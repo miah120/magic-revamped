@@ -17,7 +17,7 @@ public class ModBlocks {
 
     public static final Block ENCHANTING_TABLE = register(
             "enchanting_table",
-            Block::new,
+            ModEnchantingTableBlock::new,
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.RED)
                     .instrument(NoteBlockInstrument.BASEDRUM)
