@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "magic-revamped:item/rune.json"
+    "model": "magic-revamped:item/rune"
   }
 }
