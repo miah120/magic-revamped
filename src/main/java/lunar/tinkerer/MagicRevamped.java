@@ -20,5 +20,7 @@ public class MagicRevamped implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Hello Fabric world!");
+		ModItems.initialize();
+		ModBlocks.initialize();
 	}
 }
