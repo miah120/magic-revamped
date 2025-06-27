@@ -12,12 +12,10 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.entity.model.BookModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.StringVisitable;
@@ -31,15 +29,11 @@ import net.minecraft.util.math.random.Random;
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantmentScreen
         extends HandledScreen<ModEnchantmentScreenHandler> {
-    private static final Identifier[] LEVEL_TEXTURES = new Identifier[]{Identifier.ofVanilla((String)"container/enchanting_table/level_1"), Identifier.ofVanilla((String)"container/enchanting_table/level_2"), Identifier.ofVanilla((String)"container/enchanting_table/level_3")};
-    private static final Identifier[] LEVEL_DISABLED_TEXTURES = new Identifier[]{Identifier.ofVanilla((String)"container/enchanting_table/level_1_disabled"), Identifier.ofVanilla((String)"container/enchanting_table/level_2_disabled"), Identifier.ofVanilla((String)"container/enchanting_table/level_3_disabled")};
-    private static final Identifier ENCHANTMENT_SLOT_DISABLED_TEXTURE = Identifier.ofVanilla((String)"container/enchanting_table/enchantment_slot_disabled");
-    private static final Identifier ENCHANTMENT_SLOT_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla((String)"container/enchanting_table/enchantment_slot_highlighted");
-    private static final Identifier ENCHANTMENT_SLOT_TEXTURE = Identifier.ofVanilla((String)"container/enchanting_table/enchantment_slot");
-    private static final Identifier TEXTURE = Identifier.ofVanilla((String)"textures/gui/container/enchanting_table.png");
-    private static final Identifier BOOK_TEXTURE = Identifier.ofVanilla((String)"textures/entity/enchanting_table_book.png");
+    protected int backgroundWidth = 176;
+    protected int backgroundHeight = 186;
+
+    private static final Identifier TEXTURE = Identifier.of(MagicRevamped.MOD_ID, "textures/gui/enchanting_table.png");
     private final Random random = Random.create();
-    private BookModel BOOK_MODEL;
     public float nextPageAngle;
     public float pageAngle;
     public float approximatePageAngle;
@@ -55,25 +49,28 @@ public class ModEnchantmentScreen
     @Override
     protected void init() {
         super.init();
-        this.BOOK_MODEL = new BookModel(this.client.getLoadedEntityModels().getModelPart(EntityModelLayers.BOOK));
     }
 
     @Override
     public void handledScreenTick() {
         super.handledScreenTick();
+        assert this.client != null;
+        assert this.client.player != null;
         this.client.player.experienceBarDisplayStartTime = this.client.player.age;
         this.doTick();
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        assert this.client != null;
+        assert this.client.interactionManager != null;
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
         for (int k = 0; k < 3; ++k) {
             double d = mouseX - (double)(i + 60);
             double e = mouseY - (double)(j + 14 + 19 * k);
-            if (!(d >= 0.0) || !(e >= 0.0) || !(d < 108.0) || !(e < 19.0) || !((ModEnchantmentScreenHandler)this.handler).onButtonClick((PlayerEntity)this.client.player, k)) continue;
-            this.client.interactionManager.clickButton(((ModEnchantmentScreenHandler)this.handler).syncId, k);
+            if (!(d >= 0.0) || !(e >= 0.0) || !(d < 108.0) || !(e < 19.0) || !this.handler.onButtonClick(this.client.player, k)) continue;
+            this.client.interactionManager.clickButton(this.handler.syncId, k);
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, button);
@@ -81,82 +78,41 @@ public class ModEnchantmentScreen
 
     @Override
     protected void drawBackground(DrawContext context, float deltaTicks, int mouseX, int mouseY) {
+        assert this.client != null;
+        assert this.client.player != null;
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
         context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0.0f, 0.0f, this.backgroundWidth, this.backgroundHeight, 256, 256);
-        this.drawBook(context, i, j);
-        EnchantingPhrases.getInstance().setSeed(((ModEnchantmentScreenHandler)this.handler).getSeed());
-        int k = ((ModEnchantmentScreenHandler)this.handler).getLapisCount();
-        for (int l = 0; l < 3; ++l) {
-            int m = i + 60;
-            int n = m + 20;
-            int o = ((ModEnchantmentScreenHandler)this.handler).enchantmentPower[l];
-            if (o == 0) {
-                context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ENCHANTMENT_SLOT_DISABLED_TEXTURE, m, j + 14 + 19 * l, 108, 19);
-                continue;
-            }
-            String string = "" + o;
-            int p = 86 - this.textRenderer.getWidth(string);
-            StringVisitable stringVisitable = EnchantingPhrases.getInstance().generatePhrase(this.textRenderer, p);
-            int q = -9937334;
-            if (!(k >= l + 1 && this.client.player.experienceLevel >= o || this.client.player.isInCreativeMode())) {
-                context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ENCHANTMENT_SLOT_DISABLED_TEXTURE, m, j + 14 + 19 * l, 108, 19);
-                context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, LEVEL_DISABLED_TEXTURES[l], m + 1, j + 15 + 19 * l, 16, 16);
-                context.drawWrappedText(this.textRenderer, stringVisitable, n, j + 16 + 19 * l, p, ColorHelper.fullAlpha((int)((q & 0xFEFEFE) >> 1)), false);
-                q = -12550384;
-            } else {
-                int r = mouseX - (i + 60);
-                int s = mouseY - (j + 14 + 19 * l);
-                if (r >= 0 && s >= 0 && r < 108 && s < 19) {
-                    context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ENCHANTMENT_SLOT_HIGHLIGHTED_TEXTURE, m, j + 14 + 19 * l, 108, 19);
-                    q = -128;
-                } else {
-                    context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ENCHANTMENT_SLOT_TEXTURE, m, j + 14 + 19 * l, 108, 19);
-                }
-                context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, LEVEL_TEXTURES[l], m + 1, j + 15 + 19 * l, 16, 16);
-                context.drawWrappedText(this.textRenderer, stringVisitable, n, j + 16 + 19 * l, p, q, false);
-                q = -8323296;
-            }
-            context.drawTextWithShadow(this.textRenderer, string, n + 86 - this.textRenderer.getWidth(string), j + 16 + 19 * l + 7, q);
-        }
-    }
-
-    private void drawBook(DrawContext context, int x, int y) {
-        float f = this.client.getRenderTickCounter().getTickProgress(false);
-        float g = MathHelper.lerp((float)f, (float)this.pageTurningSpeed, (float)this.nextPageTurningSpeed);
-        float h = MathHelper.lerp((float)f, (float)this.pageAngle, (float)this.nextPageAngle);
-        int i = x + 14;
-        int j = y + 14;
-        int k = i + 38;
-        int l = j + 31;
-        context.addBookModel(this.BOOK_MODEL, BOOK_TEXTURE, 40.0f, g, h, i, j, k, l);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        assert this.client != null;
+        assert this.client.player != null;
+        assert this.client.world != null;
         float f = this.client.getRenderTickCounter().getTickProgress(false);
         super.render(context, mouseX, mouseY, f);
         this.drawMouseoverTooltip(context, mouseX, mouseY);
         boolean bl = this.client.player.isInCreativeMode();
-        int i = ((ModEnchantmentScreenHandler)this.handler).getLapisCount();
+        int i = this.handler.getLapisCount();
         for (int j = 0; j < 3; ++j) {
-            int k = ((ModEnchantmentScreenHandler)this.handler).enchantmentPower[j];
-            Optional optional = this.client.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(((ModEnchantmentScreenHandler)this.handler).enchantmentId[j]);
+            int k = this.handler.enchantmentPower[j];
+            Optional<RegistryEntry.Reference<Enchantment>> optional = this.client.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(this.handler.enchantmentId[j]);
             if (optional.isEmpty()) continue;
-            int l = ((ModEnchantmentScreenHandler)this.handler).enchantmentLevel[j];
+            int l = this.handler.enchantmentLevel[j];
             int m = j + 1;
-            if (!this.isPointWithinBounds(60, 14 + 19 * j, 108, 17, mouseX, mouseY) || k <= 0 || l < 0 || optional == null) continue;
+            if (!this.isPointWithinBounds(60, 14 + 19 * j, 108, 17, mouseX, mouseY) || k <= 0 || l < 0) continue;
             ArrayList<Text> list = Lists.newArrayList();
-            list.add((Text)Text.translatable((String)"container.enchant.clue", (Object[])new Object[]{Enchantment.getName((RegistryEntry)((RegistryEntry)optional.get()), (int)l)}).formatted(Formatting.WHITE));
+            list.add(Text.translatable("container.enchant.clue", Enchantment.getName(optional.get(), l)).formatted(Formatting.WHITE));
             if (!bl) {
                 list.add(ScreenTexts.EMPTY);
                 if (this.client.player.experienceLevel < k) {
-                    list.add((Text)Text.translatable((String)"container.enchant.level.requirement", (Object[])new Object[]{((ModEnchantmentScreenHandler)this.handler).enchantmentPower[j]}).formatted(Formatting.RED));
+                    list.add(Text.translatable("container.enchant.level.requirement", this.handler.enchantmentPower[j]).formatted(Formatting.RED));
                 } else {
-                    MutableText mutableText = m == 1 ? Text.translatable((String)"container.enchant.lapis.one") : Text.translatable((String)"container.enchant.lapis.many", (Object[])new Object[]{m});
-                    list.add((Text)mutableText.formatted(i >= m ? Formatting.GRAY : Formatting.RED));
-                    MutableText mutableText2 = m == 1 ? Text.translatable((String)"container.enchant.level.one") : Text.translatable((String)"container.enchant.level.many", (Object[])new Object[]{m});
-                    list.add((Text)mutableText2.formatted(Formatting.GRAY));
+                    MutableText mutableText = m == 1 ? Text.translatable("container.enchant.lapis.one") : Text.translatable("container.enchant.lapis.many", m);
+                    list.add(mutableText.formatted(i >= m ? Formatting.GRAY : Formatting.RED));
+                    MutableText mutableText2 = m == 1 ? Text.translatable("container.enchant.level.one") : Text.translatable("container.enchant.level.many", m);
+                    list.add(mutableText2.formatted(Formatting.GRAY));
                 }
             }
             context.drawTooltip(this.textRenderer, list, mouseX, mouseY);
@@ -165,8 +121,8 @@ public class ModEnchantmentScreen
     }
 
     public void doTick() {
-        ItemStack itemStack = ((ModEnchantmentScreenHandler)this.handler).getSlot(0).getStack();
-        if (!ItemStack.areEqual((ItemStack)itemStack, (ItemStack)this.stack)) {
+        ItemStack itemStack = this.handler.getSlot(0).getStack();
+        if (!ItemStack.areEqual(itemStack, this.stack)) {
             this.stack = itemStack;
             do {
                 this.approximatePageAngle += (float)(this.random.nextInt(4) - this.random.nextInt(4));
@@ -176,14 +132,14 @@ public class ModEnchantmentScreen
         this.pageTurningSpeed = this.nextPageTurningSpeed;
         boolean bl = false;
         for (int i = 0; i < 3; ++i) {
-            if (((ModEnchantmentScreenHandler)this.handler).enchantmentPower[i] == 0) continue;
+            if (this.handler.enchantmentPower[i] == 0) continue;
             bl = true;
         }
-        this.nextPageTurningSpeed = bl ? (this.nextPageTurningSpeed += 0.2f) : (this.nextPageTurningSpeed -= 0.2f);
-        this.nextPageTurningSpeed = MathHelper.clamp((float)this.nextPageTurningSpeed, (float)0.0f, (float)1.0f);
-        float f = (this.approximatePageAngle - this.nextPageAngle) * 0.4f;
         float g = 0.2f;
-        f = MathHelper.clamp((float)f, (float)-0.2f, (float)0.2f);
+        this.nextPageTurningSpeed += bl ? g : -g;
+        this.nextPageTurningSpeed = MathHelper.clamp(this.nextPageTurningSpeed, 0.0f, 1.0f);
+        float f = (this.approximatePageAngle - this.nextPageAngle) * 0.4f;
+        f = MathHelper.clamp(f, -g, g);
         this.pageRotationSpeed += (f - this.pageRotationSpeed) * 0.9f;
         this.nextPageAngle += this.pageRotationSpeed;
     }

@@ -56,7 +56,7 @@ public class ModEnchantmentScreenHandler
     }
 
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
-        super(ScreenHandlerType.ENCHANTMENT, syncId);
+        super(ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER, syncId);
         this.context = context;
         this.addSlot(new Slot(this.inventory, 0, 15, 47){
 
@@ -77,17 +77,7 @@ public class ModEnchantmentScreenHandler
                 return EMPTY_LAPIS_LAZULI_SLOT_TEXTURE;
             }
         });
-        this.addPlayerSlots(playerInventory, 8, 84);
-        this.addProperty(Property.create(this.enchantmentPower, 0));
-        this.addProperty(Property.create(this.enchantmentPower, 1));
-        this.addProperty(Property.create(this.enchantmentPower, 2));
-        this.addProperty(this.seed).set(playerInventory.player.getEnchantingTableSeed());
-        this.addProperty(Property.create(this.enchantmentId, 0));
-        this.addProperty(Property.create(this.enchantmentId, 1));
-        this.addProperty(Property.create(this.enchantmentId, 2));
-        this.addProperty(Property.create(this.enchantmentLevel, 0));
-        this.addProperty(Property.create(this.enchantmentLevel, 1));
-        this.addProperty(Property.create(this.enchantmentLevel, 2));
+        this.addPlayerSlots(playerInventory, 8, 94);
     }
 
     @Override
@@ -133,7 +123,7 @@ public class ModEnchantmentScreenHandler
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
         if (id < 0 || id >= this.enchantmentPower.length) {
-            Util.logErrorOrPause(String.valueOf(player.getName()) + " pressed invalid button id: " + id);
+            Util.logErrorOrPause(player.getName() + " pressed invalid button id: " + id);
             return false;
         }
         ItemStack itemStack = this.inventory.getStack(0);
@@ -166,7 +156,7 @@ public class ModEnchantmentScreenHandler
                     this.inventory.markDirty();
                     this.seed.set(player.getEnchantingTableSeed());
                     this.onContentChanged(this.inventory);
-                    world.playSound(null, (BlockPos)pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                    world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
                 }
             });
             return true;
@@ -195,10 +185,6 @@ public class ModEnchantmentScreenHandler
         return itemStack.getCount();
     }
 
-    public int getSeed() {
-        return this.seed.get();
-    }
-
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
@@ -213,7 +199,7 @@ public class ModEnchantmentScreenHandler
     @Override
     public ItemStack quickMove(PlayerEntity player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot2 = (Slot)this.slots.get(slot);
+        Slot slot2 = this.slots.get(slot);
         if (slot2 != null && slot2.hasStack()) {
             ItemStack itemStack2 = slot2.getStack();
             itemStack = itemStack2.copy();
@@ -229,10 +215,10 @@ public class ModEnchantmentScreenHandler
                 if (!this.insertItem(itemStack2, 1, 2, true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!((Slot)this.slots.get(0)).hasStack() && ((Slot)this.slots.get(0)).canInsert(itemStack2)) {
+            } else if (!this.slots.getFirst().hasStack() && this.slots.getFirst().canInsert(itemStack2)) {
                 ItemStack itemStack3 = itemStack2.copyWithCount(1);
                 itemStack2.decrement(1);
-                ((Slot)this.slots.get(0)).setStack(itemStack3);
+                this.slots.getFirst().setStack(itemStack3);
             } else {
                 return ItemStack.EMPTY;
             }
