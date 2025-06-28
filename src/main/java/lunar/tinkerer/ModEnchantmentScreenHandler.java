@@ -5,7 +5,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.RecipeInputInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeEntry;
@@ -18,6 +20,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,9 +42,9 @@ public class ModEnchantmentScreenHandler
         this.context = context;
         this.player = playerInventory.player;
 
-        this.addResultSlot(this.getPlayer(), 127, 35);
-        this.addInputSlots(44,35);
-        this.addPlayerSlots(playerInventory, 8, 94);
+        this.addResultSlot(this.getPlayer(), 127, 32);
+        this.addInputSlots(44,32);
+        this.addPlayerSlots(playerInventory, 8, 99);
     }
 
     @Override
@@ -122,6 +125,18 @@ public class ModEnchantmentScreenHandler
     }
 
     protected static void updateResult(ScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<CraftingRecipe> recipe) {
+        ItemStack conduit = craftingInventory.getStack(0);
+        if (conduit.isOf(Items.LAPIS_LAZULI)) {
+            MagicRevamped.LOGGER.info("Rune Carving!");
+            carveRune(handler, world, player, craftingInventory, resultInventory, recipe);
+        } else if (conduit.isOf(Items.BOOK)) {
+            MagicRevamped.LOGGER.info("Inscribing!");
+        } else {
+            MagicRevamped.LOGGER.info("Enchanting!");
+        }
+    }
+
+    private static void carveRune(ScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<CraftingRecipe> recipe) {
         CraftingRecipeInput craftingRecipeInput = craftingInventory.createRecipeInput();
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack = ItemStack.EMPTY;
@@ -138,6 +153,8 @@ public class ModEnchantmentScreenHandler
         handler.setReceivedStack(0, itemStack);
         serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, itemStack));
     }
+
+    private static void enchant() {}
 
     @Override
     public void onContentChanged(Inventory inventory) {
