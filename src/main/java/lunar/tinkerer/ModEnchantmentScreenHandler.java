@@ -76,8 +76,8 @@ public class ModEnchantmentScreenHandler
         ItemStack original = sourceSlot.getStack().copy();
         ItemStack itemStack = switch (slot) {
             case 0 -> quickMoveFromResult(player, slot);
-            case 1,2,3,4,5,6,7,8,9 -> quickMoveFromTable(player, slot);
-            default -> quickMoveFromPlayer(player, slot);
+            case 1,2,3,4,5,6,7,8,9 -> quickMoveFromTable(slot);
+            default -> quickMoveFromPlayer(slot);
         };
         if (itemStack.isEmpty()) {
             sourceSlot.setStack(ItemStack.EMPTY);
@@ -96,16 +96,28 @@ public class ModEnchantmentScreenHandler
 
     private ItemStack quickMoveFromResult(PlayerEntity player, int slot) {
         ItemStack items = this.slots.get(slot).getStack();
+        items.getItem().onCraftByPlayer(items, player);
+        this.insertItem(items, 10, 46, true);
         return items;
     }
 
-    private ItemStack quickMoveFromTable(PlayerEntity player, int slot) {
+    private ItemStack quickMoveFromTable(int slot) {
         ItemStack items = this.slots.get(slot).getStack();
+        this.insertItem(items, 10, 46, false);
         return items;
     }
 
-    private ItemStack quickMoveFromPlayer(PlayerEntity player, int slot) {
+    private ItemStack quickMoveFromPlayer(int slot) {
         ItemStack items = this.slots.get(slot).getStack();
+        if(this.insertItem(items, 1, 10, false)) {
+            return items;
+        }
+
+        if (slot < 37) {
+            this.insertItem(items, 37, 46, false);
+        } else {
+            this.insertItem(items, 10, 37, false);
+        }
         return items;
     }
 
