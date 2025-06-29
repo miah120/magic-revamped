@@ -35,7 +35,15 @@ public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, SlotDispla
     }
 
     static {
-        PACKET_CODEC = PacketCodec.tuple(SlotDisplay.PACKET_CODEC.collect(PacketCodecs.toList()), EnchantmentRecipeDisplay::ingredients, SlotDisplay.PACKET_CODEC, EnchantmentRecipeDisplay::result, SlotDisplay.PACKET_CODEC, EnchantmentRecipeDisplay::craftingStation, EnchantmentRecipeDisplay::new);
+        PACKET_CODEC = PacketCodec.tuple(
+                SlotDisplay.PACKET_CODEC.collect(PacketCodecs.toList()),
+                EnchantmentRecipeDisplay::ingredients,
+                SlotDisplay.PACKET_CODEC,
+                EnchantmentRecipeDisplay::result,
+                SlotDisplay.PACKET_CODEC,
+                EnchantmentRecipeDisplay::craftingStation,
+                EnchantmentRecipeDisplay::new
+        );
         SERIALIZER = new RecipeDisplay.Serializer<>(CODEC, PACKET_CODEC);
     }
 }

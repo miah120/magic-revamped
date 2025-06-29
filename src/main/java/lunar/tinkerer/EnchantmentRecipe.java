@@ -75,10 +75,10 @@ public class EnchantmentRecipe implements CraftingRecipe {
 
     @Override
     public List<RecipeDisplay> getDisplays() {
-        return List.of(new ShapelessCraftingRecipeDisplay(
+        return List.of(new EnchantmentRecipeDisplay(
                 this.ingredients.stream().map(Ingredient::toDisplay).toList(),
                 new SlotDisplay.StackSlotDisplay(this.result),
-                new SlotDisplay.ItemSlotDisplay(Items.CRAFTING_TABLE)
+                new SlotDisplay.ItemSlotDisplay(ModBlocks.ENCHANTING_TABLE.asItem())
         ));
     }
 

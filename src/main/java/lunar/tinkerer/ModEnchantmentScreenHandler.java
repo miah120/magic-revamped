@@ -126,17 +126,22 @@ public class ModEnchantmentScreenHandler
 
     protected static void updateResult(ScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<CraftingRecipe> recipe) {
         ItemStack conduit = craftingInventory.getStack(0);
+        ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
+        ItemStack itemStack = ItemStack.EMPTY;
         if (conduit.isOf(Items.LAPIS_LAZULI)) {
             MagicRevamped.LOGGER.info("Rune Carving!");
-            carveRune(handler, world, player, craftingInventory, resultInventory, recipe);
+            itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
         } else if (conduit.isOf(Items.BOOK)) {
             MagicRevamped.LOGGER.info("Inscribing!");
         } else {
             MagicRevamped.LOGGER.info("Enchanting!");
         }
+        resultInventory.setStack(0, itemStack);
+        handler.setReceivedStack(0, itemStack);
+        serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, itemStack));
     }
 
-    private static void carveRune(ScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<CraftingRecipe> recipe) {
+    private static ItemStack carveRune(ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<CraftingRecipe> recipe) {
         CraftingRecipeInput craftingRecipeInput = craftingInventory.createRecipeInput();
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack = ItemStack.EMPTY;
@@ -149,9 +154,7 @@ public class ModEnchantmentScreenHandler
                 itemStack = itemStack2;
             }
         }
-        resultInventory.setStack(0, itemStack);
-        handler.setReceivedStack(0, itemStack);
-        serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, itemStack));
+        return itemStack;
     }
 
     private static void enchant() {}

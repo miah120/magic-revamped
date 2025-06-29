@@ -23,5 +23,6 @@ public class MagicRevamped implements ModInitializer {
 		ModItems.initialize();
 		ModBlocks.initialize();
 		ModBlockEntities.initialize();
+		ModRecipeTypes.initialize();
 	}
 }

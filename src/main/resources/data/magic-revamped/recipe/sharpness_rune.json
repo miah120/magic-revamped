@@ -1,7 +1,8 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "magic-revamped:enchanting",
   "ingredients": [
-      "minecraft:enchanting_table"
+      "minecraft:enchanting_table",
+      "minecraft:lapis_lazuli"
   ],
   "result": {
     "count": 1,
