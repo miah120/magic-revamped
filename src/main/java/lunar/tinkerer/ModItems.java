@@ -2,6 +2,8 @@ package lunar.tinkerer;
 
 import com.google.common.base.Function;
 import net.minecraft.item.Item;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.IngredientPlacement;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+      "minecraft:enchanting_table"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "stored_enchantments": {
+        "minecraft:sharpness": 1
+      },
+      "enchantment_glint_override": true
+    }
+  }
+}

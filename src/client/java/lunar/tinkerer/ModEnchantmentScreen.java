@@ -39,6 +39,7 @@ public class ModEnchantmentScreen
     private static final Identifier TEXTURE = Identifier.of(MagicRevamped.MOD_ID, "textures/gui/enchanting_table.png");
 
     public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
+        //TODO: Make our own widget
         super(handler, new AbstractCraftingRecipeBookWidget(handler), inventory, title);
     }
 
