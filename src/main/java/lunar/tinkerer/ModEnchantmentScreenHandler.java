@@ -131,11 +131,14 @@ public class ModEnchantmentScreenHandler
 
     @Override
     public PostFillAction fillInputSlots(boolean craftAll, boolean creative, RecipeEntry<?> recipe, ServerWorld world, PlayerInventory inventory) {
+        if(recipe.value().getType() != ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE) {
+            return PostFillAction.NOTHING;
+        }
         RecipeEntry<EnchantmentRecipe> recipeEntry = (RecipeEntry<EnchantmentRecipe>) recipe;
         this.onInputSlotFillStart();
         try {
             List<Slot> list = this.getInputSlots();
-            return InputSlotFiller.fill(new InputSlotFiller.Handler<EnchantmentRecipe>(){
+            return InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
 
                 @Override
                 public void populateRecipeFinder(RecipeFinder finder) {
@@ -227,6 +230,9 @@ public class ModEnchantmentScreenHandler
 
     public List<Slot> getInputSlots() {
         return this.slots.subList(1, 10);
+    }
+    public Slot getOutputSlot() {
+        return this.slots.getFirst();
     }
 
     protected PlayerEntity getPlayer() {

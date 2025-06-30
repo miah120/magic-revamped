@@ -16,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.book.RecipeBookCategories;
 import net.minecraft.recipe.display.RecipeDisplay;
+import net.minecraft.screen.AbstractCraftingScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -47,6 +48,7 @@ public class ModEnchantmentScreen
 
     public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
         //TODO: Make our own widget
+        //TODO: Make our own RecipeBookCategory
         super(handler, new RecipeBookWidget<>(handler, List.of(
                 new RecipeBookWidget.Tab(Items.LAVA_BUCKET, Items.APPLE, RecipeBookCategories.CRAFTING_MISC)
         )) {
@@ -55,7 +57,7 @@ public class ModEnchantmentScreen
 
             @Override
             protected boolean isValid(Slot slot) {
-                return false;
+                return this.craftingScreenHandler.getOutputSlot() == slot || this.craftingScreenHandler.getInputSlots().contains(slot);
             }
 
             @Override
