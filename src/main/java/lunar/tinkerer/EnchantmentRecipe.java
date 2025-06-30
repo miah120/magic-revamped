@@ -4,14 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.book.RecipeBookCategories;
+import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.recipe.display.ShapelessCraftingRecipeDisplay;
 import net.minecraft.recipe.display.SlotDisplay;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EnchantmentRecipe implements CraftingRecipe {
+public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public final String group;
     public final CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
     public final ItemStack result;
@@ -35,18 +35,18 @@ public class EnchantmentRecipe implements CraftingRecipe {
     }
 
     @Override
+    public RecipeType<EnchantmentRecipe> getType() {
+        return ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE;
+    }
+
+    @Override
     public RecipeSerializer<EnchantmentRecipe> getSerializer() {
-        return ModRecipeTypes.ENCHANTMENT_RECIPE;
+        return ModRecipeTypes.ENCHANTMENT_RECIPE_SERIALIZER;
     }
 
     @Override
     public String getGroup() {
         return this.group;
-    }
-
-    @Override
-    public CraftingRecipeCategory getCategory() {
-        return this.category;
     }
 
     @Override
@@ -80,6 +80,12 @@ public class EnchantmentRecipe implements CraftingRecipe {
                 new SlotDisplay.StackSlotDisplay(this.result),
                 new SlotDisplay.ItemSlotDisplay(ModBlocks.ENCHANTING_TABLE.asItem())
         ));
+    }
+
+    @Override
+    public RecipeBookCategory getRecipeBookCategory() {
+        //TODO: Make custom category
+        return RecipeBookCategories.CRAFTING_MISC;
     }
 
     public static class Serializer

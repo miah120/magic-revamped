@@ -1,5 +1,6 @@
 {
   "type": "magic-revamped:enchanting",
+  "crafting_station": "magic-revamped:enchanting_table",
   "ingredients": [
       "minecraft:enchanting_table",
       "minecraft:lapis_lazuli"

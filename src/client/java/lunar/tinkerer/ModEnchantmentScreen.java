@@ -1,20 +1,27 @@
 package lunar.tinkerer;
 
-import java.util.List;
-
-import com.mojang.datafixers.DataFixer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenPos;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
 import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
-import net.minecraft.client.gui.screen.recipebook.AbstractCraftingRecipeBookWidget;
+import net.minecraft.client.gui.screen.recipebook.GhostRecipe;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
+import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.book.RecipeBookCategories;
+import net.minecraft.recipe.display.RecipeDisplay;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.context.ContextParameterMap;
+
+import java.util.List;
 
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantmentScreen
@@ -40,7 +47,36 @@ public class ModEnchantmentScreen
 
     public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
         //TODO: Make our own widget
-        super(handler, new AbstractCraftingRecipeBookWidget(handler), inventory, title);
+        super(handler, new RecipeBookWidget<>(handler, List.of(
+                new RecipeBookWidget.Tab(Items.LAVA_BUCKET, Items.APPLE, RecipeBookCategories.CRAFTING_MISC)
+        )) {
+            private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla((String)"recipe_book/filter_disabled"), Identifier.ofVanilla((String)"recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla((String)"recipe_book/filter_disabled_highlighted"));
+            private static final Text TOGGLE_CRAFTABLE_TEXT = Text.translatable("gui.recipebook.toggleRecipes.craftable");
+
+            @Override
+            protected boolean isValid(Slot slot) {
+                return false;
+            }
+
+            @Override
+            protected void setBookButtonTexture() {
+                this.toggleCraftableButton.setTextures(TEXTURES);
+            }
+
+            @Override
+            protected Text getToggleCraftableButtonText() {
+                return TOGGLE_CRAFTABLE_TEXT;
+            }
+
+            @Override
+            protected void populateRecipes(RecipeResultCollection recipeResultCollection, RecipeFinder recipeFinder) {
+                recipeResultCollection.populateRecipes(recipeFinder, (x) -> true);
+            }
+            @Override
+            protected void showGhostRecipe(GhostRecipe ghostRecipe, RecipeDisplay display, ContextParameterMap context) {
+
+            }
+        }, inventory, title);
     }
 
     @Override
