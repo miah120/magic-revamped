@@ -9,6 +9,7 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -96,6 +97,7 @@ public class ModEnchantmentScreenHandler
 
             @Override
             public void markDirty() {
+                ModEnchantmentScreenHandler.this.onContentChanged(this);
             }
 
             @Override
@@ -259,7 +261,7 @@ public class ModEnchantmentScreenHandler
         this.onInputSlotFillStart();
         try {
             List<Slot> list = this.getInputSlots();
-            PostFillAction postFillAction = InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
+            return InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
 
                 @Override
                 public void populateRecipeFinder(RecipeFinder finder) {
@@ -268,7 +270,6 @@ public class ModEnchantmentScreenHandler
 
                 @Override
                 public void clear() {
-                    ModEnchantmentScreenHandler.this.craftingResultInventory.clear();
                     ModEnchantmentScreenHandler.this.craftingInventory.clear();
                 }
 
@@ -277,7 +278,6 @@ public class ModEnchantmentScreenHandler
                     return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.createRecipeInput(), ModEnchantmentScreenHandler.this.getPlayer().getWorld());
                 }
             }, 3, 3, list, list, inventory, recipeEntry, craftAll, creative);
-            return postFillAction;
         } finally {
             this.onInputSlotFillFinish(world, recipeEntry);
         }
@@ -336,7 +336,9 @@ public class ModEnchantmentScreenHandler
         if (this.filling) { return; }
         this.context.run((world, pos) -> {
             if (world instanceof ServerWorld serverWorld) {
-                ModEnchantmentScreenHandler.updateResult(this, serverWorld, this.player, this.craftingInventory, this.craftingResultInventory, null);
+                CraftingRecipeInput input = this.craftingInventory.createRecipeInput();
+                RecipeEntry<EnchantmentRecipe> recipe = serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).orElse(null);
+                ModEnchantmentScreenHandler.updateResult(this, serverWorld, this.player, this.craftingInventory, this.craftingResultInventory, recipe);
             }
         });
     }

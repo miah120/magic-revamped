@@ -3,14 +3,11 @@ package lunar.tinkerer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.recipe.*;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.book.RecipeBookCategories;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.display.RecipeDisplay;
 import net.minecraft.recipe.display.SlotDisplay;
@@ -24,13 +21,12 @@ import java.util.List;
 
 public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public final String group;
-    public final CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
     public final ItemStack result;
     public final List<Ingredient> ingredients;
     @Nullable
     private IngredientPlacement ingredientPlacement;
 
-    public EnchantmentRecipe(String group, CraftingRecipeCategory category, ItemStack result, List<Ingredient> ingredients) {
+    public EnchantmentRecipe(String group, ItemStack result, List<Ingredient> ingredients) {
         this.group = group;
         this.result = result;
         this.ingredients = ingredients;
@@ -93,25 +89,12 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
         return CraftingRecipe.collectRecipeRemainders(input);
     }
 
-    public static DefaultedList<ItemStack> collectRecipeRemainders(CraftingRecipeInput input) {
-        DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(input.size(), ItemStack.EMPTY);
-        for (int i = 0; i < defaultedList.size(); ++i) {
-            Item item = input.getStackInSlot(i).getItem();
-            defaultedList.set(i, item.getRecipeRemainder());
-        }
-        return defaultedList;
-    }
-
     public static class Serializer
             implements RecipeSerializer<EnchantmentRecipe> {
         private static final MapCodec<EnchantmentRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.STRING
                         .optionalFieldOf("group", "")
                         .forGetter(recipe -> recipe.group),
-                CraftingRecipeCategory.CODEC
-                        .fieldOf("category")
-                        .orElse(CraftingRecipeCategory.MISC)
-                        .forGetter(recipe -> recipe.category),
                 ItemStack.VALIDATED_CODEC
                         .fieldOf("result")
                         .forGetter(recipe -> recipe.result),
@@ -120,7 +103,7 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
                         .fieldOf("ingredients")
                         .forGetter(recipe -> recipe.ingredients)
             ).apply(instance, EnchantmentRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, EnchantmentRecipe> PACKET_CODEC = PacketCodec.tuple(PacketCodecs.STRING, recipe -> recipe.group, CraftingRecipeCategory.PACKET_CODEC, recipe -> recipe.category, ItemStack.PACKET_CODEC, recipe -> recipe.result, Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()), recipe -> recipe.ingredients, EnchantmentRecipe::new);
+        public static final PacketCodec<RegistryByteBuf, EnchantmentRecipe> PACKET_CODEC = PacketCodec.tuple(PacketCodecs.STRING, recipe -> recipe.group, ItemStack.PACKET_CODEC, recipe -> recipe.result, Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()), recipe -> recipe.ingredients, EnchantmentRecipe::new);
 
         @Override
         public MapCodec<EnchantmentRecipe> codec() {
