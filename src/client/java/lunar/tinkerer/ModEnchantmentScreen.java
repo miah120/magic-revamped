@@ -47,10 +47,8 @@ public class ModEnchantmentScreen
     private static final Identifier TEXTURE = Identifier.of(MagicRevamped.MOD_ID, "textures/gui/enchanting_table.png");
 
     public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
-        //TODO: Make our own widget
-        //TODO: Make our own RecipeBookCategory
         super(handler, new RecipeBookWidget<>(handler, List.of(
-                new RecipeBookWidget.Tab(Items.LAVA_BUCKET, Items.APPLE, RecipeBookCategories.CRAFTING_MISC)
+                new RecipeBookWidget.Tab(Items.ENCHANTING_TABLE, ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY)
         )) {
             private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla((String)"recipe_book/filter_disabled"), Identifier.ofVanilla((String)"recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla((String)"recipe_book/filter_disabled_highlighted"));
             private static final Text TOGGLE_CRAFTABLE_TEXT = Text.translatable("gui.recipebook.toggleRecipes.craftable");

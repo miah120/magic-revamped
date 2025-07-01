@@ -2,6 +2,7 @@ package lunar.tinkerer;
 
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.display.RecipeDisplay;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -24,11 +25,16 @@ public class ModRecipeTypes {
             }
     );
 
-
     public static final RecipeDisplay.Serializer<EnchantmentRecipeDisplay> ENCHANTMENT_RECIPE_DISPLAY = Registry.register(
             Registries.RECIPE_DISPLAY,
             Identifier.of(MagicRevamped.MOD_ID, "enchanting"),
             EnchantmentRecipeDisplay.SERIALIZER
+    );
+
+    public static final RecipeBookCategory ENCHANTMENT_RECIPE_BOOK_CATEGORY = Registry.register(
+            Registries.RECIPE_BOOK_CATEGORY,
+            Identifier.of(MagicRevamped.MOD_ID, "enchanting"),
+            new RecipeBookCategory()
     );
 
     public static void initialize() {}

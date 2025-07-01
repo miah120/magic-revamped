@@ -3,6 +3,7 @@ package lunar.tinkerer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -15,6 +16,7 @@ import net.minecraft.recipe.display.RecipeDisplay;
 import net.minecraft.recipe.display.SlotDisplay;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,8 +86,20 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
 
     @Override
     public RecipeBookCategory getRecipeBookCategory() {
-        //TODO: Make custom category
-        return RecipeBookCategories.CRAFTING_MISC;
+        return ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY;
+    }
+
+    public DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input) {
+        return CraftingRecipe.collectRecipeRemainders(input);
+    }
+
+    public static DefaultedList<ItemStack> collectRecipeRemainders(CraftingRecipeInput input) {
+        DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(input.size(), ItemStack.EMPTY);
+        for (int i = 0; i < defaultedList.size(); ++i) {
+            Item item = input.getStackInSlot(i).getItem();
+            defaultedList.set(i, item.getRecipeRemainder());
+        }
+        return defaultedList;
     }
 
     public static class Serializer

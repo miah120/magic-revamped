@@ -2,16 +2,11 @@ package lunar.tinkerer;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.CraftingResultInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.RecipeInputInventory;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.recipe.InputSlotFiller;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
@@ -21,6 +16,8 @@ import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -42,7 +39,85 @@ public class ModEnchantmentScreenHandler
         super(ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER, syncId);
         this.context = context;
         this.player = playerInventory.player;
-        this.craftingInventory = new CraftingInventory(this, 3, 3);
+        this.craftingInventory = new RecipeInputInventory() {
+            private final ScreenHandler handler = ModEnchantmentScreenHandler.this;
+            private final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(9, ItemStack.EMPTY);
+
+            @Override
+            public void provideRecipeInputs(RecipeFinder finder) {
+                for (ItemStack itemStack : this.stacks) {
+                    finder.addInputIfUsable(itemStack);
+                }
+            }
+
+            @Override
+            public void clear() {
+                this.stacks.clear();
+            }
+
+            @Override
+            public int size() {
+                return 9;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return this.stacks.stream().allMatch(ItemStack::isEmpty);
+            }
+
+            @Override
+            public ItemStack getStack(int slot) {
+                if (slot >= this.size()) {
+                    return ItemStack.EMPTY;
+                }
+                return this.stacks.get(slot);
+            }
+
+            @Override
+            public ItemStack removeStack(int slot) {
+                return Inventories.removeStack(this.stacks, slot);
+            }
+
+
+            @Override
+            public ItemStack removeStack(int slot, int amount) {
+                ItemStack itemStack = Inventories.splitStack(this.stacks, slot, amount);
+                if (!itemStack.isEmpty()) {
+                    this.handler.onContentChanged(this);
+                }
+                return itemStack;
+            }
+
+            @Override
+            public void setStack(int slot, ItemStack stack) {
+                this.stacks.set(slot, stack);
+                this.handler.onContentChanged(this);
+            }
+
+            @Override
+            public void markDirty() {
+            }
+
+            @Override
+            public boolean canPlayerUse(PlayerEntity player) {
+                return true;
+            }
+
+            @Override
+            public int getWidth() {
+                return 3;
+            }
+
+            @Override
+            public int getHeight() {
+                return 3;
+            }
+
+            @Override
+            public List<ItemStack> getHeldStacks() {
+                return List.copyOf(this.stacks);
+            }
+        };
 
         this.addResultSlot(this.getPlayer(), 127, 32);
         this.addInputSlots(44,32);
@@ -50,7 +125,55 @@ public class ModEnchantmentScreenHandler
     }
 
     protected Slot addResultSlot(PlayerEntity player, int x, int y) {
-        return this.addSlot(new CraftingResultSlot(player, this.craftingInventory, this.craftingResultInventory, 0, x, y));
+        return this.addSlot(new CraftingResultSlot(player, this.craftingInventory, this.craftingResultInventory, 0, x, y) {
+            @Override
+            public void onTakeItem(PlayerEntity player, ItemStack stack) {
+                this.onCrafted(stack);
+                CraftingRecipeInput.Positioned positioned = ModEnchantmentScreenHandler.this.craftingInventory.createPositionedRecipeInput();
+                CraftingRecipeInput craftingRecipeInput = positioned.input();
+                int i = positioned.left();
+                int j = positioned.top();
+                DefaultedList<ItemStack> defaultedList = this.getRecipeRemainders(craftingRecipeInput, player.getWorld());
+                for (int k = 0; k < craftingRecipeInput.getHeight(); ++k) {
+                    for (int l = 0; l < craftingRecipeInput.getWidth(); ++l) {
+                        int m = l + i + (k + j) * ModEnchantmentScreenHandler.this.craftingInventory.getWidth();
+                        ItemStack itemStack = ModEnchantmentScreenHandler.this.craftingInventory.getStack(m);
+                        ItemStack itemStack2 = defaultedList.get(l + k * craftingRecipeInput.getWidth());
+                        if (!itemStack.isEmpty()) {
+                            ModEnchantmentScreenHandler.this.craftingInventory.removeStack(m, 1);
+                            itemStack = ModEnchantmentScreenHandler.this.craftingInventory.getStack(m);
+                        }
+                        if (itemStack2.isEmpty()) continue;
+                        if (itemStack.isEmpty()) {
+                            ModEnchantmentScreenHandler.this.craftingInventory.setStack(m, itemStack2);
+                            continue;
+                        }
+                        if (ItemStack.areItemsAndComponentsEqual(itemStack, itemStack2)) {
+                            itemStack2.increment(itemStack.getCount());
+                            ModEnchantmentScreenHandler.this.craftingInventory.setStack(m, itemStack2);
+                            continue;
+                        }
+                        if (player.getInventory().insertStack(itemStack2)) continue;
+                        player.dropItem(itemStack2, false);
+                    }
+                }
+            }
+
+            private DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input, World world) {
+                if (world instanceof ServerWorld serverWorld) {
+                    return serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).map(recipe -> (recipe.value()).getRecipeRemainders(input)).orElseGet(() -> this.copyInput(input));
+                }
+                return CraftingRecipe.collectRecipeRemainders(input);
+            }
+
+            private static DefaultedList<ItemStack> copyInput(CraftingRecipeInput input) {
+                DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(input.size(), ItemStack.EMPTY);
+                for (int i = 0; i < defaultedList.size(); ++i) {
+                    defaultedList.set(i, input.getStackInSlot(i));
+                }
+                return defaultedList;
+            }
+        });
     }
 
     protected void addInputSlots(int x, int y) {
@@ -99,6 +222,7 @@ public class ModEnchantmentScreenHandler
         if (slot == 0) {
             player.dropItem(itemStack, false);
         }
+        this.sendContentUpdates();
         return itemStack;
     }
 
@@ -131,14 +255,11 @@ public class ModEnchantmentScreenHandler
 
     @Override
     public PostFillAction fillInputSlots(boolean craftAll, boolean creative, RecipeEntry<?> recipe, ServerWorld world, PlayerInventory inventory) {
-        if(recipe.value().getType() != ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE) {
-            return PostFillAction.NOTHING;
-        }
         RecipeEntry<EnchantmentRecipe> recipeEntry = (RecipeEntry<EnchantmentRecipe>) recipe;
         this.onInputSlotFillStart();
         try {
             List<Slot> list = this.getInputSlots();
-            return InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
+            PostFillAction postFillAction = InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
 
                 @Override
                 public void populateRecipeFinder(RecipeFinder finder) {
@@ -156,6 +277,7 @@ public class ModEnchantmentScreenHandler
                     return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.createRecipeInput(), ModEnchantmentScreenHandler.this.getPlayer().getWorld());
                 }
             }, 3, 3, list, list, inventory, recipeEntry, craftAll, creative);
+            return postFillAction;
         } finally {
             this.onInputSlotFillFinish(world, recipeEntry);
         }
