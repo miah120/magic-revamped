@@ -9,7 +9,6 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -30,7 +29,7 @@ public class ModEnchantmentScreenHandler
     private final PlayerEntity player;
     private boolean filling;
     protected final RecipeInputInventory craftingInventory;
-    protected final CraftingResultInventory craftingResultInventory = new CraftingResultInventory();
+    protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
 
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
@@ -288,24 +287,25 @@ public class ModEnchantmentScreenHandler
         this.craftingInventory.provideRecipeInputs(finder);
     }
 
-    protected static void updateResult(ScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
+    protected static void updateResult(ModEnchantmentScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
         ItemStack conduit = craftingInventory.getStack(0);
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
-        ItemStack itemStack = ItemStack.EMPTY;
-        if (conduit.isOf(Items.LAPIS_LAZULI)) {
+        ItemStack itemStack;
+        if (conduit.isEmpty()) {
+            itemStack = ItemStack.EMPTY;
+        } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
             MagicRevamped.LOGGER.info("Rune Carving!");
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
-        } else if (conduit.isOf(Items.BOOK)) {
-            MagicRevamped.LOGGER.info("Inscribing!");
         } else {
             MagicRevamped.LOGGER.info("Enchanting!");
+            itemStack = enchant(resultInventory);
         }
         resultInventory.setStack(0, itemStack);
         handler.setReceivedStack(0, itemStack);
         serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, itemStack));
     }
 
-    private static ItemStack carveRune(ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
+    private static ItemStack carveRune(ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
         CraftingRecipeInput craftingRecipeInput = craftingInventory.createRecipeInput();
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack = ItemStack.EMPTY;
@@ -329,7 +329,9 @@ public class ModEnchantmentScreenHandler
         return itemStack;
     }
 
-    private static void enchant() {}
+    public static ItemStack enchant(EnchantingTableResultInventory resultInventory) {
+        return new ItemStack(Items.DIAMOND);
+    }
 
     @Override
     public void onContentChanged(Inventory inventory) {
