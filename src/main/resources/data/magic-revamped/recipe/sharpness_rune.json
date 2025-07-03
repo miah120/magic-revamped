@@ -9,9 +9,7 @@
     "count": 1,
     "id": "magic-revamped:rune",
     "components": {
-      "stored_enchantments": {
-        "minecraft:sharpness": 1
-      },
+      "magic-revamped:enchantment": "minecraft:sharpness",
       "enchantment_glint_override": true
     }
   }

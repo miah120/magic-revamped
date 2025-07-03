@@ -1,5 +1,6 @@
 package lunar.tinkerer;
 
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.*;
@@ -291,6 +292,7 @@ public class ModEnchantmentScreenHandler
         ItemStack conduit = craftingInventory.getStack(0);
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack;
+        //TODO: Validate player has enough levels
         if (conduit.isEmpty()) {
             itemStack = ItemStack.EMPTY;
         } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
@@ -298,7 +300,7 @@ public class ModEnchantmentScreenHandler
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
         } else {
             MagicRevamped.LOGGER.info("Enchanting!");
-            itemStack = enchant(resultInventory);
+            itemStack = enchant(craftingInventory);
         }
         resultInventory.setStack(0, itemStack);
         handler.setReceivedStack(0, itemStack);
@@ -329,7 +331,32 @@ public class ModEnchantmentScreenHandler
         return itemStack;
     }
 
-    public static ItemStack enchant(EnchantingTableResultInventory resultInventory) {
+    public static ItemStack enchant(RecipeInputInventory craftingInventory) {
+        ItemStack conduit = craftingInventory.getStack(0);
+        if (!EnchantmentHelper.canHaveEnchantments(conduit)) {
+            return ItemStack.EMPTY;
+        }
+
+        if (!craftingInventory.getHeldStacks().subList(1, 9).stream().allMatch(
+                itemStack -> itemStack.isEmpty() || itemStack.isOf(ModItems.RUNE)
+        )) {
+            return ItemStack.EMPTY;
+        }
+
+        List<ItemStack> inputs = craftingInventory.getHeldStacks()
+                .subList(1, 9)
+                .stream()
+                .filter(itemStack -> !itemStack.isEmpty())
+                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
+                .toList();
+        if (inputs.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        //TODO: Combine enchants
+        //TODO: Only allow open runes
+        //TODO: Remove max durability
+
         return new ItemStack(Items.DIAMOND);
     }
 
