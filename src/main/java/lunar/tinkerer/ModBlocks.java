@@ -11,7 +11,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
 
 public class ModBlocks {
 
@@ -50,11 +49,11 @@ public class ModBlocks {
     }
 
     private static RegistryKey<Block> keyOfBlock(String name) {
-        return RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(MagicRevamped.MOD_ID, name));
+        return RegistryKey.of(RegistryKeys.BLOCK, MagicRevamped.identifier(name));
     }
 
     private static RegistryKey<Item> keyOfItem(String name) {
-        return RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MagicRevamped.MOD_ID, name));
+        return RegistryKey.of(RegistryKeys.ITEM, MagicRevamped.identifier(name));
     }
 
 }

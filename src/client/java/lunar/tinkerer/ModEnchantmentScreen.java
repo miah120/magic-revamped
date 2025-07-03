@@ -14,9 +14,7 @@ import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeFinder;
-import net.minecraft.recipe.book.RecipeBookCategories;
 import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.screen.AbstractCraftingScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -44,7 +42,7 @@ public class ModEnchantmentScreen
     );
     private final CyclingSlotIcon slotIcon = new CyclingSlotIcon(1);
 
-    private static final Identifier TEXTURE = Identifier.of(MagicRevamped.MOD_ID, "textures/gui/enchanting_table.png");
+    private static final Identifier TEXTURE = MagicRevamped.identifier("textures/gui/enchanting_table.png");
 
     public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, new RecipeBookWidget<>(handler, List.of(

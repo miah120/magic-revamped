@@ -8,7 +8,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
 
 public class ModBlockEntities {
     public static final BlockEntityType<ModEnchantingTableBlockEntity> ENCHANTING_TABLE_BLOCK_ENTITY = registerBlockEntity(
@@ -16,12 +15,16 @@ public class ModBlockEntities {
             ModEnchantingTableBlockEntity::new,
             ModBlocks.ENCHANTING_TABLE
     );
-    public static final ScreenHandlerType<ModEnchantmentScreenHandler> ENCHANTMENT_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MagicRevamped.MOD_ID, "enchanting_table"), new ScreenHandlerType<>(ModEnchantmentScreenHandler::new, FeatureSet.empty()));
+    public static final ScreenHandlerType<ModEnchantmentScreenHandler> ENCHANTMENT_SCREEN_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER,
+            MagicRevamped.identifier("enchanting_table"),
+            new ScreenHandlerType<>(ModEnchantmentScreenHandler::new, FeatureSet.empty())
+    );
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block block) {
         return Registry.register(
                 Registries.BLOCK_ENTITY_TYPE,
-                Identifier.of(MagicRevamped.MOD_ID, name),
+                MagicRevamped.identifier(name),
                 FabricBlockEntityTypeBuilder.create(factory, block).build()
         );
     }
