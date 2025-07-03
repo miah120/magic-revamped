@@ -16,8 +16,6 @@ import net.minecraft.util.dynamic.Codecs;
 import java.util.function.UnaryOperator;
 
 public class ModItems {
-    public static final Item RUNE = register("rune", RuneItem::new, new Item.Settings());
-
     public static ComponentType<Integer> FLUX = registerDataComponent(
             "flux",
             builder -> builder
@@ -38,6 +36,8 @@ public class ModItems {
                     .codec(Enchantment.ENTRY_CODEC)
                     .packetCodec(Enchantment.ENTRY_PACKET_CODEC)
     );
+
+    public static final Item RUNE = register("rune", RuneItem::new, new Item.Settings().component(ENCHANTMENT, null).component(FLUX, 50));
 
     public static void initialize() {
     }

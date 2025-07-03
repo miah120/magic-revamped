@@ -21,13 +21,8 @@ public class RuneItem extends Item {
         return optional
             .map(
                 enchantment ->
-                    Text.translatable(this.translationKey + ".effect." + getEnchantmentName(enchantment))
+                    Text.translatable(this.translationKey + ".effect." + enchantment.getIdAsString())
             )
             .orElse((MutableText) super.getName(stack));
-    }
-
-    public static String getEnchantmentName(RegistryEntry<Enchantment> enchantment) {
-        String name = enchantment.getIdAsString();
-        return name; //.substring("Enchantment ".length());
     }
 }
