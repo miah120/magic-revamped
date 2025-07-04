@@ -142,6 +142,7 @@ public class ModEnchantmentScreenHandler
                 int i = positioned.left();
                 int j = positioned.top();
                 DefaultedList<ItemStack> defaultedList = this.getRecipeRemainders(craftingRecipeInput, player.getWorld());
+
                 for (int k = 0; k < craftingRecipeInput.getHeight(); ++k) {
                     for (int l = 0; l < craftingRecipeInput.getWidth(); ++l) {
                         int m = l + i + (k + j) * ModEnchantmentScreenHandler.this.craftingInventory.getWidth();
@@ -169,17 +170,9 @@ public class ModEnchantmentScreenHandler
 
             private DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input, World world) {
                 if (world instanceof ServerWorld serverWorld) {
-                    return serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).map(recipe -> (recipe.value()).getRecipeRemainders(input)).orElseGet(() -> this.copyInput(input));
+                    return serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).map(recipe -> (recipe.value()).getRecipeRemainders(input)).orElse(DefaultedList.ofSize(input.size(), ItemStack.EMPTY));
                 }
                 return CraftingRecipe.collectRecipeRemainders(input);
-            }
-
-            private static DefaultedList<ItemStack> copyInput(CraftingRecipeInput input) {
-                DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(input.size(), ItemStack.EMPTY);
-                for (int i = 0; i < defaultedList.size(); ++i) {
-                    defaultedList.set(i, input.getStackInSlot(i));
-                }
-                return defaultedList;
             }
         });
     }
