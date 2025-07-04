@@ -25,7 +25,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.injection.selectors.TargetSelector;
 
+import javax.naming.spi.DirStateFactory;
+import javax.xml.transform.Result;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -135,7 +138,15 @@ public class ModEnchantmentScreenHandler
     protected Slot addResultSlot(PlayerEntity player, int x, int y) {
         return this.addSlot(new CraftingResultSlot(player, this.craftingInventory, this.craftingResultInventory, 0, x, y) {
             @Override
+            public boolean canTakeItems(PlayerEntity playerEntity) {
+                //TODO: Check level here
+                return super.canTakeItems(playerEntity);
+            }
+
+            @Override
             public void onTakeItem(PlayerEntity player, ItemStack stack) {
+                //TODO: Implement flux check
+
                 this.onCrafted(stack);
                 CraftingRecipeInput.Positioned positioned = ModEnchantmentScreenHandler.this.craftingInventory.createPositionedRecipeInput();
                 CraftingRecipeInput craftingRecipeInput = positioned.input();
@@ -143,6 +154,7 @@ public class ModEnchantmentScreenHandler
                 int j = positioned.top();
                 DefaultedList<ItemStack> defaultedList = this.getRecipeRemainders(craftingRecipeInput, player.getWorld());
 
+                //TODO: Clean this up
                 for (int k = 0; k < craftingRecipeInput.getHeight(); ++k) {
                     for (int l = 0; l < craftingRecipeInput.getWidth(); ++l) {
                         int m = l + i + (k + j) * ModEnchantmentScreenHandler.this.craftingInventory.getWidth();
@@ -175,6 +187,12 @@ public class ModEnchantmentScreenHandler
                 return CraftingRecipe.collectRecipeRemainders(input);
             }
         });
+    }
+
+    public record Result<T> (T entry, boolean success) {}
+
+    public Result<ItemStack> doFluxCheck() {
+        return new Result<>(ItemStack.EMPTY, true);
     }
 
     protected void addInputSlots(int x, int y) {
