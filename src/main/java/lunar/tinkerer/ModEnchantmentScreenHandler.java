@@ -1,5 +1,9 @@
 package lunar.tinkerer;
 
+import net.minecraft.component.ComponentChanges;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -23,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ModEnchantmentScreenHandler
         extends AbstractRecipeScreenHandler {
@@ -353,11 +359,32 @@ public class ModEnchantmentScreenHandler
             return ItemStack.EMPTY;
         }
 
-        //TODO: Combine enchants
-        //TODO: Only allow open runes
-        //TODO: Remove max durability
+        ItemStack result = inputs.stream()
+                .filter(itemStack -> itemStack.get(ModItems.ENCHANTMENT) != null)
+                .reduce( conduit.copy(),
+                        (subResult, rune) -> {
+                    RegistryEntry<Enchantment> entry = rune.get(ModItems.ENCHANTMENT);
+                    Enchantment enchantment = entry != null ? entry.value() : null;
+                    if (enchantment == null) return subResult;
+                    int nextLevel = getResultEnchantmentLevel(subResult, entry, enchantment, rune);
+                    EnchantmentHelper.apply(subResult, builder -> builder.add(entry, nextLevel));
+                    return subResult;
+                });
 
-        return new ItemStack(Items.DIAMOND);
+        if (result.isDamageable()) {
+            //TODO: make max durability lost dependent on flux
+            result.set(DataComponentTypes.MAX_DAMAGE, result.getMaxDamage() - 1);
+        }
+
+        return result;
+    }
+
+    public static int getResultEnchantmentLevel(ItemStack itemStack, RegistryEntry<Enchantment> entry, Enchantment enchantment, ItemStack rune) {
+        if (rune.get(ModItems.OPEN) == null) {
+            return 1;
+        }
+        int currentLevel = EnchantmentHelper.getEnchantments(itemStack).getLevel(entry);
+        return Math.min(currentLevel + 1, enchantment.getMaxLevel());
     }
 
     @Override
