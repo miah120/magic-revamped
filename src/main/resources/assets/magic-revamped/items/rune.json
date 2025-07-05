@@ -1,6 +1,20 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "magic-revamped:item/rune"
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "magic-revamped:enchantment",
+    "cases": [
+      {
+        "when": "minecraft:mending",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/diamond"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "magic-revamped:item/rune"
+    }
   }
 }
