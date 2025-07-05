@@ -1,6 +1,5 @@
 package lunar.tinkerer;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
@@ -123,12 +122,13 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         }
         AtomicInteger levelSum = new AtomicInteger();
         chiseledBookshelfBlockEntity.forEach(itemStack -> {
+            if(itemStack.isEmpty()) return;
             ItemEnchantmentsComponent enchantmentsComponent = EnchantmentHelper.getEnchantments(itemStack);
             levelSum.addAndGet(enchantmentsComponent.getEnchantmentEntries().stream()
                     .map(registryEntryEntry ->
                             enchantmentsComponent.getLevel(registryEntryEntry.getKey())
                     )
-                    .reduce(0, Integer::max));
+                    .reduce(1, Integer::max));
         });
         return levelSum.get();
     }
