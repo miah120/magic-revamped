@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 import java.util.Optional;
 
@@ -21,7 +23,16 @@ public class RuneItem extends Item {
         return optional
             .map(
                 enchantment ->
-                    Text.translatable(this.translationKey + ".effect." + enchantment.getIdAsString())
+                    Text.translatableWithFallback(
+                    this.translationKey + ".template",
+                null,
+                        Text.translatable(
+                            Util.createTranslationKey(
+                                "enchantment",
+                                Identifier.of(enchantment.getIdAsString())
+                            )
+                        )
+                    )
             )
             .orElse((MutableText) super.getName(stack));
     }
