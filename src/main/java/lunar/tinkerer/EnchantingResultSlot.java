@@ -154,7 +154,15 @@ public class EnchantingResultSlot extends CraftingResultSlot {
                 .orElse(40);
     }
 
-    public static int getLevelRequirement() {
-        return 0;
+    public static int getLevelRequirement(RecipeInputInventory input) {
+        //TODO: Figure out the best way to balance this calculation
+        return input.getHeldStacks().stream()
+                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
+                .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
+                .filter(Objects::nonNull)
+                .map(RegistryEntry::value)
+                .filter(Objects::nonNull)
+                .map(Enchantment::getAnvilCost)
+                .reduce(0, Integer::sum);
     }
 }
