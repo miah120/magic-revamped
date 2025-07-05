@@ -33,50 +33,49 @@ public class AnvilScreenHandlerMixin {
 		accessor.getLevelCost().set(1);
 		int k;
 		int i = 0;
-		int j = 0;
 		if (input.isEmpty()) {
 			forgingAccessor.getOutput().setStack(0, ItemStack.EMPTY);
 			accessor.getLevelCost().set(0);
 			return;
 		}
-		ItemStack itemStack2 = input.copy();
+		ItemStack result = input.copy();
 		ItemStack sacrifice = forgingAccessor.getInput().getStack(1);
 		long l = (long) input.getOrDefault(DataComponentTypes.REPAIR_COST, 0)
 				+ (long) sacrifice.getOrDefault(DataComponentTypes.REPAIR_COST, 0);
 		accessor.setRepairItemUsage(0);
 		if (!sacrifice.isEmpty()) {
-			if (itemStack2.isDamageable() && input.canRepairWith(sacrifice)) {
+			if (result.isDamageable() && input.canRepairWith(sacrifice)) {
 				int m;
-				k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
+				k = Math.min(result.getDamage(), result.getMaxDamage() / 2);
 				if (k <= 0) {
 					forgingAccessor.getOutput().setStack(0, ItemStack.EMPTY);
 					accessor.getLevelCost().set(0);
 					return;
 				}
 				for (m = 0; k > 0 && m < sacrifice.getCount(); ++m) {
-					int n = itemStack2.getDamage() - k;
-					itemStack2.setDamage(n);
-					++i;
-					k = Math.min(itemStack2.getDamage(), itemStack2.getMaxDamage() / 4);
+					int n = result.getDamage() - k;
+					result.setDamage(n);
+					i += 5;
+					k = Math.min(result.getDamage(), result.getMaxDamage() / 2);
 				}
 				accessor.setRepairItemUsage(m);
 			} else {
-				if (!(itemStack2.isOf(sacrifice.getItem()) && itemStack2.isDamageable())) {
+				if (!(result.isOf(sacrifice.getItem()) && result.isDamageable())) {
 					forgingAccessor.getOutput().setStack(0, ItemStack.EMPTY);
 					accessor.getLevelCost().set(0);
 					return;
 				}
-				if (itemStack2.isDamageable()) {
+				if (result.isDamageable()) {
 					int k2 = input.getMaxDamage() - input.getDamage();
 					int m = sacrifice.getMaxDamage() - sacrifice.getDamage();
-					int n = m + itemStack2.getMaxDamage() * 12 / 100;
+					int n = m + result.getMaxDamage() * 12 / 100;
 					int o = k2 + n;
-					int p = itemStack2.getMaxDamage() - o;
+					int p = result.getMaxDamage() - o;
 					if (p < 0) {
 						p = 0;
 					}
-					if (p < itemStack2.getDamage()) {
-						itemStack2.setDamage(p);
+					if (p < result.getDamage()) {
+						result.setDamage(p);
 						i += 2;
 					}
 				}
@@ -84,30 +83,19 @@ public class AnvilScreenHandlerMixin {
 		}
 		if (accessor.getNewItemName() == null || StringHelper.isBlank(accessor.getNewItemName())) {
 			if (input.contains(DataComponentTypes.CUSTOM_NAME)) {
-				j = 1;
-				i += j;
-				itemStack2.remove(DataComponentTypes.CUSTOM_NAME);
+				i += 1;
+				result.remove(DataComponentTypes.CUSTOM_NAME);
 			}
 		} else if (!accessor.getNewItemName().equals(input.getName().getString())) {
-			j = 1;
-			i += j;
-			itemStack2.set(DataComponentTypes.CUSTOM_NAME, Text.literal(accessor.getNewItemName()));
+			i += 1;
+			result.set(DataComponentTypes.CUSTOM_NAME, Text.literal(accessor.getNewItemName()));
 		}
 		int t = i <= 0 ? 0 : (int) MathHelper.clamp(l + (long)i, 0L, Integer.MAX_VALUE);
 		accessor.getLevelCost().set(t);
 		if (i <= 0) {
-			itemStack2 = ItemStack.EMPTY;
+			result = ItemStack.EMPTY;
 		}
-		if (j == i && j > 0) {
-			if (accessor.getLevelCost().get() >= 40) {
-				accessor.getLevelCost().set(39);
-			}
-			accessor.setKeepSecondSlot(true);
-		}
-		if (accessor.getLevelCost().get() >= 40 && !forgingAccessor.getPlayer().isInCreativeMode()) {
-			itemStack2 = ItemStack.EMPTY;
-		}
-		forgingAccessor.getOutput().setStack(0, itemStack2);
+		forgingAccessor.getOutput().setStack(0, result);
 		thisObject.sendContentUpdates();
 	}
 
