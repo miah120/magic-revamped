@@ -18,6 +18,11 @@ public class RuneItem extends Item {
     }
 
     @Override
+    public boolean hasGlint(ItemStack stack) {
+        return stack.get(ModItems.OPEN) != null;
+    }
+
+    @Override
     public Text getName(ItemStack stack) {
         Optional<RegistryEntry<Enchantment>> optional = Optional.ofNullable(stack.get(ModItems.ENCHANTMENT));
         return optional

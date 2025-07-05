@@ -1,37 +1,33 @@
 package lunar.tinkerer;
 
-import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.recipe.*;
+import net.minecraft.recipe.InputSlotFiller;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.injection.selectors.TargetSelector;
 
-import javax.naming.spi.DirStateFactory;
-import javax.xml.transform.Result;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class ModEnchantmentScreenHandler
         extends AbstractRecipeScreenHandler {
@@ -264,11 +260,9 @@ public class ModEnchantmentScreenHandler
 
         if (conduit.isEmpty()) {
             itemStack = ItemStack.EMPTY;
-        } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
-            MagicRevamped.LOGGER.info("Rune Carving!");
+        } else if (conduit.isOf(Items.LAPIS_LAZULI) || conduit.isOf(ModItems.RUNE)) {
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
         } else {
-            MagicRevamped.LOGGER.info("Enchanting!");
             itemStack = enchant(craftingInventory);
         }
         resultInventory.setStack(0, itemStack);
