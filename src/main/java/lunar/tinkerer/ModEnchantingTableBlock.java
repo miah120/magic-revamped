@@ -22,7 +22,7 @@ public class ModEnchantingTableBlock extends EnchantingTableBlock {
     public static List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos
             .stream(-3, 0, -3, 3, 1, 3)
             .filter(
-                    pos -> Math.abs(pos.getX()) == 2 || Math.abs(pos.getZ()) == 2
+                    pos -> Math.abs(pos.getX()) > 1 || Math.abs(pos.getZ()) > 1
             ).map(BlockPos::toImmutable).toList();
 
     public ModEnchantingTableBlock(Settings settings) {

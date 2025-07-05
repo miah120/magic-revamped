@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 public class ModEnchantmentScreenHandler
         extends AbstractRecipeScreenHandler {
-    private final ScreenHandlerContext context;
+    public final ScreenHandlerContext context;
     private final PlayerEntity player;
     private boolean filling;
     protected final RecipeInputInventory craftingInventory;
@@ -135,64 +135,16 @@ public class ModEnchantmentScreenHandler
         this.addPlayerSlots(playerInventory, 8, 99);
     }
 
-    protected Slot addResultSlot(PlayerEntity player, int x, int y) {
-        return this.addSlot(new CraftingResultSlot(player, this.craftingInventory, this.craftingResultInventory, 0, x, y) {
-            @Override
-            public boolean canTakeItems(PlayerEntity playerEntity) {
-                //TODO: Check level here
-                return super.canTakeItems(playerEntity);
-            }
-
-            @Override
-            public void onTakeItem(PlayerEntity player, ItemStack stack) {
-                //TODO: Implement flux check
-
-                this.onCrafted(stack);
-                CraftingRecipeInput.Positioned positioned = ModEnchantmentScreenHandler.this.craftingInventory.createPositionedRecipeInput();
-                CraftingRecipeInput craftingRecipeInput = positioned.input();
-                int i = positioned.left();
-                int j = positioned.top();
-                DefaultedList<ItemStack> defaultedList = this.getRecipeRemainders(craftingRecipeInput, player.getWorld());
-
-                //TODO: Clean this up
-                for (int k = 0; k < craftingRecipeInput.getHeight(); ++k) {
-                    for (int l = 0; l < craftingRecipeInput.getWidth(); ++l) {
-                        int m = l + i + (k + j) * ModEnchantmentScreenHandler.this.craftingInventory.getWidth();
-                        ItemStack itemStack = ModEnchantmentScreenHandler.this.craftingInventory.getStack(m);
-                        ItemStack itemStack2 = defaultedList.get(l + k * craftingRecipeInput.getWidth());
-                        if (!itemStack.isEmpty()) {
-                            ModEnchantmentScreenHandler.this.craftingInventory.removeStack(m, 1);
-                            itemStack = ModEnchantmentScreenHandler.this.craftingInventory.getStack(m);
-                        }
-                        if (itemStack2.isEmpty()) continue;
-                        if (itemStack.isEmpty()) {
-                            ModEnchantmentScreenHandler.this.craftingInventory.setStack(m, itemStack2);
-                            continue;
-                        }
-                        if (ItemStack.areItemsAndComponentsEqual(itemStack, itemStack2)) {
-                            itemStack2.increment(itemStack.getCount());
-                            ModEnchantmentScreenHandler.this.craftingInventory.setStack(m, itemStack2);
-                            continue;
-                        }
-                        if (player.getInventory().insertStack(itemStack2)) continue;
-                        player.dropItem(itemStack2, false);
-                    }
-                }
-            }
-
-            private DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input, World world) {
-                if (world instanceof ServerWorld serverWorld) {
-                    return serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).map(recipe -> (recipe.value()).getRecipeRemainders(input)).orElse(DefaultedList.ofSize(input.size(), ItemStack.EMPTY));
-                }
-                return CraftingRecipe.collectRecipeRemainders(input);
-            }
-        });
-    }
-
-    public record Result<T> (T entry, boolean success) {}
-
-    public Result<ItemStack> doFluxCheck() {
-        return new Result<>(ItemStack.EMPTY, true);
+    protected void addResultSlot(PlayerEntity player, int x, int y) {
+        this.addSlot(new EnchantingResultSlot(
+                this,
+                player,
+                this.craftingInventory,
+                this.craftingResultInventory,
+                0,
+                x,
+                y
+        ));
     }
 
     protected void addInputSlots(int x, int y) {
@@ -309,7 +261,7 @@ public class ModEnchantmentScreenHandler
         ItemStack conduit = craftingInventory.getStack(0);
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack;
-        //TODO: Validate player has enough levels
+
         if (conduit.isEmpty()) {
             itemStack = ItemStack.EMPTY;
         } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
@@ -355,7 +307,7 @@ public class ModEnchantmentScreenHandler
         }
 
         if (!craftingInventory.getHeldStacks().subList(1, 9).stream().allMatch(
-                itemStack -> itemStack.isEmpty() || itemStack.isOf(ModItems.RUNE)
+                itemStack -> itemStack.isEmpty() || isValidRuneForItem(itemStack, conduit)
         )) {
             return ItemStack.EMPTY;
         }
@@ -376,7 +328,7 @@ public class ModEnchantmentScreenHandler
                         (subResult, rune) -> {
                     RegistryEntry<Enchantment> entry = rune.get(ModItems.ENCHANTMENT);
                     Enchantment enchantment = entry != null ? entry.value() : null;
-                    if (enchantment == null) return subResult;
+                    if (!isValidRuneForItem(rune, subResult)) return subResult;
                     int nextLevel = getResultEnchantmentLevel(subResult, entry, enchantment, rune);
                     EnchantmentHelper.apply(subResult, builder -> builder.add(entry, nextLevel));
                     return subResult;
@@ -384,16 +336,28 @@ public class ModEnchantmentScreenHandler
 
         if (result.isDamageable()) {
             //TODO: make max durability lost dependent on flux
-            result.set(DataComponentTypes.MAX_DAMAGE, result.getMaxDamage() - 1);
+            result.set(DataComponentTypes.MAX_DAMAGE, Math.max(result.getMaxDamage() - 1, 1));
         }
 
         return result;
     }
 
+    public static boolean isValidRuneForItem(ItemStack rune, ItemStack conduit) {
+        if (!rune.isOf(ModItems.RUNE)) return false;
+        RegistryEntry<Enchantment> runeEnchantmentRegistryEntry = rune.get(ModItems.ENCHANTMENT);
+        if (runeEnchantmentRegistryEntry == null) return false;
+        Enchantment runeEnchantment = runeEnchantmentRegistryEntry.value();
+        if (runeEnchantment == null) return false;
+        if (!runeEnchantment.isAcceptableItem(conduit)) return false;
+        return conduit.getEnchantments().getEnchantments().stream()
+                .allMatch(conduitEnchantment ->
+                        conduitEnchantment.equals(runeEnchantmentRegistryEntry) ||
+                    Enchantment.canBeCombined(conduitEnchantment, runeEnchantmentRegistryEntry)
+                );
+    }
+
     public static int getResultEnchantmentLevel(ItemStack itemStack, RegistryEntry<Enchantment> entry, Enchantment enchantment, ItemStack rune) {
-        if (rune.get(ModItems.OPEN) == null) {
-            return 1;
-        }
+        if (rune.get(ModItems.OPEN) == null) return 1;
         int currentLevel = EnchantmentHelper.getEnchantments(itemStack).getLevel(entry);
         return Math.min(currentLevel + 1, enchantment.getMaxLevel());
     }
