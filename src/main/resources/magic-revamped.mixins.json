@@ -3,7 +3,9 @@
 	"package": "lunar.tinkerer.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"AnvilScreenHandlerAccessor",
+		"AnvilScreenHandlerMixin",
+		"ForgingScreenHandlerAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

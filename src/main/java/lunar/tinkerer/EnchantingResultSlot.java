@@ -15,6 +15,7 @@ import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.slot.CraftingResultSlot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -47,8 +48,11 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
             if (!result.success) {
                 stack.setCount(0);
-                this.handler.onContentChanged(this.input);
+                //this.handler.onContentChanged(this.input);
                 //player.addExperienceLevels(-this.levelCost.get());
+                if (player instanceof ServerPlayerEntity serverPlayerEntity) {
+                    serverPlayerEntity.closeHandledScreen();
+                }
                 return;
             };
 
