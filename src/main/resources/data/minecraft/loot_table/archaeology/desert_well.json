@@ -14,8 +14,7 @@
                 "magic-revamped:enchantment": "minecraft:channeling"
               }
             }
-          ],
-          "weight": 200
+          ]
         },
         {
           "type": "minecraft:item",
