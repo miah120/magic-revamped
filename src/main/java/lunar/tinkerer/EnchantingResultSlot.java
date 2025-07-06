@@ -2,9 +2,7 @@ package lunar.tinkerer;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.RecipeInputInventory;
@@ -37,8 +35,8 @@ public class EnchantingResultSlot extends CraftingResultSlot {
 
     @Override
     public boolean canTakeItems(PlayerEntity playerEntity) {
-        //TODO: Check level here
-        return super.canTakeItems(playerEntity);
+        int levelRequirement = getLevelRequirement(this.input);
+        return playerEntity.experienceLevel > levelRequirement;
     }
 
     @Override
@@ -47,8 +45,8 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
             if (!result.success) {
                 stack.setCount(0);
-                //this.handler.onContentChanged(this.input);
-                //player.addExperienceLevels(-this.levelCost.get());
+                player.addExperienceLevels(-getLevelRequirement(this.input));
+                //TODO: Consequence
                 if (player instanceof ServerPlayerEntity serverPlayerEntity) {
                     serverPlayerEntity.closeHandledScreen();
                 }
@@ -123,12 +121,10 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         AtomicInteger levelSum = new AtomicInteger();
         chiseledBookshelfBlockEntity.forEach(itemStack -> {
             if(itemStack.isEmpty()) return;
-            ItemEnchantmentsComponent enchantmentsComponent = EnchantmentHelper.getEnchantments(itemStack);
-            levelSum.addAndGet(enchantmentsComponent.getEnchantmentEntries().stream()
-                    .map(registryEntryEntry ->
-                            enchantmentsComponent.getLevel(registryEntryEntry.getKey())
-                    )
-                    .reduce(1, Integer::max));
+            int maxEnchantLevel = RuneItem.getEnchantments(itemStack)
+                    .map(RuneItem.LeveledEnchantment::level)
+                    .reduce(1, Integer::max);
+            levelSum.addAndGet(maxEnchantLevel);
         });
         return levelSum.get();
     }
@@ -147,7 +143,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     }
 
     public static int getFlux(RecipeInputInventory input) {
-        return 1000 * input.getHeldStacks().stream()
+        return 100 * input.getHeldStacks().stream()
                 .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
                 .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
                 .filter(Objects::nonNull)
