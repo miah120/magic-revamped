@@ -329,7 +329,6 @@ public class ModEnchantmentScreenHandler
                 });
 
         if (result.isDamageable()) {
-            //TODO: make max durability lost dependent on flux
             result.set(DataComponentTypes.MAX_DAMAGE, Math.max(result.getMaxDamage() - 1, 1));
         }
 

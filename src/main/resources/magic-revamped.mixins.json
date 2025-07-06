@@ -1,16 +1,17 @@
 {
-	"required": true,
-	"package": "lunar.tinkerer.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"AnvilScreenHandlerAccessor",
-		"AnvilScreenHandlerMixin",
-		"ForgingScreenHandlerAccessor"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
+  "required": true,
+  "package": "lunar.tinkerer.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnvilScreenHandlerAccessor",
+    "AnvilScreenHandlerMixin",
+    "ForgingScreenHandlerAccessor",
+    "ItemStackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
 	}
 }

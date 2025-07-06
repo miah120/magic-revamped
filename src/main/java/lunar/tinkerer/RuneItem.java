@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class RuneItem extends Item {
 
@@ -40,5 +41,15 @@ public class RuneItem extends Item {
                     )
             )
             .orElse((MutableText) super.getName(stack));
+    }
+
+    public record LeveledEnchantment(RegistryEntry<Enchantment> enchantment, int level) {}
+    public static Stream<LeveledEnchantment> getEnchantments(ItemStack itemStack) {
+        var enchantments = itemStack.getEnchantments();
+        return enchantments.getEnchantmentEntries().stream().map(enchantmentRegistryEntryEntry -> {
+            var enchantment = enchantmentRegistryEntryEntry.getKey();
+            int level = enchantments.getLevel(enchantment);
+            return new LeveledEnchantment(enchantment, level);
+        });
     }
 }
