@@ -99,7 +99,7 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
                         .fieldOf("result")
                         .forGetter(recipe -> recipe.result),
                 Ingredient.CODEC
-                        .listOf(1, 8)
+                        .listOf(1, 9)
                         .fieldOf("ingredients")
                         .forGetter(recipe -> recipe.ingredients)
             ).apply(instance, EnchantmentRecipe::new));

@@ -1,0 +1,21 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:echo_shard",
+    "minecraft:echo_shard",
+    "minecraft:echo_shard",
+    "minecraft:echo_shard",
+    "minecraft:sugar",
+    "minecraft:sugar",
+    "minecraft:sugar",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:swift_sneak"
+    }
+  }
+}

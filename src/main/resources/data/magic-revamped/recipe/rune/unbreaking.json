@@ -2,13 +2,16 @@
   "type": "magic-revamped:enchanting",
   "ingredients": [
     "minecraft:lapis_lazuli",
-    "minecraft:enchanting_table"
+    "minecraft:dragon_breath",
+    "minecraft:dragon_breath",
+    "minecraft:dragon_breath",
+    "minecraft:dragon_breath"
   ],
   "result": {
     "count": 1,
     "id": "magic-revamped:rune",
     "components": {
-      "magic-revamped:enchantment": "minecraft:sharpness"
+      "magic-revamped:enchantment": "minecraft:unbreaking"
     }
   }
 }

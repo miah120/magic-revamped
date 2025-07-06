@@ -37,6 +37,7 @@ public class ModEnchantmentScreenHandler
     protected final RecipeInputInventory craftingInventory;
     protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
 
+    //TODO: Fix recipe previews
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
     }
@@ -260,8 +261,13 @@ public class ModEnchantmentScreenHandler
 
         if (conduit.isEmpty()) {
             itemStack = ItemStack.EMPTY;
-        } else if (conduit.isOf(Items.LAPIS_LAZULI) || conduit.isOf(ModItems.RUNE)) {
+        } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
+            //TODO: Implement rune building manually ;_;
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
+        } else if (conduit.isOf(ModItems.RUNE)) {
+            //TODO: Stabilize w diamonds
+            //TODO: Show Flux in UI some how?
+            itemStack = ItemStack.EMPTY;
         } else {
             itemStack = enchant(craftingInventory);
         }

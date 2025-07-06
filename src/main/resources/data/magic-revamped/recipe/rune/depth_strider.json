@@ -1,0 +1,21 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:pitcher_plant",
+    "minecraft:pitcher_plant",
+    "minecraft:pitcher_plant",
+    "minecraft:pitcher_plant",
+    "minecraft:sugar",
+    "minecraft:sugar",
+    "minecraft:sugar",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:depth_strider"
+    }
+  }
+}
