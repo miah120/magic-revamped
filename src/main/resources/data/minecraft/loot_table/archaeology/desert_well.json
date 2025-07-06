@@ -7,9 +7,14 @@
         {
           "type": "minecraft:item",
           "name": "magic-revamped:rune",
-          "components": {
-            "magic-revamped:enchantment": "minecraft:channeling"
-          },
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "magic-revamped:enchantment": "minecraft:channeling"
+              }
+            }
+          ],
           "weight": 200
         },
         {
