@@ -22,14 +22,16 @@ import java.util.List;
 public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public final String group;
     public final ItemStack result;
+    public final List<ItemStack> specialIngredients;
     public final List<Ingredient> ingredients;
     @Nullable
     private IngredientPlacement ingredientPlacement;
 
-    public EnchantmentRecipe(String group, ItemStack result, List<Ingredient> ingredients) {
+    public EnchantmentRecipe(String group, ItemStack result, List<Ingredient> ingredients, List<ItemStack> specialIngredients) {
         this.group = group;
         this.result = result;
         this.ingredients = ingredients;
+        this.specialIngredients = specialIngredients;
     }
 
     @Override
@@ -57,11 +59,30 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
 
     @Override
     public boolean matches(CraftingRecipeInput craftingRecipeInput, World world) {
-        if (craftingRecipeInput.getStackCount() != this.ingredients.size()) {
+        if (craftingRecipeInput.getStackCount() != this.ingredients.size() + this.specialIngredients.size()) {
             return false;
+        }
+        if(!this.specialIngredients.isEmpty()) {
+            return matchesSpecial(craftingRecipeInput);
         }
         if (craftingRecipeInput.size() == 1 && this.ingredients.size() == 1) {
             return this.ingredients.getFirst().test(craftingRecipeInput.getStackInSlot(0));
+        }
+        return craftingRecipeInput.getRecipeMatcher().isCraftable(this, null);
+    }
+
+    public boolean matchesSpecial(CraftingRecipeInput craftingRecipeInput) {
+        MagicRevamped.LOGGER.info(
+            this.specialIngredients.stream()
+                .map(itemStack -> itemStack.toString() + "[" + itemStack.getComponents().toString() + "]")
+                .toList().toString()
+        );
+        if (this.specialIngredients.stream().noneMatch(itemStack -> {
+            int x = craftingRecipeInput.getStacks().stream().filter(itemStack1 -> itemStack.getComponents().toString().equals(itemStack1.getComponents().toString())).toList().size();
+            int y = this.specialIngredients.stream().filter(itemStack1 -> itemStack.getComponents().toString().equals(itemStack1.getComponents().toString())).toList().size();
+            return x == y;
+        })) {
+            return false;
         }
         return craftingRecipeInput.getRecipeMatcher().isCraftable(this, null);
     }
@@ -101,9 +122,23 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
                 Ingredient.CODEC
                         .listOf(1, 9)
                         .fieldOf("ingredients")
-                        .forGetter(recipe -> recipe.ingredients)
+                        .forGetter(recipe -> recipe.ingredients),
+                ItemStack.VALIDATED_CODEC
+                        .listOf(0, 8)
+                        .optionalFieldOf("special_ingredients", List.of())
+                        .forGetter(recipe -> recipe.specialIngredients)
             ).apply(instance, EnchantmentRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, EnchantmentRecipe> PACKET_CODEC = PacketCodec.tuple(PacketCodecs.STRING, recipe -> recipe.group, ItemStack.PACKET_CODEC, recipe -> recipe.result, Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()), recipe -> recipe.ingredients, EnchantmentRecipe::new);
+        public static final PacketCodec<RegistryByteBuf, EnchantmentRecipe> PACKET_CODEC = PacketCodec.tuple(
+                PacketCodecs.STRING,
+                recipe -> recipe.group,
+                ItemStack.PACKET_CODEC,
+                recipe -> recipe.result,
+                Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()),
+                recipe -> recipe.ingredients,
+                ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()),
+                recipe -> recipe.specialIngredients,
+                EnchantmentRecipe::new
+        );
 
         @Override
         public MapCodec<EnchantmentRecipe> codec() {
