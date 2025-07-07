@@ -7,6 +7,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 
 import java.util.Optional;
@@ -30,8 +31,8 @@ public class RuneItem extends Item {
             .map(
                 enchantment ->
                     Text.translatableWithFallback(
-                    this.translationKey + ".template",
-                null,
+                    this._getTranslationKey(stack),
+                "Unknown Rune",
                         Text.translatable(
                             Util.createTranslationKey(
                                 "enchantment",
@@ -41,6 +42,14 @@ public class RuneItem extends Item {
                     )
             )
             .orElse((MutableText) super.getName(stack));
+    }
+
+    public String _getTranslationKey(ItemStack stack) {
+        String base = this.translationKey + ".template";
+        Optional<Unit> optional = Optional.ofNullable(stack.get(ModItems.OPEN));
+        return optional.isEmpty()
+                ? base
+                : base + ".open";
     }
 
     public record LeveledEnchantment(RegistryEntry<Enchantment> enchantment, int level) {}

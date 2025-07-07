@@ -23,6 +23,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Unit;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,6 @@ public class ModEnchantmentScreenHandler
     protected final RecipeInputInventory craftingInventory;
     protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
 
-    //TODO: Fix recipe previews
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
     }
@@ -322,16 +322,28 @@ public class ModEnchantmentScreenHandler
         }
 
         ItemStack result = inputs.stream()
-                .filter(itemStack -> itemStack.get(ModItems.ENCHANTMENT) != null)
-                .reduce( conduit.copy(),
-                        (subResult, rune) -> {
+            .filter(itemStack -> itemStack.get(ModItems.ENCHANTMENT) != null)
+            .sorted((itemStack1, itemStack2)  -> {
+                var open1 = itemStack1.get(ModItems.OPEN);
+                var open2 = itemStack2.get(ModItems.OPEN);
+                if (open2 == open1) {
+                    return 0;
+                } else if(open2 == Unit.INSTANCE) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            })
+            .reduce( conduit.copy(),
+                (subResult, rune) -> {
                     RegistryEntry<Enchantment> entry = rune.get(ModItems.ENCHANTMENT);
                     Enchantment enchantment = entry != null ? entry.value() : null;
                     if (!isValidRuneForItem(rune, subResult)) return subResult;
                     int nextLevel = getResultEnchantmentLevel(subResult, entry, enchantment, rune);
                     EnchantmentHelper.apply(subResult, builder -> builder.add(entry, nextLevel));
                     return subResult;
-                });
+                }
+            );
 
         if (result.isDamageable()) {
             result.set(DataComponentTypes.MAX_DAMAGE, Math.max(result.getMaxDamage() - 1, 1));
