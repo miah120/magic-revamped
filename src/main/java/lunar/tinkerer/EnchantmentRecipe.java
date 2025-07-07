@@ -72,11 +72,6 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     }
 
     public boolean matchesSpecial(CraftingRecipeInput craftingRecipeInput) {
-        MagicRevamped.LOGGER.info(
-            this.specialIngredients.stream()
-                .map(itemStack -> itemStack.toString() + "[" + itemStack.getComponents().toString() + "]")
-                .toList().toString()
-        );
         if (this.specialIngredients.stream().noneMatch(itemStack -> {
             int x = craftingRecipeInput.getStacks().stream().filter(itemStack1 -> itemStack.getComponents().toString().equals(itemStack1.getComponents().toString())).toList().size();
             int y = this.specialIngredients.stream().filter(itemStack1 -> itemStack.getComponents().toString().equals(itemStack1.getComponents().toString())).toList().size();
