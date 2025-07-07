@@ -1,0 +1,26 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:nautilus_shell",
+    "minecraft:nautilus_shell",
+    "minecraft:nautilus_shell",
+    "minecraft:nautilus_shell"
+  ],
+  "special_ingredients": [
+    {
+      "count": 1,
+      "id": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "minecraft:efficiency"
+      }
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:lure"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:prismarine_crystals",
+    "minecraft:prismarine_crystals",
+    "minecraft:prismarine_crystals",
+    "minecraft:prismarine_crystals"
+  ],
+  "special_ingredients": [
+    {
+      "count": 1,
+      "id": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "minecraft:efficiency"
+      }
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:aqua_affinity"
+    }
+  }
+}

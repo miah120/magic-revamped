@@ -11,6 +11,7 @@ import net.minecraft.resource.featuretoggle.FeatureSet;
 
 import java.util.List;
 
+//TODO: Show tooltip and special ingredients?
 public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, SlotDisplay result, SlotDisplay craftingStation) implements RecipeDisplay {
     public static final MapCodec<EnchantmentRecipeDisplay> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             SlotDisplay.CODEC.listOf()
