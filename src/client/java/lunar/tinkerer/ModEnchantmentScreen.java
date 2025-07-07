@@ -1,5 +1,6 @@
 package lunar.tinkerer;
 
+import lunar.tinkerer.mixin.client.GhostRecipeInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gl.RenderPipelines;
@@ -15,12 +16,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.display.RecipeDisplay;
+import net.minecraft.recipe.display.SlotDisplay;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.context.ContextParameterMap;
 
 import java.util.List;
+import java.util.Objects;
 
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantmentScreen
@@ -48,7 +51,7 @@ public class ModEnchantmentScreen
         super(handler, new RecipeBookWidget<>(handler, List.of(
                 new RecipeBookWidget.Tab(Items.ENCHANTING_TABLE, ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY)
         )) {
-            private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla((String)"recipe_book/filter_disabled"), Identifier.ofVanilla((String)"recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla((String)"recipe_book/filter_disabled_highlighted"));
+            private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla("recipe_book/filter_disabled"), Identifier.ofVanilla("recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla("recipe_book/filter_disabled_highlighted"));
             private static final Text TOGGLE_CRAFTABLE_TEXT = Text.translatable("gui.recipebook.toggleRecipes.craftable");
 
             @Override
@@ -72,7 +75,20 @@ public class ModEnchantmentScreen
             }
             @Override
             protected void showGhostRecipe(GhostRecipe ghostRecipe, RecipeDisplay display, ContextParameterMap context) {
-
+                ((GhostRecipeInvoker) ghostRecipe).invokeAddResults(this.craftingScreenHandler.getOutputSlot(), context, display.result());
+                Objects.requireNonNull(display);
+                EnchantmentRecipeDisplay enchantmentRecipeDisplay = (EnchantmentRecipeDisplay) display;
+                List<Slot> list2 = this.craftingScreenHandler.getInputSlots();
+                List<SlotDisplay> list = enchantmentRecipeDisplay.ingredients();
+                list.addAll(enchantmentRecipeDisplay.specialIngredients());
+                int i = Math.min(list.size(), list2.size());
+                for (int j = 0; j < i; ++j) {
+                    ((GhostRecipeInvoker) ghostRecipe).invokeAddInputs(
+                        list2.get(j),
+                        context,
+                        list.get(j)
+                    );
+                }
             }
         }, inventory, title);
     }

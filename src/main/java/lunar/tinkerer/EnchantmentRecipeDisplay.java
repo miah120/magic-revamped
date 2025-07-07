@@ -12,11 +12,14 @@ import net.minecraft.resource.featuretoggle.FeatureSet;
 import java.util.List;
 
 //TODO: Show tooltip and special ingredients?
-public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, SlotDisplay result, SlotDisplay craftingStation) implements RecipeDisplay {
+public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, List<SlotDisplay> specialIngredients, SlotDisplay result, SlotDisplay craftingStation) implements RecipeDisplay {
     public static final MapCodec<EnchantmentRecipeDisplay> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             SlotDisplay.CODEC.listOf()
                     .fieldOf("ingredients")
                     .forGetter(EnchantmentRecipeDisplay::ingredients),
+            SlotDisplay.CODEC.listOf()
+                    .fieldOf("special_ingredients")
+                    .forGetter(EnchantmentRecipeDisplay::specialIngredients),
             SlotDisplay.CODEC
                     .fieldOf("result")
                     .forGetter(EnchantmentRecipeDisplay::result),
@@ -39,6 +42,8 @@ public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, SlotDispla
         PACKET_CODEC = PacketCodec.tuple(
                 SlotDisplay.PACKET_CODEC.collect(PacketCodecs.toList()),
                 EnchantmentRecipeDisplay::ingredients,
+                SlotDisplay.PACKET_CODEC.collect(PacketCodecs.toList()),
+                EnchantmentRecipeDisplay::specialIngredients,
                 SlotDisplay.PACKET_CODEC,
                 EnchantmentRecipeDisplay::result,
                 SlotDisplay.PACKET_CODEC,

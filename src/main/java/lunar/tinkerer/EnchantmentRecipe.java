@@ -91,6 +91,9 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public List<RecipeDisplay> getDisplays() {
         return List.of(new EnchantmentRecipeDisplay(
                 this.ingredients.stream().map(Ingredient::toDisplay).toList(),
+                this.specialIngredients.stream().map(
+                        itemStack -> (SlotDisplay) new SlotDisplay.StackSlotDisplay(itemStack)
+                ).toList(),
                 new SlotDisplay.StackSlotDisplay(this.result),
                 new SlotDisplay.ItemSlotDisplay(ModBlocks.ENCHANTING_TABLE.asItem())
         ));
