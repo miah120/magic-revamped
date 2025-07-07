@@ -1,0 +1,30 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:fermented_spider_eye"
+  ],
+  "special_ingredients": [
+    {
+      "count": 1,
+      "id": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "minecraft:sharpness"
+      }
+    },
+    {
+      "count": 1,
+      "id": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "minecraft:sharpness"
+      }
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:breach"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:fire_charge",
+    "minecraft:fire_charge",
+    "minecraft:fire_charge",
+    "minecraft:fire_charge"
+  ],
+  "special_ingredients": [
+    {
+      "count": 1,
+      "id": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "minecraft:sharpness"
+      }
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:fire_aspect"
+    }
+  }
+}
