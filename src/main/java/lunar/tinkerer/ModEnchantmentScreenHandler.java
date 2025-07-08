@@ -424,11 +424,10 @@ public class ModEnchantmentScreenHandler
     }
 
     public static int getFlux(RecipeInputInventory input) {
-        return 100 * getLevelRequirement(input);
+        return 40 * getLevelRequirement(input);
     }
 
     public static int getLevelRequirement(RecipeInputInventory input) {
-        //TODO: Figure out the best way to balance this calculation
         return Math.min(
             input.getHeldStacks().stream()
                 .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
