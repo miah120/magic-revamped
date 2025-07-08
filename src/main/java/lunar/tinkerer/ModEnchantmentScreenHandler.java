@@ -18,6 +18,7 @@ import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
+import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
@@ -28,6 +29,7 @@ import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ModEnchantmentScreenHandler
@@ -35,8 +37,10 @@ public class ModEnchantmentScreenHandler
     public final ScreenHandlerContext context;
     private final PlayerEntity player;
     private boolean filling;
+    public final Property seed = Property.create();
     protected final RecipeInputInventory craftingInventory;
     protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
+    public EnchantingResultSlot resultSlot;
 
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
@@ -44,6 +48,7 @@ public class ModEnchantmentScreenHandler
 
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER, syncId);
+        this.addProperty(this.seed).set(playerInventory.player.getEnchantingTableSeed());
         this.context = context;
         this.player = playerInventory.player;
         this.craftingInventory = new RecipeInputInventory() {
@@ -127,21 +132,22 @@ public class ModEnchantmentScreenHandler
             }
         };
 
-        this.addResultSlot(this.getPlayer(), 127, 32);
+        this.resultSlot = new EnchantingResultSlot(
+            this,
+            player,
+            this.craftingInventory,
+            this.craftingResultInventory,
+            0,
+            127,
+            32
+        );
+        this.addResultSlot();
         this.addInputSlots(44,32);
         this.addPlayerSlots(playerInventory, 8, 99);
     }
 
-    protected void addResultSlot(PlayerEntity player, int x, int y) {
-        this.addSlot(new EnchantingResultSlot(
-                this,
-                player,
-                this.craftingInventory,
-                this.craftingResultInventory,
-                0,
-                x,
-                y
-        ));
+    protected void addResultSlot() {
+        this.addSlot(this.resultSlot);
     }
 
     protected void addInputSlots(int x, int y) {
@@ -354,11 +360,15 @@ public class ModEnchantmentScreenHandler
 
     public static boolean isValidRuneForItem(ItemStack rune, ItemStack conduit) {
         if (!rune.isOf(ModItems.RUNE)) return false;
-        RegistryEntry<Enchantment> runeEnchantmentRegistryEntry = rune.get(ModItems.ENCHANTMENT);
-        if (runeEnchantmentRegistryEntry == null) return false;
-        Enchantment runeEnchantment = runeEnchantmentRegistryEntry.value();
-        if (runeEnchantment == null) return false;
-        if (!runeEnchantment.isAcceptableItem(conduit)) return false;
+        Optional<RegistryEntry<Enchantment>> runeEnchantmentRegistryEntryOptional = Optional
+                .ofNullable(rune.get(ModItems.ENCHANTMENT));
+        if (runeEnchantmentRegistryEntryOptional.isEmpty()) return false;
+        boolean isAcceptable = runeEnchantmentRegistryEntryOptional
+                .map(RegistryEntry::value)
+                .map(enchantment -> enchantment.isAcceptableItem(conduit))
+                .orElse(false);
+        if (!isAcceptable) return false;
+        RegistryEntry<Enchantment> runeEnchantmentRegistryEntry = runeEnchantmentRegistryEntryOptional.get();
         return conduit.getEnchantments().getEnchantments().stream()
                 .allMatch(conduitEnchantment ->
                         conduitEnchantment.equals(runeEnchantmentRegistryEntry) ||
@@ -408,5 +418,45 @@ public class ModEnchantmentScreenHandler
     public RecipeBookType getCategory() {
         return RecipeBookType.CRAFTING;
     }
+
+    public int getSeed() {
+        return this.seed.get();
+    }
+
+    public static int getFlux(RecipeInputInventory input) {
+        return 100 * getLevelRequirement(input);
+    }
+
+    public static int getLevelRequirement(RecipeInputInventory input) {
+        //TODO: Figure out the best way to balance this calculation
+        return Math.min(
+            input.getHeldStacks().stream()
+                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
+                .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
+                .filter(Objects::nonNull)
+                .map(RegistryEntry::value)
+                .filter(Objects::nonNull)
+                .map(Enchantment::getAnvilCost)
+                .reduce(0, (integer, integer2) -> {
+                    return 2 * integer + integer2;
+                })
+                    +
+                RuneItem.getEnchantments(input.getStack(0))
+                    .map(leveledEnchantment -> {
+                        int level = leveledEnchantment.level();
+                        int enchantmentCost = Optional
+                                .of(leveledEnchantment)
+                                .map(RuneItem.LeveledEnchantment::enchantment)
+                                .map(RegistryEntry::value)
+                                .map(Enchantment::getAnvilCost)
+                                .orElse(8);
+                        return level * enchantmentCost;
+                    })
+                    .reduce(0, Integer::sum)
+                ,
+            99
+        );
+    }
+
 }
 

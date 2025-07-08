@@ -31,6 +31,7 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
         this.group = group;
         this.result = result;
         this.ingredients = ingredients;
+        //TODO: implement component holder on this instead of... whatever we're doing here
         this.specialIngredients = specialIngredients;
     }
 

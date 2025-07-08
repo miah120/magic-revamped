@@ -24,6 +24,8 @@ import net.minecraft.world.World;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static lunar.tinkerer.ModEnchantmentScreenHandler.getLevelRequirement;
+
 public class EnchantingResultSlot extends CraftingResultSlot {
     public ModEnchantmentScreenHandler handler;
     public RecipeInputInventory input;
@@ -42,6 +44,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
         this.handler.context.run(((world, blockPos) -> {
+            this.handler.seed.set(player.getEnchantingTableSeed());
             Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
             if (!result.success) {
                 stack.setCount(0);
@@ -105,12 +108,19 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             World world,
             BlockPos blockPos
     ) {
-        int flux = getFlux(input);
+        int flux = ModEnchantmentScreenHandler.getFlux(input);
         int playerCheck = player.getRandom().nextBetween(0, 1000);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextBetween(0, bookshelfBonus);
         boolean success = (playerCheck + bookshelfCheck > flux);
-        return new Result<>(stack, success);
+        MagicRevamped.LOGGER.info(
+            "Success:{} = [{} + {}] > {}",
+            success,
+            playerCheck,
+            bookshelfCheck,
+            flux
+        );
+        return new Result<>(stack, true);
     }
 
     public int getSingleBookshelfBonus(World world, BlockPos blockPos) {
@@ -140,29 +150,5 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             .reduce(0, Integer::sum);
         MagicRevamped.LOGGER.info(e.toString());
         return e;
-    }
-
-    public static int getFlux(RecipeInputInventory input) {
-        return 100 * input.getHeldStacks().stream()
-                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
-                .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
-                .filter(Objects::nonNull)
-                .map(RegistryEntry::value)
-                .filter(Objects::nonNull)
-                .map(Enchantment::getAnvilCost)
-                .reduce(Integer::sum)
-                .orElse(40);
-    }
-
-    public static int getLevelRequirement(RecipeInputInventory input) {
-        //TODO: Figure out the best way to balance this calculation
-        return input.getHeldStacks().stream()
-                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
-                .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
-                .filter(Objects::nonNull)
-                .map(RegistryEntry::value)
-                .filter(Objects::nonNull)
-                .map(Enchantment::getAnvilCost)
-                .reduce(0, Integer::sum);
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenPos;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
+import net.minecraft.client.gui.screen.ingame.EnchantingPhrases;
 import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
 import net.minecraft.client.gui.screen.recipebook.GhostRecipe;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
@@ -18,6 +19,7 @@ import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.display.RecipeDisplay;
 import net.minecraft.recipe.display.SlotDisplay;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.context.ContextParameterMap;
@@ -30,6 +32,7 @@ public class ModEnchantmentScreen
         extends RecipeBookScreen<ModEnchantmentScreenHandler> {
     protected int backgroundWidth = 176;
     protected int backgroundHeight = 196;
+    private static final Identifier[] LEVEL_TEXTURES = new Identifier[]{Identifier.ofVanilla((String)"container/enchanting_table/level_1"), Identifier.ofVanilla((String)"container/enchanting_table/level_2"), Identifier.ofVanilla("container/enchanting_table/level_3")};
     private static final List<Identifier> CONDUIT_TEXTURES = List.of(
             Identifier.ofVanilla("container/slot/chestplate"),
             Identifier.ofVanilla("container/slot/helmet"),
@@ -116,18 +119,52 @@ public class ModEnchantmentScreen
         assert this.client != null;
         assert this.client.player != null;
         context.drawTexture(
-                RenderPipelines.GUI_TEXTURED,
-                TEXTURE,
-                this.x,
-                (this.height - this.backgroundHeight) / 2,
-                0.0f,
-                0.0f,
-                this.backgroundWidth,
-                this.backgroundHeight,
-                256,
-                256
+            RenderPipelines.GUI_TEXTURED,
+            TEXTURE,
+            this.x,
+            (this.height - this.backgroundHeight) / 2,
+            0.0f,
+            0.0f,
+            this.backgroundWidth,
+            this.backgroundHeight,
+            256,
+            256
         );
         this.slotIcon.render(this.handler, context, deltaTicks, this.x, this.y);
+
+        this.renderRisk(context);
     }
+
+    public void renderRisk(DrawContext context) {
+        if (this.handler.resultSlot.inventory.isEmpty()) return;
+        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory);
+        EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
+        StringVisitable riskLabel = EnchantingPhrases.getInstance()
+            .generatePhrase(
+                textRenderer,
+                46 - this.textRenderer.getWidth(risk)
+            );
+
+        int x = 223;
+        int y = 115;
+        context.fill(x, y, x + 50, y + 18, 0x4F000000);
+        context.drawWrappedText(
+            this.textRenderer,
+            riskLabel,
+            x + 2,
+            120,
+            40,
+            -8323296,
+            true
+        );
+        context.drawTextWithShadow(
+            this.textRenderer,
+            risk,
+            x + 2 + this.textRenderer.getWidth(riskLabel),
+            120,
+            -8323296
+        );
+    }
+
 }
 
