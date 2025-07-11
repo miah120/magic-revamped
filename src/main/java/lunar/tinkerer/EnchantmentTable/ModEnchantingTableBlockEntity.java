@@ -1,11 +1,11 @@
 /*
  * Decompiled with CFR 0.2.2 (FabricMC 7c48b8c4).
  */
-package lunar.tinkerer;
+package lunar.tinkerer.EnchantmentTable;
 
+import lunar.tinkerer.ModBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentsAccess;
 import net.minecraft.component.DataComponentTypes;

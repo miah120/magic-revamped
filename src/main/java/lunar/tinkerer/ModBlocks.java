@@ -1,6 +1,7 @@
 package lunar.tinkerer;
 
 import com.google.common.base.Function;
+import lunar.tinkerer.EnchantmentTable.ModEnchantingTableBlock;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;

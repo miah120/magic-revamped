@@ -1,4 +1,4 @@
-package lunar.tinkerer;
+package lunar.tinkerer.EnchantmentTable;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -31,7 +31,7 @@ public class EnchantingTableResultInventory implements Inventory,
 
     @Override
     public ItemStack getStack(int slot) {
-        return this.stacks.get(0);
+        return this.stacks.getFirst();
     }
 
     @Override

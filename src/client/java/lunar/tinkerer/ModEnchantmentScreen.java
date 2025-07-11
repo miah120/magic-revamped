@@ -1,5 +1,6 @@
 package lunar.tinkerer;
 
+import lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler;
 import lunar.tinkerer.mixin.client.GhostRecipeInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -132,7 +133,7 @@ public class ModEnchantmentScreen
         );
         this.slotIcon.render(this.handler, context, deltaTicks, this.x, this.y);
 
-        this.renderRisk(context);
+        //this.renderRisk(context);
     }
 
     public void renderRisk(DrawContext context) {
@@ -141,13 +142,14 @@ public class ModEnchantmentScreen
         EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
         StringVisitable riskLabel = EnchantingPhrases.getInstance()
             .generatePhrase(
-                textRenderer,
+                this.textRenderer,
                 46 - this.textRenderer.getWidth(risk)
             );
 
-        int x = 223;
-        int y = 115;
+        int x = this.x + this.backgroundWidth - 70;
+        int y = this.y + this.backgroundHeight - 40;
         context.fill(x, y, x + 50, y + 18, 0x4F000000);
+        context.fill(this.x, this.y, this.x + this.backgroundWidth, this.y + this.backgroundHeight, 0x4F4f4f00);
         context.drawWrappedText(
             this.textRenderer,
             riskLabel,

@@ -1,15 +1,18 @@
-package lunar.tinkerer;
+package lunar.tinkerer.EnchantmentTable;
 
+import lunar.tinkerer.Consequences.Consequence;
+import lunar.tinkerer.Consequences.ConsequenceManager;
+import lunar.tinkerer.MagicRevamped;
+import lunar.tinkerer.ModRecipeTypes;
+import lunar.tinkerer.RuneItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,10 +24,9 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static lunar.tinkerer.ModEnchantmentScreenHandler.getLevelRequirement;
+import static lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler.getLevelRequirement;
 
 public class EnchantingResultSlot extends CraftingResultSlot {
     public ModEnchantmentScreenHandler handler;
@@ -41,6 +43,12 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         return playerEntity.experienceLevel > levelRequirement;
     }
 
+    public void doConsequence(World world) {
+        //TODO: Consequence
+        Consequence consequence = ConsequenceManager.pick(world);
+        MagicRevamped.LOGGER.info(consequence.description());
+    }
+
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
         this.handler.context.run(((world, blockPos) -> {
@@ -49,8 +57,9 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             if (!result.success) {
                 stack.setCount(0);
                 player.addExperienceLevels(-getLevelRequirement(this.input));
-                //TODO: Consequence
+                doConsequence(world);
                 if (player instanceof ServerPlayerEntity serverPlayerEntity) {
+                    //TODO: This should probably be a timeout instead
                     serverPlayerEntity.closeHandledScreen();
                 }
                 return;
@@ -120,7 +129,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             bookshelfCheck,
             flux
         );
-        return new Result<>(stack, true);
+        return new Result<>(stack, success);
     }
 
     public int getSingleBookshelfBonus(World world, BlockPos blockPos) {

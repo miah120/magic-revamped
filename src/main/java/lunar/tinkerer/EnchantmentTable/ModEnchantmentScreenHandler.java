@@ -1,5 +1,6 @@
-package lunar.tinkerer;
+package lunar.tinkerer.EnchantmentTable;
 
+import lunar.tinkerer.*;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -38,7 +39,7 @@ public class ModEnchantmentScreenHandler
     private final PlayerEntity player;
     private boolean filling;
     public final Property seed = Property.create();
-    protected final RecipeInputInventory craftingInventory;
+    public final RecipeInputInventory craftingInventory;
     protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
     public EnchantingResultSlot resultSlot;
 
