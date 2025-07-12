@@ -1,5 +1,6 @@
 package lunar.tinkerer;
 
+import lunar.tinkerer.Consequences.ConsequenceRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class MagicRevamped implements ModInitializer {
 		ModBlocks.initialize();
 		ModBlockEntities.initialize();
 		ModRecipeTypes.initialize();
+		ConsequenceRegistry.initialize();
 	}
 
 	public static Identifier identifier(String id) {

@@ -3,6 +3,7 @@ package lunar.tinkerer.Consequences;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.registry.ModRegistryKeys;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -20,6 +21,6 @@ public record Consequence(String description) {
         );
 
     public static final Codec<RegistryEntry<Consequence>> ENTRY_CODEC = RegistryFixedCodec
-            .of(ConsequenceRegistry.CONSEQUENCE);
-    public static final PacketCodec<RegistryByteBuf, RegistryEntry<Consequence>> ENTRY_PACKET_CODEC = PacketCodecs.registryEntry(ConsequenceRegistry.CONSEQUENCE);
+            .of(ModRegistryKeys.CONSEQUENCE);
+    public static final PacketCodec<RegistryByteBuf, RegistryEntry<Consequence>> ENTRY_PACKET_CODEC = PacketCodecs.registryEntry(ModRegistryKeys.CONSEQUENCE);
 }

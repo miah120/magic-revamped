@@ -68,10 +68,11 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             this.handler.seed.set(player.getEnchantingTableSeed());
             Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
             if (!result.success) {
-                stack.setCount(0);
+                stack.setCount(result.entry.getCount());
+                stack.applyComponentsFrom(result.entry.getComponents());
                 player.addExperienceLevels(-getLevelRequirement(this.input));
                 this.handler.sendContentUpdates();
-                //doConsequence(world);
+                doConsequence(world);
                 return;
             };
 
