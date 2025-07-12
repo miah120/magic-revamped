@@ -96,7 +96,7 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     }
 
     public static boolean containsAllComponentChanges(ItemStack required, ItemStack present) {
-        return required.getComponentChanges().entrySet().stream()
+        return ItemStack.areItemsEqual(required, present) && required.getComponentChanges().entrySet().stream()
             .allMatch(componentTypeOptionalEntry ->
                 componentTypeOptionalEntry.getValue()
                     .map(v -> v == present.get(componentTypeOptionalEntry.getKey()))
