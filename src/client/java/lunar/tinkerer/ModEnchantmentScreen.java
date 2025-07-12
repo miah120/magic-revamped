@@ -1,5 +1,6 @@
 package lunar.tinkerer;
 
+import lunar.tinkerer.EnchantmentTable.EnchantingResultSlot;
 import lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler;
 import lunar.tinkerer.mixin.client.GhostRecipeInvoker;
 import net.fabricmc.api.EnvType;
@@ -33,7 +34,6 @@ public class ModEnchantmentScreen
         extends RecipeBookScreen<ModEnchantmentScreenHandler> {
     protected int backgroundWidth = 176;
     protected int backgroundHeight = 196;
-    private static final Identifier[] LEVEL_TEXTURES = new Identifier[]{Identifier.ofVanilla((String)"container/enchanting_table/level_1"), Identifier.ofVanilla((String)"container/enchanting_table/level_2"), Identifier.ofVanilla("container/enchanting_table/level_3")};
     private static final List<Identifier> CONDUIT_TEXTURES = List.of(
             Identifier.ofVanilla("container/slot/chestplate"),
             Identifier.ofVanilla("container/slot/helmet"),
@@ -132,8 +132,25 @@ public class ModEnchantmentScreen
             256
         );
         this.slotIcon.render(this.handler, context, deltaTicks, this.x, this.y);
+        this.renderCooldown(context);
+        this.renderRisk(context);
+    }
 
-        //this.renderRisk(context);
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        super.drawForeground(context, mouseX, mouseY);
+    }
+
+    public void renderCooldown(DrawContext context) {
+        int x = this.handler.resultSlot.x + this.x;
+        int y = this.handler.resultSlot.y + this.y;
+        int timeout = this.handler.resultSlot.timeout;
+        context.fill(
+                RenderPipelines.GUI,
+                x, y + 16 - Math.floorDiv(16 * timeout, EnchantingResultSlot.MAX_TIME_OUT),
+                x+16, y+16,
+                0xBFBFBFAA
+    );
     }
 
     public void renderRisk(DrawContext context) {
@@ -146,10 +163,9 @@ public class ModEnchantmentScreen
                 46 - this.textRenderer.getWidth(risk)
             );
 
-        int x = this.x + this.backgroundWidth - 70;
-        int y = this.y + this.backgroundHeight - 40;
-        context.fill(x, y, x + 50, y + 18, 0x4F000000);
-        context.fill(this.x, this.y, this.x + this.backgroundWidth, this.y + this.backgroundHeight, 0x4F4f4f00);
+        int x = this.x + 220;
+        int y = this.y + 40;
+        context.fill(RenderPipelines.GUI, x, y, x + 50, y + 18, 0x4F000000);
         context.drawWrappedText(
             this.textRenderer,
             riskLabel,

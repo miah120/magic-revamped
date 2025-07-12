@@ -15,7 +15,6 @@ import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.slot.CraftingResultSlot;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -29,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler.getLevelRequirement;
 
 public class EnchantingResultSlot extends CraftingResultSlot {
+    public final static int MAX_TIME_OUT = 100;
     public ModEnchantmentScreenHandler handler;
     public RecipeInputInventory input;
     public int timeout = 0;
@@ -41,6 +41,9 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     @Override
     public boolean isEnabled() {
         this.timeout = Math.max(0, this.timeout - 1);
+        if (this.timeout == 0) {
+            this.handler.onContentChanged(this.handler.craftingInventory);
+        }
         return super.isEnabled() && this.timeout <= 0;
     }
 
@@ -59,18 +62,15 @@ public class EnchantingResultSlot extends CraftingResultSlot {
 
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
-        this.timeout = 200;
+        this.timeout = MAX_TIME_OUT;
         this.handler.context.run(((world, blockPos) -> {
             this.handler.seed.set(player.getEnchantingTableSeed());
             Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
             if (!result.success) {
                 stack.setCount(0);
                 player.addExperienceLevels(-getLevelRequirement(this.input));
+                this.handler.sendContentUpdates();
                 //doConsequence(world);
-                if (player instanceof ServerPlayerEntity serverPlayerEntity) {
-                    //TODO: This should probably be a timeout instead
-                    //serverPlayerEntity.closeHandledScreen();
-                }
                 return;
             };
 
