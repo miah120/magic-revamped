@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public final String group;
@@ -73,14 +74,38 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     }
 
     public boolean matchesSpecial(CraftingRecipeInput craftingRecipeInput) {
-        if (this.specialIngredients.stream().noneMatch(itemStack -> {
-            int x = craftingRecipeInput.getStacks().stream().filter(itemStack1 -> itemStack.getComponents().toString().equals(itemStack1.getComponents().toString())).toList().size();
-            int y = this.specialIngredients.stream().filter(itemStack1 -> itemStack.getComponents().toString().equals(itemStack1.getComponents().toString())).toList().size();
-            return x == y;
-        })) {
+        if (
+            !containsAllSpecialIngredients(this.specialIngredients, craftingRecipeInput.getStacks())
+        ) {
             return false;
         }
         return craftingRecipeInput.getRecipeMatcher().isCraftable(this, null);
+    }
+
+    public static boolean containsAllSpecialIngredients(List<ItemStack> requirements, List<ItemStack> present) {
+        return requirements.stream().distinct()
+            .allMatch(
+                itemStack -> countMatching(
+                    present,
+                    itemStack1 -> containsAllComponentChanges(itemStack, itemStack1)
+                ) == countMatching(
+                    requirements,
+                    itemStack1 -> containsAllComponentChanges(itemStack, itemStack1)
+                )
+            );
+    }
+
+    public static boolean containsAllComponentChanges(ItemStack required, ItemStack present) {
+        return required.getComponentChanges().entrySet().stream()
+            .allMatch(componentTypeOptionalEntry ->
+                componentTypeOptionalEntry.getValue()
+                    .map(v -> v == present.get(componentTypeOptionalEntry.getKey()))
+                    .orElse(true)
+            );
+    }
+
+    public static int countMatching(List<ItemStack> stacks, Predicate<? super ItemStack> predicate) {
+        return stacks.stream().filter(predicate).toList().size();
     }
 
     @Override

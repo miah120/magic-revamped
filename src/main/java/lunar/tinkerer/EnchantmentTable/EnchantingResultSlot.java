@@ -31,6 +31,7 @@ import static lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler.getLev
 public class EnchantingResultSlot extends CraftingResultSlot {
     public ModEnchantmentScreenHandler handler;
     public RecipeInputInventory input;
+    public int timeout = 0;
     public EnchantingResultSlot(ModEnchantmentScreenHandler handler, PlayerEntity player, RecipeInputInventory input, Inventory inventory, int index, int x, int y) {
         super(player, input, inventory, index, x, y);
         this.input = input;
@@ -38,7 +39,14 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     }
 
     @Override
+    public boolean isEnabled() {
+        this.timeout = Math.max(0, this.timeout - 1);
+        return super.isEnabled() && this.timeout <= 0;
+    }
+
+    @Override
     public boolean canTakeItems(PlayerEntity playerEntity) {
+        if(this.timeout > 0) return false;
         int levelRequirement = getLevelRequirement(this.input);
         return playerEntity.experienceLevel > levelRequirement;
     }
@@ -51,16 +59,17 @@ public class EnchantingResultSlot extends CraftingResultSlot {
 
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
+        this.timeout = 200;
         this.handler.context.run(((world, blockPos) -> {
             this.handler.seed.set(player.getEnchantingTableSeed());
             Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
             if (!result.success) {
                 stack.setCount(0);
                 player.addExperienceLevels(-getLevelRequirement(this.input));
-                doConsequence(world);
+                //doConsequence(world);
                 if (player instanceof ServerPlayerEntity serverPlayerEntity) {
                     //TODO: This should probably be a timeout instead
-                    serverPlayerEntity.closeHandledScreen();
+                    //serverPlayerEntity.closeHandledScreen();
                 }
                 return;
             };
@@ -129,7 +138,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             bookshelfCheck,
             flux
         );
-        return new Result<>(stack, success);
+        return new Result<>(stack, false);
     }
 
     public int getSingleBookshelfBonus(World world, BlockPos blockPos) {
