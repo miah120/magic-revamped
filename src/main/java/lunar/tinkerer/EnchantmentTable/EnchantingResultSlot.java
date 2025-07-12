@@ -41,7 +41,8 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     @Override
     public boolean isEnabled() {
         this.timeout = Math.max(0, this.timeout - 1);
-        if (this.timeout == 0) {
+        if (this.timeout <= 0) {
+            //TODO: Sometimes the result fails to refresh on quick move
             this.handler.onContentChanged(this.handler.craftingInventory);
         }
         return super.isEnabled() && this.timeout <= 0;

@@ -202,9 +202,11 @@ public class ModEnchantmentScreenHandler
     }
 
     private ItemStack quickMoveFromResult(PlayerEntity player, int slot) {
-        ItemStack items = this.slots.get(slot).getStack();
+        ItemStack items = this.resultSlot.getStack();
+        this.resultSlot.onTakeItem(player, items);
         items.getItem().onCraftByPlayer(items, player);
         this.insertItem(items, 10, 46, true);
+        this.onContentChanged(this.craftingInventory);
         return items;
     }
 
