@@ -237,7 +237,6 @@ public class ModEnchantmentScreenHandler
         try {
             List<Slot> list = this.getInputSlots();
             return InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
-
                 @Override
                 public void populateRecipeFinder(RecipeFinder finder) {
                     ModEnchantmentScreenHandler.this.populateRecipeFinder(finder);

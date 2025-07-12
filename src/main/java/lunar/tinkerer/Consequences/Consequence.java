@@ -4,19 +4,28 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.registry.ModRegistryKeys;
+import net.minecraft.item.Items;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryFixedCodec;
 
 
-public record Consequence(String description) {
+public record Consequence(
+        String description,
+        Ingredient decoration
+) {
+    public static final Consequence EMPTY = new Consequence("default", Ingredient.ofItem(Items.BARRIER));
     public static final MapCodec<Consequence> CODEC = RecordCodecBuilder
         .mapCodec(instance -> instance.group(
                 Codec.STRING
-                    .optionalFieldOf("description", "")
-                    .forGetter(consequence -> consequence.description)
+                        .optionalFieldOf("description", "")
+                        .forGetter(consequence -> consequence.description),
+                Ingredient.CODEC
+                        .fieldOf("decoration")
+                        .forGetter(consequence -> consequence.decoration)
             ).apply(instance, Consequence::new)
         );
 

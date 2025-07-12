@@ -26,6 +26,10 @@ public class ModEnchantingTableBlock extends EnchantingTableBlock {
                     pos -> Math.abs(pos.getX()) > 1 || Math.abs(pos.getZ()) > 1
             ).map(BlockPos::toImmutable).toList();
 
+    public static List<BlockPos> DECORATION_OFFSETS = BlockPos
+            .stream(-3, -1, -3, 3, 1, 3)
+            .map(BlockPos::toImmutable).toList();
+
     public ModEnchantingTableBlock(Settings settings) {
         super(settings);
     }
@@ -38,7 +42,7 @@ public class ModEnchantingTableBlock extends EnchantingTableBlock {
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         for (BlockPos blockPos : POWER_PROVIDER_OFFSETS) {
-            if (random.nextInt(16) != 0 || !EnchantingTableBlock.canAccessPowerProvider(world, pos, blockPos)) continue;
+            if (random.nextInt(12) != 0 || !EnchantingTableBlock.canAccessPowerProvider(world, pos, blockPos)) continue;
             world.addParticleClient(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5, (double)pos.getY() + 2.0, (double)pos.getZ() + 0.5, (double)((float)blockPos.getX() + random.nextFloat()) - 0.5, (float)blockPos.getY() - random.nextFloat() - 1.0f, (double)((float)blockPos.getZ() + random.nextFloat()) - 0.5);
         }
     }

@@ -55,9 +55,13 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         return playerEntity.experienceLevel > levelRequirement;
     }
 
-    public void doConsequence(World world) {
+    public void doConsequence(World world, BlockPos blockPos) {
         //TODO: Consequence
-        Consequence consequence = ConsequenceManager.pick(world);
+        Consequence consequence = ConsequenceManager.pick(
+            world,
+            ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
+                .map(blockPos1 -> blockPos1.add(blockPos)).toList()
+        );
         MagicRevamped.LOGGER.info(consequence.description());
     }
 
@@ -72,7 +76,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
                 stack.applyComponentsFrom(result.entry.getComponents());
                 player.addExperienceLevels(-getLevelRequirement(this.input));
                 this.handler.sendContentUpdates();
-                doConsequence(world);
+                doConsequence(world, blockPos);
                 return;
             };
 
@@ -160,7 +164,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     }
 
     public int getBookshelfBonus(World world, BlockPos blockPos) {
-        var e = ModEnchantingTableBlock.POWER_PROVIDER_OFFSETS.stream()
+        return ModEnchantingTableBlock.POWER_PROVIDER_OFFSETS.stream()
             .map(blockPos1 -> blockPos1.add(blockPos))
             .filter(blockPos1 ->
                 world.getBlockState(blockPos1)
@@ -168,7 +172,5 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             )
             .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
             .reduce(0, Integer::sum);
-        MagicRevamped.LOGGER.info(e.toString());
-        return e;
     }
 }
