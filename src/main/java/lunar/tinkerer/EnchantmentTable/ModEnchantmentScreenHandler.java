@@ -274,6 +274,9 @@ public class ModEnchantmentScreenHandler
         } else if (conduit.isOf(ModItems.RUNE)) {
             //TODO: Stabilize w diamonds
             //TODO: Show Flux in UI some how?
+            itemStack = stabilize(craftingInventory);
+        } else if (conduit.isOf(Items.BOOK)) {
+            //TODO: Implement inscribing
             itemStack = ItemStack.EMPTY;
         } else {
             itemStack = enchant(craftingInventory);
@@ -281,6 +284,11 @@ public class ModEnchantmentScreenHandler
         resultInventory.setStack(0, itemStack);
         handler.setReceivedStack(0, itemStack);
         serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, itemStack));
+    }
+
+    private static ItemStack stabilize(RecipeInputInventory craftingInventory) {
+        ItemStack conduit = craftingInventory.getStack(0);
+        return conduit.copy();
     }
 
     private static ItemStack carveRune(ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {

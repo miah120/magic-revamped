@@ -14,7 +14,7 @@ public class ConsequenceRegistry {
         DEFAULT = register("default", Consequence.EMPTY);
         OBSIDIAN = register(
             "obsidian",
-            new Consequence("Obsidian", Ingredient.ofItem(Items.OBSIDIAN))
+            new Consequence("Obsidian", Ingredient.ofItem(Items.OBSIDIAN), 2)
         );
     }
 
