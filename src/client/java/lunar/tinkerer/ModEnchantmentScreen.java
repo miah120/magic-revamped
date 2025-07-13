@@ -33,7 +33,7 @@ import java.util.Objects;
 public class ModEnchantmentScreen
         extends RecipeBookScreen<ModEnchantmentScreenHandler> {
     protected int backgroundWidth = 176;
-    protected int backgroundHeight = 196;
+    protected int backgroundHeight = 212;
     private static final List<Identifier> CONDUIT_TEXTURES = List.of(
             Identifier.ofVanilla("container/slot/chestplate"),
             Identifier.ofVanilla("container/slot/helmet"),
@@ -99,14 +99,14 @@ public class ModEnchantmentScreen
 
     @Override
     protected void init() {
-        titleY = -9;
-        playerInventoryTitleY = 88;
+        titleY = -18;
+        playerInventoryTitleY = 79;
         super.init();
     }
 
     @Override
     protected ScreenPos getRecipeBookButtonPos() {
-        return new ScreenPos(this.x + 149, this.height / 2 - 5);
+        return new ScreenPos(this.x + 149, this.height / 2 - 14);
     }
 
     @Override
@@ -155,6 +155,8 @@ public class ModEnchantmentScreen
 
     public void renderRisk(DrawContext context) {
         if (this.handler.resultSlot.inventory.isEmpty()) return;
+        int x = this.handler.resultSlot.x + this.x - 33;
+        int y = this.handler.resultSlot.y + this.y + 47;
         String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory);
         EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
         StringVisitable riskLabel = EnchantingPhrases.getInstance()
@@ -163,23 +165,26 @@ public class ModEnchantmentScreen
                 46 - this.textRenderer.getWidth(risk)
             );
 
-        int x = this.x + 220;
-        int y = this.y + 40;
-        context.fill(RenderPipelines.GUI, x, y, x + 50, y + 18, 0x4F000000);
-        context.drawWrappedText(
+        context.fill(
+            RenderPipelines.GUI,
+            x, y,
+            x + 50, y + 14,
+            0x4F000000
+        );
+
+        context.drawWrappedTextWithShadow(
             this.textRenderer,
             riskLabel,
-            x + 2,
-            120,
+            x + 3,
+            y + 3,
             40,
-            -8323296,
-            true
+            -8323296
         );
         context.drawTextWithShadow(
             this.textRenderer,
             risk,
-            x + 2 + this.textRenderer.getWidth(riskLabel),
-            120,
+            x + 3 + this.textRenderer.getWidth(riskLabel),
+            y + 3,
             -8323296
         );
     }

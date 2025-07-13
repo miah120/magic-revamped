@@ -140,11 +140,11 @@ public class ModEnchantmentScreenHandler
             this.craftingResultInventory,
             0,
             127,
-            32
+            24
         );
         this.addResultSlot();
-        this.addInputSlots(44,32);
-        this.addPlayerSlots(playerInventory, 8, 99);
+        this.addInputSlots(44,24);
+        this.addPlayerSlots(playerInventory, 8, 91);
     }
 
     protected void addResultSlot() {
@@ -272,7 +272,6 @@ public class ModEnchantmentScreenHandler
         } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
         } else if (conduit.isOf(ModItems.RUNE)) {
-            //TODO: Stabilize w diamonds
             //TODO: Show Flux in UI some how?
             itemStack = stabilize(craftingInventory);
         } else if (conduit.isOf(Items.BOOK)) {
@@ -288,7 +287,28 @@ public class ModEnchantmentScreenHandler
 
     private static ItemStack stabilize(RecipeInputInventory craftingInventory) {
         ItemStack conduit = craftingInventory.getStack(0);
-        return conduit.copy();
+        if (!craftingInventory.getHeldStacks().subList(1, 9).stream().allMatch(
+            itemStack -> itemStack.isEmpty() || itemStack.isOf(Items.DIAMOND)
+        )) {
+            return ItemStack.EMPTY;
+        }
+
+        int stabilization = craftingInventory.getHeldStacks()
+            .subList(1, 9)
+            .stream()
+            .filter(itemStack -> !itemStack.isEmpty())
+            .filter(itemStack -> itemStack.isOf(Items.DIAMOND))
+            .toList()
+            .size();
+
+        int currentFLux = Optional.ofNullable(conduit.get(ModItems.FLUX)).orElse(50);
+        var newFlux = Math.max(0, currentFLux - stabilization);
+
+        if (newFlux == currentFLux) return ItemStack.EMPTY;
+
+        ItemStack result = conduit.copyWithCount(1);
+        result.set(ModItems.FLUX, newFlux);
+        return result;
     }
 
     private static ItemStack carveRune(ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
@@ -434,7 +454,15 @@ public class ModEnchantmentScreenHandler
     }
 
     public static int getFlux(RecipeInputInventory input) {
-        return 40 * getLevelRequirement(input);
+        int flux = input.getHeldStacks()
+            .subList(1, 9)
+            .stream()
+            .map(itemStack ->
+                 Optional.ofNullable(itemStack.get(ModItems.FLUX)).orElse(0)
+            )
+            .reduce(0, Integer::sum);
+
+        return flux * getLevelRequirement(input);
     }
 
     public static int getLevelRequirement(RecipeInputInventory input) {
@@ -446,9 +474,9 @@ public class ModEnchantmentScreenHandler
                 .map(RegistryEntry::value)
                 .filter(Objects::nonNull)
                 .map(Enchantment::getAnvilCost)
-                .reduce(0, (integer, integer2) -> {
-                    return 2 * integer + integer2;
-                })
+                .reduce(0, (integer, integer2) ->
+                    2 * integer + integer2
+                )
                     +
                 RuneItem.getEnchantments(input.getStack(0))
                     .map(leveledEnchantment -> {

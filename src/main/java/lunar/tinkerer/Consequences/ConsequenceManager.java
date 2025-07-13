@@ -10,6 +10,8 @@ import java.util.List;
 
 public class ConsequenceManager {
     public static Consequence pick(World world, List<BlockPos> area) {
+        //TODO: Weighting.getRandom(random, list2, EnchantmentLevelEntry::getWeight).ifPresent(list::add);
+
         List<Block> blocks = area.stream()
              .map(world::getBlockState)
              .map(AbstractBlock.AbstractBlockState::getBlock)
