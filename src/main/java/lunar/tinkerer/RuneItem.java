@@ -3,8 +3,10 @@ package lunar.tinkerer;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -73,6 +75,33 @@ public class RuneItem extends Item {
                 .formatted(color)
                 .formatted(Formatting.ITALIC)
         );
+    }
+
+    public static void addOpenRunes(ItemGroup.Entries entries, RegistryWrapper<Enchantment> registryWrapper, ItemGroup.StackVisibility stackVisibility) {
+        registryWrapper.streamEntries().map(enchantmentEntry ->
+            {
+                ItemStack itemStack = new ItemStack(ModItems.RUNE);
+                itemStack.set(ModItems.OPEN, Unit.INSTANCE);
+                itemStack.set(ModItems.ENCHANTMENT, enchantmentEntry);
+                return itemStack;
+            }).forEach(stack -> entries.add(stack, stackVisibility));
+    }
+
+    public static void addOpenAndClosedRunes(ItemGroup.Entries entries, RegistryWrapper<Enchantment> registryWrapper, ItemGroup.StackVisibility stackVisibility) {
+        registryWrapper.streamEntries().flatMap(enchantmentEntry ->
+            {
+                ItemStack closed = new ItemStack(ModItems.RUNE);
+                closed.set(ModItems.ENCHANTMENT, enchantmentEntry);
+
+                ItemStack open = new ItemStack(ModItems.RUNE);
+                open.set(ModItems.ENCHANTMENT, enchantmentEntry);
+                open.set(ModItems.OPEN, Unit.INSTANCE);
+
+                return Stream.of(
+                    closed,
+                    open
+                );
+            }).forEach(stack -> entries.add(stack, stackVisibility));
     }
 
     public record LeveledEnchantment(RegistryEntry<Enchantment> enchantment, int level) {}

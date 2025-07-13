@@ -2,6 +2,9 @@
   "item.magic-revamped.rune.template": "Rune of %s",
   "item.magic-revamped.rune.template.open": "Open Rune of %s",
   "item.magic-revamped.rune.flux": "Flux %s",
+
+  "item.magic-revamped.enchanting_table": "Enchanting Table",
+
   "enchantment.magic-revamped.luck": "Luck",
   "container.repair.cost": "Repair Cost: %1$s"
 }

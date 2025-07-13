@@ -1,9 +1,13 @@
 package lunar.tinkerer;
 
 import com.google.common.base.Function;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.ComponentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -37,9 +41,28 @@ public class ModItems {
                     .packetCodec(Enchantment.ENTRY_PACKET_CODEC)
     );
 
-    public static final Item RUNE = register("rune", RuneItem::new, new Item.Settings().component(ENCHANTMENT, null).component(FLUX, RuneItem.DEFAULT_RUNE_FLUX));
+    public static final Item RUNE = register(
+        "rune",
+        RuneItem::new,
+        new Item.Settings()
+            .component(ENCHANTMENT, null)
+            .component(FLUX, RuneItem.DEFAULT_RUNE_FLUX)
+    );
 
     public static void initialize() {
+        addBlocksToItemGroup();
+    }
+
+    public static void addBlocksToItemGroup() {
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(content ->
+            content.getContext().lookup().getOptional(RegistryKeys.ENCHANTMENT).ifPresent(registryWrapper -> {
+                RuneItem.addOpenRunes(content, registryWrapper, ItemGroup.StackVisibility.PARENT_TAB_ONLY);
+                RuneItem.addOpenAndClosedRunes(content, registryWrapper, ItemGroup.StackVisibility.SEARCH_TAB_ONLY);
+            })
+        );
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
+            content.addAfter(Items.ENCHANTING_TABLE, ModBlocks.ENCHANTING_TABLE);
+        });
     }
 
     public static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {
