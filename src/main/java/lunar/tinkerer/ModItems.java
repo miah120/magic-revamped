@@ -19,7 +19,7 @@ public class ModItems {
     public static ComponentType<Integer> FLUX = registerDataComponent(
             "flux",
             builder -> builder
-                    .codec(Codecs.POSITIVE_INT)
+                    .codec(Codecs.NON_NEGATIVE_INT)
                     .packetCodec(PacketCodecs.VAR_INT)
     );
 

@@ -1,16 +1,20 @@
 package lunar.tinkerer;
 
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class RuneItem extends Item {
@@ -51,6 +55,24 @@ public class RuneItem extends Item {
         return optional.isEmpty()
                 ? base
                 : base + ".open";
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        var flux = stack.getOrDefault(ModItems.FLUX, DEFAULT_RUNE_FLUX);
+        Formatting color;
+        if (flux > 6) {
+            color = Formatting.DARK_RED;
+        } else if (flux > 2) {
+            color = Formatting.GRAY;
+        } else {
+            color = Formatting.DARK_GREEN;
+        }
+        textConsumer.accept(
+            Text.translatable(this.translationKey + ".flux", flux)
+                .formatted(color)
+                .formatted(Formatting.ITALIC)
+        );
     }
 
     public record LeveledEnchantment(RegistryEntry<Enchantment> enchantment, int level) {}
