@@ -39,8 +39,7 @@ public class RuneItem extends Item {
                                 "enchantment",
                                 Identifier.of(enchantment.getIdAsString())
                             )
-                        ),
-                        stack.get(ModItems.FLUX)
+                        )
                     )
             )
             .orElse((MutableText) super.getName(stack));

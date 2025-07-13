@@ -1,6 +1,6 @@
 {
   "item.magic-revamped.rune.template": "Rune of %s",
-  "item.magic-revamped.rune.template.open": "Open Rune of %s [%s]",
+  "item.magic-revamped.rune.template.open": "Open Rune of %s",
   "enchantment.magic-revamped.luck": "Luck",
   "container.repair.cost": "Repair Cost: %1$s"
 }

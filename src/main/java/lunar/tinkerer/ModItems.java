@@ -16,7 +16,7 @@ import net.minecraft.util.dynamic.Codecs;
 import java.util.function.UnaryOperator;
 
 public class ModItems {
-    public static ComponentType<RuneFluxComponent> FLUX = registerDataComponent(
+    public static ComponentType<Integer> FLUX = registerDataComponent(
             "flux",
             builder -> builder
                     .codec(Codecs.POSITIVE_INT)
