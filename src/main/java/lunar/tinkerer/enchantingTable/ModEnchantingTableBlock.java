@@ -1,4 +1,4 @@
-package lunar.tinkerer.EnchantmentTable;
+package lunar.tinkerer.enchantingTable;
 
 import lunar.tinkerer.ModBlockEntities;
 import net.minecraft.block.BlockState;

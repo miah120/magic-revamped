@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0.2.2 (FabricMC 7c48b8c4).
  */
-package lunar.tinkerer.EnchantmentTable;
+package lunar.tinkerer.enchantingTable;
 
 import lunar.tinkerer.ModBlockEntities;
 import net.minecraft.block.BlockState;

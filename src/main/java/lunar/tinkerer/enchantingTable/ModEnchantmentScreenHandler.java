@@ -1,4 +1,4 @@
-package lunar.tinkerer.EnchantmentTable;
+package lunar.tinkerer.enchantingTable;
 
 import lunar.tinkerer.*;
 import net.minecraft.component.DataComponentTypes;
@@ -272,7 +272,6 @@ public class ModEnchantmentScreenHandler
         } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
         } else if (conduit.isOf(ModItems.RUNE)) {
-            //TODO: Show Flux in UI some how?
             itemStack = stabilize(craftingInventory);
         } else if (conduit.isOf(Items.BOOK)) {
             //TODO: Implement inscribing

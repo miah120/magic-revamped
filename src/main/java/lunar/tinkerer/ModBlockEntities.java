@@ -1,7 +1,7 @@
 package lunar.tinkerer;
 
-import lunar.tinkerer.EnchantmentTable.ModEnchantingTableBlockEntity;
-import lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler;
+import lunar.tinkerer.enchantingTable.ModEnchantingTableBlockEntity;
+import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;

@@ -1,7 +1,7 @@
-package lunar.tinkerer.EnchantmentTable;
+package lunar.tinkerer.enchantingTable;
 
-import lunar.tinkerer.Consequences.Consequence;
-import lunar.tinkerer.Consequences.ConsequenceManager;
+import lunar.tinkerer.consequences.Consequence;
+import lunar.tinkerer.consequences.ConsequenceManager;
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.ModRecipeTypes;
 import lunar.tinkerer.RuneItem;
@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler.getLevelRequirement;
+import static lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler.getLevelRequirement;
 
 public class EnchantingResultSlot extends CraftingResultSlot {
     public final static int MAX_TIME_OUT = 100;

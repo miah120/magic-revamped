@@ -1,4 +1,4 @@
-package lunar.tinkerer.EnchantmentTable;
+package lunar.tinkerer.enchantingTable;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;

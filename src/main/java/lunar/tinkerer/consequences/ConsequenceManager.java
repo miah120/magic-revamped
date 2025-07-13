@@ -1,4 +1,4 @@
-package lunar.tinkerer.Consequences;
+package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.registry.ModRegistryKeys;
 import net.minecraft.block.AbstractBlock;

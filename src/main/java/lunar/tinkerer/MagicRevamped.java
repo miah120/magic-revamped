@@ -1,6 +1,6 @@
 package lunar.tinkerer;
 
-import lunar.tinkerer.Consequences.ConsequenceRegistry;
+import lunar.tinkerer.consequences.ConsequenceRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package lunar.tinkerer.Consequences;
+package lunar.tinkerer.consequences;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

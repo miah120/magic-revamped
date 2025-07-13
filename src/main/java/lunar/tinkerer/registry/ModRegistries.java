@@ -1,6 +1,6 @@
 package lunar.tinkerer.registry;
 
-import lunar.tinkerer.Consequences.Consequence;
+import lunar.tinkerer.consequences.Consequence;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;

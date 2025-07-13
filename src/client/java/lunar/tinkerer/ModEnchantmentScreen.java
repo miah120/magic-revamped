@@ -1,7 +1,7 @@
 package lunar.tinkerer;
 
-import lunar.tinkerer.EnchantmentTable.EnchantingResultSlot;
-import lunar.tinkerer.EnchantmentTable.ModEnchantmentScreenHandler;
+import lunar.tinkerer.enchantingTable.EnchantingResultSlot;
+import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import lunar.tinkerer.mixin.client.GhostRecipeInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
