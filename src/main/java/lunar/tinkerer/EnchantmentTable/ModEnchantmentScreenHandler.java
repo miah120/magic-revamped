@@ -301,7 +301,7 @@ public class ModEnchantmentScreenHandler
             .toList()
             .size();
 
-        int currentFLux = Optional.ofNullable(conduit.get(ModItems.FLUX)).orElse(50);
+        int currentFLux = Optional.ofNullable(conduit.get(ModItems.FLUX)).orElse(RuneItem.DEFAULT_RUNE_FLUX);
         var newFlux = Math.max(0, currentFLux - stabilization);
 
         if (newFlux == currentFLux) return ItemStack.EMPTY;

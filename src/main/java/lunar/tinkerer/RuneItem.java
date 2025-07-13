@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class RuneItem extends Item {
+    public static final int DEFAULT_RUNE_FLUX = 8;
 
     public RuneItem(Settings settings) {
         super(settings);

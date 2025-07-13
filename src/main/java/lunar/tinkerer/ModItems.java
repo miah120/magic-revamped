@@ -37,7 +37,7 @@ public class ModItems {
                     .packetCodec(Enchantment.ENTRY_PACKET_CODEC)
     );
 
-    public static final Item RUNE = register("rune", RuneItem::new, new Item.Settings().component(ENCHANTMENT, null).component(FLUX, 50));
+    public static final Item RUNE = register("rune", RuneItem::new, new Item.Settings().component(ENCHANTMENT, null).component(FLUX, RuneItem.DEFAULT_RUNE_FLUX));
 
     public static void initialize() {
     }
