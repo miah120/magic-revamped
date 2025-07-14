@@ -531,7 +531,7 @@ public class ModEnchantmentScreenHandler
             success ? ">" : "<",
             flux
         );
-        return true;
+        return success;
     }
 
     public void tickTimeout() {
