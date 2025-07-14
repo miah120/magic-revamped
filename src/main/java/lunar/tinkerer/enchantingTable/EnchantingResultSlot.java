@@ -1,18 +1,15 @@
 package lunar.tinkerer.enchantingTable;
 
+import lunar.tinkerer.MagicRevamped;
+import lunar.tinkerer.RuneItem;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceManager;
-import lunar.tinkerer.MagicRevamped;
-import lunar.tinkerer.ModRecipeTypes;
-import lunar.tinkerer.RuneItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,7 +17,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -71,6 +67,9 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
         this.timeout = MAX_TIME_OUT;
+        if (player instanceof ServerPlayerEntity) {
+            int i = 0;
+        }
         this.handler.context.run(((world, blockPos) -> {
             boolean success = this.doFluxCheck(player, input, world, blockPos);
             if (!success) {
@@ -85,18 +84,11 @@ public class EnchantingResultSlot extends CraftingResultSlot {
             player.incrementStat(Stats.ENCHANT_ITEM);
             world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
             this.onCrafted(stack);
-            IntStream.range(0, this.input.size())
-                 .forEach(i -> this.input.removeStack(i, 1));
+            IntStream.range(0, this.input.size()).forEach(
+                i -> this.input.removeStack(i, 1)
+            );
         }));
-        super.onTakeItem(player, stack);
-        this.handler.sendContentUpdates();
-    }
-
-    private DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input, World world) {
-        if (world instanceof ServerWorld serverWorld) {
-            return serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).map(recipe -> (recipe.value()).getRecipeRemainders(input)).orElse(DefaultedList.ofSize(input.size(), ItemStack.EMPTY));
-        }
-        return CraftingRecipe.collectRecipeRemainders(input);
+        this.handler.craftingInventory.markDirty();
     }
 
     public boolean doFluxCheck(
