@@ -1,6 +1,10 @@
 package lunar.tinkerer.enchantingTable;
 
 import lunar.tinkerer.*;
+import lunar.tinkerer.consequences.Consequence;
+import lunar.tinkerer.consequences.ConsequenceManager;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -18,6 +22,7 @@ import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.book.RecipeBookType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
@@ -25,19 +30,28 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Unit;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class ModEnchantmentScreenHandler
         extends AbstractRecipeScreenHandler {
     public final ScreenHandlerContext context;
     private final PlayerEntity player;
     private boolean filling;
+    public final static int MAX_TIME_OUT = 20;
+    public final Property timeout = Property.create();
     public final Property seed = Property.create();
     public final RecipeInputInventory craftingInventory;
     protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
@@ -50,6 +64,7 @@ public class ModEnchantmentScreenHandler
     public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER, syncId);
         this.addProperty(this.seed).set(playerInventory.player.getEnchantingTableSeed());
+        this.addProperty(this.timeout).set(0);
         this.context = context;
         this.player = playerInventory.player;
         this.craftingInventory = new RecipeInputInventory() {
@@ -145,6 +160,10 @@ public class ModEnchantmentScreenHandler
         this.addResultSlot();
         this.addInputSlots(44,24);
         this.addPlayerSlots(playerInventory, 8, 91);
+
+        context.run((world, blockPos) -> {
+            Objects.requireNonNull(world.getServer()).addServerGuiTickable(this::tickTimeout);
+        });
     }
 
     protected void addResultSlot() {
@@ -203,7 +222,6 @@ public class ModEnchantmentScreenHandler
 
     private ItemStack quickMoveFromResult(PlayerEntity player, int slot) {
         ItemStack items = this.resultSlot.getStack();
-        this.resultSlot.onTakeItem(player, items);
         items.getItem().onCraftByPlayer(items, player);
         this.insertItem(items, 10, 46, true);
         this.onContentChanged(this.craftingInventory);
@@ -494,5 +512,95 @@ public class ModEnchantmentScreenHandler
         );
     }
 
+    public boolean doFluxCheck(
+        PlayerEntity player,
+        RecipeInputInventory input,
+        World world,
+        BlockPos blockPos
+    ) {
+        int flux = ModEnchantmentScreenHandler.getFlux(input);
+        int playerCheck = player.getRandom().nextBetween(0, 1000);
+        int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
+        int bookshelfCheck = player.getRandom().nextBetween(0, bookshelfBonus);
+        boolean success = (playerCheck + bookshelfCheck > flux);
+        MagicRevamped.LOGGER.info(
+            "{} : [{} + {}] {} {}",
+            success ? "Success!" : "Failure :(",
+            playerCheck,
+            bookshelfCheck,
+            success ? ">" : "<",
+            flux
+        );
+        return true;
+    }
+
+    public void tickTimeout() {
+        int timeout = this.timeout.get() - 1;
+        this.timeout.set(Math.max(0, timeout));
+    }
+
+    public void onTakeResult(PlayerEntity player, ItemStack stack) {
+        this.context.run(((world, blockPos) -> {
+            this.timeout.set(MAX_TIME_OUT);
+            boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos);
+            if (!success) {
+                world.playSound(null, blockPos, SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player);
+                stack.setCount(result.entry().getCount());
+                stack.applyComponentsFrom(result.entry().getComponents());
+                player.addExperienceLevels(-getLevelRequirement(this.craftingInventory));
+                if (!result.success()) return;
+            };
+
+            player.incrementStat(Stats.ENCHANT_ITEM);
+            world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+            this.resultSlot.onCrafted(stack);
+            IntStream.range(0, this.craftingInventory.size()).forEach(
+                i -> this.craftingInventory.removeStack(i, 1)
+            );
+        }));
+        this.craftingInventory.markDirty();
+    }
+
+    public Consequence.Result<ItemStack> doConsequence(World world, BlockPos blockPos, PlayerEntity player) {
+        if (!(world instanceof ServerWorld serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+        if (!(player instanceof ServerPlayerEntity serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+
+        Consequence consequence = ConsequenceManager.pick(
+            world,
+            ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
+                .map(blockPos1 -> blockPos1.add(blockPos))
+                .toList()
+        );
+        MagicRevamped.LOGGER.info(consequence.description());
+        return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory);
+    }
+
+    public int getSingleBookshelfBonus(World world, BlockPos blockPos) {
+        BlockEntity blockEntity = world.getBlockEntity(blockPos);
+        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity)) {
+            return 3;
+        }
+        AtomicInteger levelSum = new AtomicInteger();
+        chiseledBookshelfBlockEntity.forEach(itemStack -> {
+            if(itemStack.isEmpty()) return;
+            int maxEnchantLevel = RuneItem.getEnchantments(itemStack)
+                                          .map(RuneItem.LeveledEnchantment::level)
+                                          .reduce(1, Integer::max);
+            levelSum.addAndGet(maxEnchantLevel);
+        });
+        return levelSum.get();
+    }
+
+    public int getBookshelfBonus(World world, BlockPos blockPos) {
+        return ModEnchantingTableBlock.POWER_PROVIDER_OFFSETS.stream()
+                                                             .map(blockPos1 -> blockPos1.add(blockPos))
+                                                             .filter(blockPos1 ->
+                                                                         world.getBlockState(blockPos1)
+                                                                              .isIn(BlockTags.ENCHANTMENT_POWER_PROVIDER)
+                                                             )
+                                                             .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
+                                                             .reduce(0, Integer::sum);
+    }
 }
 

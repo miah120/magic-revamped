@@ -1,6 +1,5 @@
 package lunar.tinkerer;
 
-import lunar.tinkerer.enchantingTable.EnchantingResultSlot;
 import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import lunar.tinkerer.mixin.client.GhostRecipeInvoker;
 import net.fabricmc.api.EnvType;
@@ -144,10 +143,10 @@ public class ModEnchantmentScreen
     public void renderCooldown(DrawContext context) {
         int x = this.handler.resultSlot.x + this.x;
         int y = this.handler.resultSlot.y + this.y;
-        int timeout = this.handler.resultSlot.timeout;
+        int timeout = this.handler.timeout.get();
         context.fill(
                 RenderPipelines.GUI,
-                x, y + 16 - Math.floorDiv(16 * timeout, EnchantingResultSlot.MAX_TIME_OUT),
+                x, y + 16 - Math.floorDiv(16 * timeout, ModEnchantmentScreenHandler.MAX_TIME_OUT),
                 x+16, y+16,
                 0xBFBFBFAA
     );
