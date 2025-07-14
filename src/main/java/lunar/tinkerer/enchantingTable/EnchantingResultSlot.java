@@ -15,6 +15,7 @@ import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.slot.CraftingResultSlot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -24,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import static lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler.getLevelRequirement;
 
@@ -41,11 +43,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     @Override
     public boolean isEnabled() {
         this.timeout = Math.max(0, this.timeout - 1);
-        if (this.timeout <= 0) {
-            //TODO: Sometimes the result fails to refresh on quick move
-            this.handler.onContentChanged(this.handler.craftingInventory);
-        }
-        return super.isEnabled() && this.timeout <= 0;
+        return super.isEnabled();
     }
 
     @Override
@@ -55,65 +53,43 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         return playerEntity.experienceLevel > levelRequirement;
     }
 
-    public void doConsequence(World world, BlockPos blockPos) {
+    public Consequence.Result<ItemStack> doConsequence(World world, BlockPos blockPos, PlayerEntity player) {
+        if (!(world instanceof ServerWorld serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+        if (!(player instanceof ServerPlayerEntity serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+
         //TODO: Consequence
         Consequence consequence = ConsequenceManager.pick(
             world,
             ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
-                .map(blockPos1 -> blockPos1.add(blockPos)).toList()
+                .map(blockPos1 -> blockPos1.add(blockPos))
+                .toList()
         );
         MagicRevamped.LOGGER.info(consequence.description());
+        return consequence.run(serverWorld, blockPos, serverPlayer, this.input);
     }
 
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
         this.timeout = MAX_TIME_OUT;
         this.handler.context.run(((world, blockPos) -> {
-            this.handler.seed.set(player.getEnchantingTableSeed());
-            Result<ItemStack> result = this.doFluxCheck(player, stack, input, world, blockPos);
-            if (!result.success) {
-                stack.setCount(result.entry.getCount());
-                stack.applyComponentsFrom(result.entry.getComponents());
+            boolean success = this.doFluxCheck(player, input, world, blockPos);
+            if (!success) {
+                world.playSound(null, blockPos, SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player);
+                stack.setCount(result.entry().getCount());
+                stack.applyComponentsFrom(result.entry().getComponents());
                 player.addExperienceLevels(-getLevelRequirement(this.input));
-                this.handler.sendContentUpdates();
-                doConsequence(world, blockPos);
-                return;
+                if (!result.success()) return;
             };
 
             player.incrementStat(Stats.ENCHANT_ITEM);
             world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
-            this.onCrafted(result.entry);
-            CraftingRecipeInput.Positioned positioned = this.input.createPositionedRecipeInput();
-            CraftingRecipeInput craftingRecipeInput = positioned.input();
-            int i = positioned.left();
-            int j = positioned.top();
-            DefaultedList<ItemStack> defaultedList = this.getRecipeRemainders(craftingRecipeInput, player.getWorld());
-
-            //TODO: Clean this up
-            for (int k = 0; k < craftingRecipeInput.getHeight(); ++k) {
-                for (int l = 0; l < craftingRecipeInput.getWidth(); ++l) {
-                    int m = l + i + (k + j) * this.input.getWidth();
-                    ItemStack itemStack = this.input.getStack(m);
-                    ItemStack itemStack2 = defaultedList.get(l + k * craftingRecipeInput.getWidth());
-                    if (!itemStack.isEmpty()) {
-                        this.input.removeStack(m, 1);
-                        itemStack = this.input.getStack(m);
-                    }
-                    if (itemStack2.isEmpty()) continue;
-                    if (itemStack.isEmpty()) {
-                        this.input.setStack(m, itemStack2);
-                        continue;
-                    }
-                    if (ItemStack.areItemsAndComponentsEqual(itemStack, itemStack2)) {
-                        itemStack2.increment(itemStack.getCount());
-                        this.input.setStack(m, itemStack2);
-                        continue;
-                    }
-                    if (player.getInventory().insertStack(itemStack2)) continue;
-                    player.dropItem(itemStack2, false);
-                }
-            }
+            this.onCrafted(stack);
+            IntStream.range(0, this.input.size())
+                 .forEach(i -> this.input.removeStack(i, 1));
         }));
+        super.onTakeItem(player, stack);
+        this.handler.sendContentUpdates();
     }
 
     private DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input, World world) {
@@ -123,11 +99,8 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         return CraftingRecipe.collectRecipeRemainders(input);
     }
 
-    public record Result<T> (T entry, boolean success) {}
-
-    public Result<ItemStack> doFluxCheck(
+    public boolean doFluxCheck(
             PlayerEntity player,
-            ItemStack stack,
             RecipeInputInventory input,
             World world,
             BlockPos blockPos
@@ -138,13 +111,14 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         int bookshelfCheck = player.getRandom().nextBetween(0, bookshelfBonus);
         boolean success = (playerCheck + bookshelfCheck > flux);
         MagicRevamped.LOGGER.info(
-            "Success:{} = [{} + {}] > {}",
-            success,
+            "{} : [{} + {}] {} {}",
+            success ? "Success!" : "Failure :(",
             playerCheck,
             bookshelfCheck,
+            success ? ">" : "<",
             flux
         );
-        return new Result<>(stack, false);
+        return false;
     }
 
     public int getSingleBookshelfBonus(World world, BlockPos blockPos) {
