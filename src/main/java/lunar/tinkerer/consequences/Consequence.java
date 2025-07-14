@@ -22,8 +22,8 @@ public record Consequence(
     public static final Consequence EMPTY = new Consequence(
         "default",
         Ingredient.ofItem(Items.BARRIER),
-        List.of(),
-        false,
+        List.of((world, blockPos, player, input) -> ItemStack.EMPTY),
+        true,
         0
     );
     public record Result<T> (T entry, boolean success) {}
