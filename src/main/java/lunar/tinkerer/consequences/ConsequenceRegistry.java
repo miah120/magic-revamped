@@ -16,6 +16,7 @@ public class ConsequenceRegistry {
     public static final Consequence OBSIDIAN;
     public static final Consequence DEFAULT;
 
+    //TODO: Implement the rest of the Consequences
     static {
         DEFAULT = register("default", Consequence.EMPTY);
         OBSIDIAN = register(

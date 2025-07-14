@@ -53,7 +53,6 @@ public class EnchantingResultSlot extends CraftingResultSlot {
         if (!(world instanceof ServerWorld serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
         if (!(player instanceof ServerPlayerEntity serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
 
-        //TODO: Consequence
         Consequence consequence = ConsequenceManager.pick(
             world,
             ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
