@@ -411,9 +411,11 @@ public class ModEnchantmentScreenHandler
                 .ofNullable(rune.get(ModItems.ENCHANTMENT));
         if (runeEnchantmentRegistryEntryOptional.isEmpty()) return false;
         boolean isAcceptable = runeEnchantmentRegistryEntryOptional
-                .map(RegistryEntry::value)
-                .map(enchantment -> enchantment.isAcceptableItem(conduit))
-                .orElse(false);
+            .map(RegistryEntry::value)
+            .map(enchantment ->
+                 enchantment.isAcceptableItem(conduit) || conduit.isOf(Items.ENCHANTED_BOOK)
+            )
+            .orElse(false);
         if (!isAcceptable) return false;
         RegistryEntry<Enchantment> runeEnchantmentRegistryEntry = runeEnchantmentRegistryEntryOptional.get();
         return conduit.getEnchantments().getEnchantments().stream()
