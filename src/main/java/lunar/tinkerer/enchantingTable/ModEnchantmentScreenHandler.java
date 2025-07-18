@@ -212,16 +212,22 @@ public class ModEnchantmentScreenHandler
         if (original.getCount() == itemStack.getCount()) {
             return ItemStack.EMPTY;
         }
-        sourceSlot.onTakeItem(player, itemStack);
+
         if (slot == 0) {
             player.dropItem(itemStack, false);
+        } else {
+            //onTakeItem handled by quickMoveFromResult
+            sourceSlot.onTakeItem(player, itemStack);
         }
         this.sendContentUpdates();
         return itemStack;
     }
 
     private ItemStack quickMoveFromResult(PlayerEntity player, int slot) {
+        if(!this.resultSlot.canTakeItems(player)) return ItemStack.EMPTY;
         ItemStack items = this.resultSlot.getStack();
+        if(items.isEmpty()) return ItemStack.EMPTY;
+        this.resultSlot.onTakeItem(player, items);
         items.getItem().onCraftByPlayer(items, player);
         this.insertItem(items, 10, 46, true);
         this.onContentChanged(this.craftingInventory);
