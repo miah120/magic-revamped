@@ -48,7 +48,7 @@ import java.util.stream.IntStream;
 public class ModEnchantmentScreenHandler
         extends AbstractRecipeScreenHandler {
     public final ScreenHandlerContext context;
-    private final PlayerEntity player;
+    public final PlayerEntity player;
     private boolean filling;
     public final static int MAX_TIME_OUT = 20;
     public final Property timeout = Property.create();
