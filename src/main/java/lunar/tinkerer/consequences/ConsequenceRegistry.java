@@ -18,6 +18,7 @@ public class ConsequenceRegistry {
     public static final Consequence OBSIDIAN;
     public static final Consequence CANDLE;
     public static final Consequence AMETHYST;
+    public static final Consequence GLOW_BERRIES;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -46,7 +47,7 @@ public class ConsequenceRegistry {
                     new TransformBlock(Ingredient.ofItem(Items.CANDLE), Blocks.AIR.getDefaultState())
                 ),
                 true,
-                2
+                1
             )
         );
         AMETHYST = register(
@@ -61,6 +62,20 @@ public class ConsequenceRegistry {
                 ),
                 true,
                 2
+            )
+        );
+        GLOW_BERRIES = register(
+            "glow_berries",
+            new Consequence(
+                "Glow Berries",
+                Ingredient.ofItem(Items.GLOW_BERRIES),
+                List.of(
+                    new PlaySound(SoundEvents.ITEM_BONE_MEAL_USE),
+                    new TransformBlock(Ingredient.ofItem(Items.GLOW_BERRIES), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.ofItems(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.MOSS_BLOCK.getDefaultState())
+                ),
+                true,
+                1
             )
         );
     }
