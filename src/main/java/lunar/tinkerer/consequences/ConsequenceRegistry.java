@@ -131,12 +131,13 @@ public class ConsequenceRegistry {
                 "Skeleton Skull",
                 Ingredient.ofItem(Items.SKELETON_SKULL),
                 List.of(
+                    new EnchantSuccess(),
                     new TransformBlock(Ingredient.ofItem(Items.SKELETON_SKULL), Blocks.AIR.getDefaultState()),
                     new SummonEntity<>(EntityType.SKELETON),
                     new SummonEntity<>(EntityType.SKELETON),
                     new SummonEntity<>(EntityType.SKELETON)
                 ),
-                false,
+                true,
                 1
             )
         );
@@ -146,13 +147,13 @@ public class ConsequenceRegistry {
                 "Wither Skeleton Skull",
                 Ingredient.ofItem(Items.WITHER_SKELETON_SKULL),
                 List.of(
+                    new EnchantSuccess(),
                     new TransformBlock(Ingredient.ofItem(Items.WITHER_SKELETON_SKULL), Blocks.AIR.getDefaultState()),
-                    //TODO: Where r their swords?
                     new SummonEntity<>(EntityType.WITHER_SKELETON),
                     new SummonEntity<>(EntityType.WITHER_SKELETON),
                     new SummonEntity<>(EntityType.WITHER_SKELETON)
                 ),
-                false,
+                true,
                 1
             )
         );
