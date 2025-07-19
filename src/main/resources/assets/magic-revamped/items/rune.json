@@ -4,17 +4,53 @@
     "property": "minecraft:component",
     "component": "magic-revamped:enchantment",
     "cases": [
-      {
-        "when": "minecraft:mending",
-        "model": {
-          "type": "minecraft:model",
-          "model": "minecraft:item/diamond"
-        }
-      }
+      {"when": "minecraft:aqua_affinity", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/aqua_affinity"}},
+      {"when": "minecraft:bane_of_arthropods", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/bane_of_arthropods"}},
+      {"when": "minecraft:base", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/base"}},
+      {"when": "minecraft:binding_curse", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/binding_curse"}},
+      {"when": "minecraft:blast_protection", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/blast_protection"}},
+      {"when": "minecraft:breach", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/breach"}},
+      {"when": "minecraft:channeling", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/channeling"}},
+      {"when": "minecraft:density", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/density"}},
+      {"when": "minecraft:depth_strider", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/depth_strider"}},
+      {"when": "minecraft:efficiency", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/efficiency"}},
+      {"when": "minecraft:feather_falling", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/feather_falling"}},
+      {"when": "minecraft:fire_aspect", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/fire_aspect"}},
+      {"when": "minecraft:fire_protection", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/fire_protection"}},
+      {"when": "minecraft:flame", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/flame"}},
+      {"when": "minecraft:fortune", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/fortune"}},
+      {"when": "minecraft:frost_walker", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/frost_walker"}},
+      {"when": "minecraft:impaling", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/impaling"}},
+      {"when": "minecraft:infinity", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/infinity"}},
+      {"when": "minecraft:knockback", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/knockback"}},
+      {"when": "minecraft:looting", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/looting"}},
+      {"when": "minecraft:loyalty", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/loyalty"}},
+      {"when": "minecraft:luck_of_the_sea", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/luck_of_the_sea"}},
+      {"when": "minecraft:lure", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/lure"}},
+      {"when": "minecraft:mending", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/mending"}},
+      {"when": "minecraft:multishot", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/multishot"}},
+      {"when": "minecraft:piercing", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/piercing"}},
+      {"when": "minecraft:power", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/power"}},
+      {"when": "minecraft:projectile_protection", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/projectile_protection"}},
+      {"when": "minecraft:protection", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/protection"}},
+      {"when": "minecraft:punch", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/punch"}},
+      {"when": "minecraft:quick_charge", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/quick_charge"}},
+      {"when": "minecraft:respiration", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/respiration"}},
+      {"when": "minecraft:riptide", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/riptide"}},
+      {"when": "minecraft:sharpness", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/sharpness"}},
+      {"when": "minecraft:silk_touch", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/silk_touch"}},
+      {"when": "minecraft:smite", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/smite"}},
+      {"when": "minecraft:soul_speed", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/soul_speed"}},
+      {"when": "minecraft:sweeping_edge", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/sweeping_edge"}},
+      {"when": "minecraft:swift_sneak", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/swift_sneak"}},
+      {"when": "minecraft:thorns", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/thorns"}},
+      {"when": "minecraft:unbreaking", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/unbreaking"}},
+      {"when": "minecraft:vanishing_curse", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/vanishing_curse"}},
+      {"when": "minecraft:wind_burst", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/wind_burst"}}
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "magic-revamped:item/rune"
+      "model": "magic-revamped:item/rune/base"
     }
   }
 }
