@@ -17,6 +17,7 @@ public class ConsequenceRegistry {
     public static final Consequence DEFAULT;
     public static final Consequence OBSIDIAN;
     public static final Consequence CANDLE;
+    public static final Consequence AMETHYST;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -43,6 +44,20 @@ public class ConsequenceRegistry {
                     new ApplyCurse(),
                     new PlaySound(SoundEvents.BLOCK_CANDLE_EXTINGUISH),
                     new TransformBlock(Ingredient.ofItem(Items.CANDLE), Blocks.AIR.getDefaultState())
+                ),
+                true,
+                2
+            )
+        );
+        AMETHYST = register(
+            "amethyst",
+            new Consequence(
+                "Amethyst",
+                Ingredient.ofItem(Items.AMETHYST_CLUSTER),
+                List.of(
+                    new PlaySound(SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK),
+                    new TransformBlock(Ingredient.ofItem(Items.AMETHYST_CLUSTER), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.ofItems(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.AMETHYST_BLOCK.getDefaultState())
                 ),
                 true,
                 2
