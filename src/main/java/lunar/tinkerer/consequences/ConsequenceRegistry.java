@@ -1,12 +1,10 @@
 package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.MagicRevamped;
-import lunar.tinkerer.consequences.effects.ApplyCurse;
-import lunar.tinkerer.consequences.effects.ApplyEffect;
-import lunar.tinkerer.consequences.effects.PlaySound;
-import lunar.tinkerer.consequences.effects.TransformBlock;
+import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
@@ -22,6 +20,8 @@ public class ConsequenceRegistry {
     public static final Consequence AMETHYST;
     public static final Consequence GLOW_BERRIES;
     public static final Consequence SOUL_LANTERN;
+    public static final Consequence LIGHTNING_ROD;
+    public static final Consequence COBWEB;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -94,6 +94,33 @@ public class ConsequenceRegistry {
                 ),
                 false,
                 1
+            )
+        );
+        LIGHTNING_ROD = register(
+            "lightning_rod",
+            new Consequence(
+                "Lightning Rod",
+                Ingredient.ofItem(Items.LIGHTNING_ROD),
+                List.of(
+                    new SummonLightning()
+                ),
+                false,
+                3
+            )
+        );
+        COBWEB = register(
+            "cobweb",
+            new Consequence(
+                "Cobweb",
+                Ingredient.ofItem(Items.COBWEB),
+                List.of(
+                    new TransformBlock(Ingredient.ofItem(Items.COBWEB), Blocks.AIR.getDefaultState()),
+                    new SummonEntity<>(EntityType.CAVE_SPIDER),
+                    new SummonEntity<>(EntityType.CAVE_SPIDER),
+                    new SummonEntity<>(EntityType.CAVE_SPIDER)
+                ),
+                false,
+                2
             )
         );
     }
