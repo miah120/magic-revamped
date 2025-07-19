@@ -117,9 +117,7 @@ public class ConsequenceRegistry {
                 Ingredient.ofItem(Items.COBWEB),
                 List.of(
                     new TransformBlock(Ingredient.ofItem(Items.COBWEB), Blocks.AIR.getDefaultState()),
-                    new SummonEntity<>(EntityType.CAVE_SPIDER),
-                    new SummonEntity<>(EntityType.CAVE_SPIDER),
-                    new SummonEntity<>(EntityType.CAVE_SPIDER)
+                    new SummonEntity<>(EntityType.CAVE_SPIDER, 3)
                 ),
                 false,
                 2
@@ -133,9 +131,7 @@ public class ConsequenceRegistry {
                 List.of(
                     new EnchantSuccess(),
                     new TransformBlock(Ingredient.ofItem(Items.SKELETON_SKULL), Blocks.AIR.getDefaultState()),
-                    new SummonEntity<>(EntityType.SKELETON),
-                    new SummonEntity<>(EntityType.SKELETON),
-                    new SummonEntity<>(EntityType.SKELETON)
+                    new SummonEntity<>(EntityType.SKELETON, 3)
                 ),
                 true,
                 1
@@ -149,9 +145,7 @@ public class ConsequenceRegistry {
                 List.of(
                     new EnchantSuccess(),
                     new TransformBlock(Ingredient.ofItem(Items.WITHER_SKELETON_SKULL), Blocks.AIR.getDefaultState()),
-                    new SummonEntity<>(EntityType.WITHER_SKELETON),
-                    new SummonEntity<>(EntityType.WITHER_SKELETON),
-                    new SummonEntity<>(EntityType.WITHER_SKELETON)
+                    new SummonEntity<>(EntityType.WITHER_SKELETON, 3)
                 ),
                 true,
                 1

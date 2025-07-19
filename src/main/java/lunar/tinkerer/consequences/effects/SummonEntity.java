@@ -10,14 +10,15 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public record SummonEntity<T extends Entity>(EntityType<T> entityType) implements ConsequenceEffect {
+public record SummonEntity<T extends Entity>(EntityType<T> entityType, int count) implements ConsequenceEffect {
     @Override
     public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
-        var entity = entityType.spawn(world, player.getBlockPos(), SpawnReason.MOB_SUMMONED);
-        if (entity == null) return ItemStack.EMPTY;
-        world.addEntities(Stream.of(entity));
+        Stream<Entity> entities = IntStream.range(0, count)
+            .mapToObj(i -> entityType.spawn(world, player.getBlockPos(), SpawnReason.MOB_SUMMONED));
+        world.addEntities(entities);
         return ItemStack.EMPTY;
     }
 }
