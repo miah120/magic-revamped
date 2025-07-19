@@ -15,9 +15,8 @@ import java.util.stream.Stream;
 public record SummonEntity<T extends Entity>(EntityType<T> entityType) implements ConsequenceEffect {
     @Override
     public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
-        var entity = entityType.create(world, SpawnReason.MOB_SUMMONED);
+        var entity = entityType.spawn(world, player.getBlockPos(), SpawnReason.MOB_SUMMONED);
         if (entity == null) return ItemStack.EMPTY;
-        entity.setPos(player.getX(), player.getY(), player.getZ());
         world.addEntities(Stream.of(entity));
         return ItemStack.EMPTY;
     }
