@@ -2,10 +2,12 @@ package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.effects.ApplyCurse;
+import lunar.tinkerer.consequences.effects.ApplyEffect;
 import lunar.tinkerer.consequences.effects.PlaySound;
 import lunar.tinkerer.consequences.effects.TransformBlock;
 import lunar.tinkerer.registry.ModRegistries;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registry;
@@ -19,6 +21,7 @@ public class ConsequenceRegistry {
     public static final Consequence CANDLE;
     public static final Consequence AMETHYST;
     public static final Consequence GLOW_BERRIES;
+    public static final Consequence SOUL_LANTERN;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -54,13 +57,13 @@ public class ConsequenceRegistry {
             "amethyst",
             new Consequence(
                 "Amethyst",
-                Ingredient.ofItem(Items.AMETHYST_CLUSTER),
+                Ingredient.ofItems(Items.AMETHYST_CLUSTER, Items.SMALL_AMETHYST_BUD, Items.MEDIUM_AMETHYST_BUD, Items.LARGE_AMETHYST_BUD),
                 List.of(
                     new PlaySound(SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK),
                     new TransformBlock(Ingredient.ofItem(Items.AMETHYST_CLUSTER), Blocks.AIR.getDefaultState()),
                     new TransformBlock(Ingredient.ofItems(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.AMETHYST_BLOCK.getDefaultState())
                 ),
-                true,
+                false,
                 2
             )
         );
@@ -74,7 +77,22 @@ public class ConsequenceRegistry {
                     new TransformBlock(Ingredient.ofItem(Items.GLOW_BERRIES), Blocks.AIR.getDefaultState()),
                     new TransformBlock(Ingredient.ofItems(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.MOSS_BLOCK.getDefaultState())
                 ),
-                true,
+                false,
+                1
+            )
+        );
+        SOUL_LANTERN = register(
+            "soul_lantern",
+            new Consequence(
+                "Soul Lantern",
+                Ingredient.ofItems(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH),
+                List.of(
+                    new PlaySound(SoundEvents.PARTICLE_SOUL_ESCAPE.value()),
+                    new PlaySound(SoundEvents.BLOCK_LANTERN_BREAK),
+                    new TransformBlock(Ingredient.ofItems(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH), Blocks.AIR.getDefaultState()),
+                    new ApplyEffect(StatusEffects.WITHER)
+                ),
+                false,
                 1
             )
         );
