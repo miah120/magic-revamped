@@ -1,6 +1,7 @@
 package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.MagicRevamped;
+import lunar.tinkerer.consequences.effects.ApplyCurse;
 import lunar.tinkerer.consequences.effects.PlaySound;
 import lunar.tinkerer.consequences.effects.TransformBlock;
 import lunar.tinkerer.registry.ModRegistries;
@@ -13,8 +14,9 @@ import net.minecraft.sound.SoundEvents;
 import java.util.List;
 
 public class ConsequenceRegistry {
-    public static final Consequence OBSIDIAN;
     public static final Consequence DEFAULT;
+    public static final Consequence OBSIDIAN;
+    public static final Consequence CANDLE;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -29,6 +31,20 @@ public class ConsequenceRegistry {
                     new TransformBlock(Ingredient.ofItem(Items.OBSIDIAN), Blocks.CRYING_OBSIDIAN.getDefaultState())
                 ),
                 false,
+                2
+            )
+        );
+        CANDLE = register(
+            "candle",
+            new Consequence(
+                "Candle",
+                Ingredient.ofItem(Items.CANDLE),
+                List.of(
+                    new ApplyCurse(),
+                    new PlaySound(SoundEvents.BLOCK_CANDLE_EXTINGUISH),
+                    new TransformBlock(Ingredient.ofItem(Items.CANDLE), Blocks.AIR.getDefaultState())
+                ),
+                true,
                 2
             )
         );

@@ -553,7 +553,7 @@ public class ModEnchantmentScreenHandler
             boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos);
             if (!success) {
                 world.playSound(null, blockPos, SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
-                Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player);
+                Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
                 stack.setCount(result.entry().getCount());
                 stack.applyComponentsFrom(result.entry().getComponents());
                 player.addExperienceLevels(-getLevelRequirement(this.craftingInventory));
@@ -570,7 +570,7 @@ public class ModEnchantmentScreenHandler
         this.craftingInventory.markDirty();
     }
 
-    public Consequence.Result<ItemStack> doConsequence(World world, BlockPos blockPos, PlayerEntity player) {
+    public Consequence.Result<ItemStack> doConsequence(World world, BlockPos blockPos, PlayerEntity player, ItemStack stack) {
         if (!(world instanceof ServerWorld serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
         if (!(player instanceof ServerPlayerEntity serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
 
@@ -581,7 +581,7 @@ public class ModEnchantmentScreenHandler
                 .toList()
         );
         MagicRevamped.LOGGER.info(consequence.description());
-        return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory);
+        return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
     }
 
     public int getSingleBookshelfBonus(World world, BlockPos blockPos) {

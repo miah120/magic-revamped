@@ -23,7 +23,7 @@ public record Consequence(
     public static final Consequence EMPTY = new Consequence(
         "default",
         Ingredient.ofItem(Items.BARRIER),
-        List.of((world, blockPos, player, input) -> {
+        List.of((world, blockPos, player, input, stack) -> {
             IntStream.range(1, input.size()).forEach(
                 i -> input.removeStack(i, 1)
             );
@@ -34,9 +34,9 @@ public record Consequence(
     );
     public record Result<T> (T entry, boolean success) {}
 
-    public Result<ItemStack> run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input) {
+    public Result<ItemStack> run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
         var results = effectList.stream()
-            .map(effect -> effect.run(world, blockPos, player, input))
+            .map(effect -> effect.run(world, blockPos, player, input, stack))
             .toList();
         return new Result<>(
             results.isEmpty() ? ItemStack.EMPTY : results.getFirst(),

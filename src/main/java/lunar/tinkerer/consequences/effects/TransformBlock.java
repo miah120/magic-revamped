@@ -15,7 +15,7 @@ import java.util.List;
 
 public record TransformBlock(Ingredient target, BlockState result) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input) {
+    public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
         List<BlockPos> targets = ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
             .map(blockPos1 -> blockPos1.add(blockPos))
             .filter(blockPos1 -> this.test(world.getBlockState(blockPos1).getBlock()))

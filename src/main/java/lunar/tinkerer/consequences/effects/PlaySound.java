@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 
 public record PlaySound(SoundEvent soundEvent) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input) {
+    public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
         world.playSound(null, blockPos, soundEvent, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
         return ItemStack.EMPTY;
     }
