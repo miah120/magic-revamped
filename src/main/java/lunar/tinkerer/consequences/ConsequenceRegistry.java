@@ -22,6 +22,8 @@ public class ConsequenceRegistry {
     public static final Consequence SOUL_LANTERN;
     public static final Consequence LIGHTNING_ROD;
     public static final Consequence COBWEB;
+    public static final Consequence SKELETON_SKULL;
+    public static final Consequence WITHER_SKELETON_SKULL;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -121,6 +123,36 @@ public class ConsequenceRegistry {
                 ),
                 false,
                 2
+            )
+        );
+        SKELETON_SKULL = register(
+            "skeleton_skull",
+            new Consequence(
+                "Skeleton Skull",
+                Ingredient.ofItem(Items.SKELETON_SKULL),
+                List.of(
+                    new TransformBlock(Ingredient.ofItem(Items.SKELETON_SKULL), Blocks.AIR.getDefaultState()),
+                    new SummonEntity<>(EntityType.SKELETON),
+                    new SummonEntity<>(EntityType.SKELETON),
+                    new SummonEntity<>(EntityType.SKELETON)
+                ),
+                false,
+                1
+            )
+        );
+        WITHER_SKELETON_SKULL = register(
+            "wither_skeleton_skull",
+            new Consequence(
+                "Wither Skeleton Skull",
+                Ingredient.ofItem(Items.WITHER_SKELETON_SKULL),
+                List.of(
+                    new TransformBlock(Ingredient.ofItem(Items.WITHER_SKELETON_SKULL), Blocks.AIR.getDefaultState()),
+                    new SummonEntity<>(EntityType.WITHER_SKELETON),
+                    new SummonEntity<>(EntityType.WITHER_SKELETON),
+                    new SummonEntity<>(EntityType.WITHER_SKELETON)
+                ),
+                false,
+                1
             )
         );
     }
