@@ -147,6 +147,7 @@ public class ConsequenceRegistry {
                 Ingredient.ofItem(Items.WITHER_SKELETON_SKULL),
                 List.of(
                     new TransformBlock(Ingredient.ofItem(Items.WITHER_SKELETON_SKULL), Blocks.AIR.getDefaultState()),
+                    //TODO: Where r their swords?
                     new SummonEntity<>(EntityType.WITHER_SKELETON),
                     new SummonEntity<>(EntityType.WITHER_SKELETON),
                     new SummonEntity<>(EntityType.WITHER_SKELETON)
