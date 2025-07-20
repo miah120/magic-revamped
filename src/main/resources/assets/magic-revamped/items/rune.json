@@ -25,6 +25,7 @@
       {"when": "minecraft:knockback", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/knockback"}},
       {"when": "minecraft:looting", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/looting"}},
       {"when": "minecraft:loyalty", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/loyalty"}},
+      {"when": "magic-revamped:luck", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/luck"}},
       {"when": "minecraft:luck_of_the_sea", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/luck_of_the_sea"}},
       {"when": "minecraft:lure", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/lure"}},
       {"when": "minecraft:mending", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/mending"}},
