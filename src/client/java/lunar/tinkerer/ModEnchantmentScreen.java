@@ -149,23 +149,6 @@ public class ModEnchantmentScreen
                 x, y + 16 - Math.floorDiv(16 * timeout, ModEnchantmentScreenHandler.MAX_TIME_OUT),
                 x+16, y+16,
                 0xBFBFBFAA
-    );
-    }
-
-    public void renderFailure(DrawContext context, int x, int y, Text message) {
-        context.fill(
-            RenderPipelines.GUI,
-            x, y,
-            x + 60, y + 22,
-            0x4F000000
-        );
-        context.drawWrappedTextWithShadow(
-            this.textRenderer,
-            message,
-            x + 3,
-            y + 3,
-            60,
-            0xDFd31b1b
         );
     }
 
@@ -174,10 +157,7 @@ public class ModEnchantmentScreen
         int x = this.handler.resultSlot.x + this.x - 33;
         int y = this.handler.resultSlot.y + this.y + 47;
 
-        if (!this.handler.resultSlot.canTakeItems(this.handler.player)) {
-            this.renderFailure(context, x - 7, y - 5, Text.translatable("container.enchant.levels"));
-            return;
-        }
+        int color = this.handler.resultSlot.canTakeItems(this.handler.player) ? -8323296 : 0xDFd31b1b;
 
         String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory);
         EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
@@ -199,14 +179,14 @@ public class ModEnchantmentScreen
             x + 3,
             y + 3,
             40,
-            -8323296
+            color
         );
         context.drawTextWithShadow(
             this.textRenderer,
             risk,
             x + 3 + this.textRenderer.getWidth(riskLabel),
             y + 3,
-            -8323296
+            color
         );
     }
 
