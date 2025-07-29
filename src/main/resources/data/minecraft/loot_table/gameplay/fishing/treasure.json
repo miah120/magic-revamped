@@ -71,7 +71,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:nautilus_shell",
-          "weight": 3
+          "weight": 6
         },
         {
           "type": "minecraft:item",
@@ -88,6 +88,7 @@
         {
           "type": "minecraft:item",
           "name": "magic-revamped:rune",
+          "weight": 2,
           "functions": [
             {
               "function": "minecraft:set_components",
@@ -100,6 +101,7 @@
         {
           "type": "minecraft:item",
           "name": "magic-revamped:rune",
+          "weight": 6,
           "functions": [
             {
               "function": "minecraft:set_components",
