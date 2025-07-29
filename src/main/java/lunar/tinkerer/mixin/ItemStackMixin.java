@@ -1,5 +1,6 @@
 package lunar.tinkerer.mixin;
 
+import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.ModItems;
 import lunar.tinkerer.RuneItem;
 import net.minecraft.component.DataComponentTypes;
@@ -8,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Unit;
@@ -45,16 +47,39 @@ public class ItemStackMixin {
                 serverWorld,
                 serverPlayerEntity,
                 (Item item) -> {
+                    RuneItem.LeveledEnchantment chargedEnchant = getChargedEnchant(thisCopy, enchantments, serverWorld);
+                    int flux = getFluxValue(thisCopy);
                     enchantments.forEach(leveledEnchantment -> {
                         ItemStack itemStack = new ItemStack(ModItems.RUNE, leveledEnchantment.level());
                         itemStack.set(ModItems.OPEN, Unit.INSTANCE);
                         itemStack.set(ModItems.ENCHANTMENT, leveledEnchantment.enchantment());
-                        itemStack.set(ModItems.FLUX, getFluxValue(thisCopy));
+                        itemStack.set(ModItems.FLUX, flux);
+                        if(leveledEnchantment == chargedEnchant) {
+                            ItemStack chargedRune = itemStack.split(1);
+                            chargedRune.set(ModItems.CHARGED, Unit.INSTANCE);
+                            serverPlayerEntity.dropItem(chargedRune, false);
+                        }
+                        if(itemStack.isEmpty()) return;
                         serverPlayerEntity.dropItem(itemStack, false);
                     });
                     entity.sendEquipmentBreakStatus(item, slot);
                 });
         ci.cancel();
+    }
+
+    @Unique
+    RuneItem.LeveledEnchantment getChargedEnchant(ItemStack itemStack, List<RuneItem.LeveledEnchantment> enchantments, ServerWorld world) {
+        if (!itemStack.isIn(ModItems.DROPS_CHARGED_RUNE)) {
+            return null;
+        }
+        List<RuneItem.LeveledEnchantment> viable = enchantments.stream().filter(
+                leveledEnchantment -> leveledEnchantment.enchantment().value().getMaxLevel() > 1
+        ).toList();
+        if (viable.isEmpty()) {
+            return null;
+        }
+        int pickedSlot = world.random.nextInt(viable.size());
+        return viable.get(pickedSlot);
     }
 
     @Unique

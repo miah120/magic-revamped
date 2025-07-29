@@ -14,6 +14,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.dynamic.Codecs;
 
@@ -34,6 +36,13 @@ public class ModItems {
                     .packetCodec(Unit.PACKET_CODEC)
     );
 
+    public static ComponentType<Unit> CHARGED = registerDataComponent(
+            "charged",
+            builder -> builder
+                    .codec(Unit.CODEC)
+                    .packetCodec(Unit.PACKET_CODEC)
+    );
+
     public static ComponentType<RegistryEntry<Enchantment>> ENCHANTMENT = registerDataComponent(
             "enchantment",
             builder -> builder
@@ -48,6 +57,8 @@ public class ModItems {
             .component(ENCHANTMENT, null)
             .component(FLUX, RuneItem.DEFAULT_RUNE_FLUX)
     );
+
+    public static final TagKey<Item> DROPS_CHARGED_RUNE = TagKey.of(RegistryKeys.ITEM, MagicRevamped.identifier("drops_charged_rune"));
 
     public static void initialize() {
         addBlocksToItemGroup();
