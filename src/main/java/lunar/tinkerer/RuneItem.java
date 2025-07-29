@@ -54,10 +54,13 @@ public class RuneItem extends Item {
 
     public String _getTranslationKey(ItemStack stack) {
         String base = this.translationKey + ".template";
-        Optional<Unit> optional = Optional.ofNullable(stack.get(ModItems.OPEN));
-        return optional.isEmpty()
-                ? base
-                : base + ".open";
+        Optional<Unit> open = Optional.ofNullable(stack.get(ModItems.OPEN));
+        Optional<Unit> charged = Optional.ofNullable(stack.get(ModItems.CHARGED));
+        return charged.isPresent()
+                ? base + ".charged"
+                : open.isPresent()
+                    ? base + ".open"
+                    : base;
     }
 
     @Override
