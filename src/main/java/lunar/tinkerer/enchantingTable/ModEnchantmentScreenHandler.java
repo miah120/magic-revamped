@@ -583,7 +583,17 @@ public class ModEnchantmentScreenHandler
     }
 
     public int getBookBonus(ItemStack itemStack) {
-        return RuneItem.getEnchantments(itemStack)
+        List<RuneItem.LeveledEnchantment> enchantments = RuneItem.getEnchantments(itemStack).toList();
+        int specialtyBonus = this.craftingInventory.getHeldStacks().subList(1,9).stream()
+            .map(itemStack1 -> Optional.ofNullable(itemStack1.get(ModItems.ENCHANTMENT)).map(RegistryEntry::value))
+            .anyMatch(
+                enchantment -> enchantments.stream()
+                    .map(RuneItem.LeveledEnchantment::enchantment)
+                    .map(RegistryEntry::value)
+                    .anyMatch(enchantment1 -> enchantment.filter(value -> value == enchantment1).isPresent())
+            ) ? 10 : 0;
+
+        return specialtyBonus + enchantments.stream()
                 .map(RuneItem.LeveledEnchantment::level)
                 .map(i -> switch (i) {
                     case 1 -> 3;
@@ -591,6 +601,7 @@ public class ModEnchantmentScreenHandler
                     case 3 -> 8;
                     case 4 -> 13;
                     case 5 -> 21;
+                    case 6 -> 34;
                     default -> 1;
                 })
                 .reduce(1, Integer::max);
