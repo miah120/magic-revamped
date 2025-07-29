@@ -383,15 +383,11 @@ public class ModEnchantmentScreenHandler
         ItemStack result = inputs.stream()
             .filter(itemStack -> itemStack.get(ModItems.ENCHANTMENT) != null)
             .sorted((itemStack1, itemStack2)  -> {
-                var open1 = itemStack1.get(ModItems.OPEN);
-                var open2 = itemStack2.get(ModItems.OPEN);
-                if (open2 == open1) {
-                    return 0;
-                } else if(open2 == Unit.INSTANCE) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                var open1 = itemStack1.get(ModItems.OPEN) != null ? 1 : 0;
+                var open2 = itemStack2.get(ModItems.OPEN) != null ? 1 : 0;
+                var charged1 = itemStack1.get(ModItems.CHARGED) != null ? 10 : 0;
+                var charged2 = itemStack2.get(ModItems.CHARGED) != null ? 10 : 0;
+                return open1 + charged1 - open2 - charged2;
             })
             .reduce( conduit.copy(),
                 (subResult, rune) -> {
@@ -434,7 +430,8 @@ public class ModEnchantmentScreenHandler
     public static int getResultEnchantmentLevel(ItemStack itemStack, RegistryEntry<Enchantment> entry, Enchantment enchantment, ItemStack rune) {
         if (rune.get(ModItems.OPEN) == null) return 1;
         int currentLevel = EnchantmentHelper.getEnchantments(itemStack).getLevel(entry);
-        return Math.min(currentLevel + 1, enchantment.getMaxLevel());
+        int maxLevel = rune.get(ModItems.CHARGED) == null ? enchantment.getMaxLevel() : enchantment.getMaxLevel() + 1;
+        return Math.min(currentLevel + 1, maxLevel);
     }
 
     @Override
