@@ -529,13 +529,14 @@ public class ModEnchantmentScreenHandler
         int flux = ModEnchantmentScreenHandler.getFlux(input);
         int playerCheck = player.getRandom().nextBetween(0, 1000);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
-        int bookshelfCheck = player.getRandom().nextBetween(0, bookshelfBonus);
+        int bookshelfCheck = player.getRandom().nextBetween(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
         boolean success = (playerCheck + bookshelfCheck > flux);
         MagicRevamped.LOGGER.info(
-            "{} : [{} + {}] {} {}",
+            "{} : [{}:1000 + {}:{}] {} {}",
             success ? "Success!" : "Failure :(",
             playerCheck,
             bookshelfCheck,
+            bookshelfBonus,
             success ? ">" : "<",
             flux
         );
@@ -558,7 +559,7 @@ public class ModEnchantmentScreenHandler
                 stack.applyComponentsFrom(result.entry().getComponents());
                 player.addExperienceLevels(-getLevelRequirement(this.craftingInventory));
                 if (!result.success()) return;
-            };
+            }
 
             player.incrementStat(Stats.ENCHANT_ITEM);
             world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
@@ -584,6 +585,20 @@ public class ModEnchantmentScreenHandler
         return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
     }
 
+    public int getBookBonus(ItemStack itemStack) {
+        return RuneItem.getEnchantments(itemStack)
+                .map(RuneItem.LeveledEnchantment::level)
+                .map(i -> switch (i) {
+                    case 1 -> 3;
+                    case 2 -> 5;
+                    case 3 -> 8;
+                    case 4 -> 13;
+                    case 5 -> 21;
+                    default -> 1;
+                })
+                .reduce(1, Integer::max);
+    }
+
     public int getSingleBookshelfBonus(World world, BlockPos blockPos) {
         BlockEntity blockEntity = world.getBlockEntity(blockPos);
         if(!(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity)) {
@@ -592,9 +607,7 @@ public class ModEnchantmentScreenHandler
         AtomicInteger levelSum = new AtomicInteger();
         chiseledBookshelfBlockEntity.forEach(itemStack -> {
             if(itemStack.isEmpty()) return;
-            int maxEnchantLevel = RuneItem.getEnchantments(itemStack)
-                                          .map(RuneItem.LeveledEnchantment::level)
-                                          .reduce(1, Integer::max);
+            int maxEnchantLevel = getBookBonus(itemStack);
             levelSum.addAndGet(maxEnchantLevel);
         });
         return levelSum.get();

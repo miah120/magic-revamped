@@ -2,6 +2,7 @@ package lunar.tinkerer;
 
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -106,7 +107,7 @@ public class RuneItem extends Item {
 
     public record LeveledEnchantment(RegistryEntry<Enchantment> enchantment, int level) {}
     public static Stream<LeveledEnchantment> getEnchantments(ItemStack itemStack) {
-        var enchantments = itemStack.getEnchantments();
+        var enchantments = EnchantmentHelper.getEnchantments(itemStack);
         return enchantments.getEnchantmentEntries().stream().map(enchantmentRegistryEntryEntry -> {
             var enchantment = enchantmentRegistryEntryEntry.getKey();
             int level = enchantments.getLevel(enchantment);
