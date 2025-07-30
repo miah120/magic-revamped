@@ -24,6 +24,7 @@ public class ConsequenceRegistry {
     public static final Consequence COBWEB;
     public static final Consequence SKELETON_SKULL;
     public static final Consequence WITHER_SKELETON_SKULL;
+    public static final Consequence GILDED_BLACKSTONE;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -149,6 +150,20 @@ public class ConsequenceRegistry {
                 ),
                 true,
                 1
+            )
+        );
+        GILDED_BLACKSTONE = register(
+            "gilded_blackstone",
+            new Consequence(
+                "",
+                Ingredient.ofItem(Items.GILDED_BLACKSTONE),
+                List.of(
+                    new EnchantSuccess(),
+                    new TransformBlock(Ingredient.ofItem(Items.GILDED_BLACKSTONE), Blocks.AIR.getDefaultState()),
+                    new Explosion()
+                ),
+                true,
+                3
             )
         );
     }
