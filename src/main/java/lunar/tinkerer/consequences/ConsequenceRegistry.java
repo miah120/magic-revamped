@@ -10,6 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ConsequenceRegistry {
     public static final Consequence SKELETON_SKULL;
     public static final Consequence WITHER_SKELETON_SKULL;
     public static final Consequence GILDED_BLACKSTONE;
+    public static final Consequence SEA_LANTERN;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -164,6 +166,20 @@ public class ConsequenceRegistry {
                 ),
                 true,
                 3
+            )
+        );
+        SEA_LANTERN = register(
+            "sea_lantern",
+            new Consequence(
+                "Sea Lantern",
+                Ingredient.ofItem(Items.SEA_LANTERN),
+                List.of(
+                    new TransformArea(new Vec3i(-2, -2, -2), new Vec3i(2, 2, 2), Blocks.WATER.getDefaultState(), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.ofItem(Items.SEA_LANTERN), Blocks.AIR.getDefaultState()),
+                    new SummonEntity<>(EntityType.GUARDIAN, 3)
+                ),
+                false,
+                1
             )
         );
     }
