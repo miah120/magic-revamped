@@ -1,0 +1,31 @@
+{
+  "criteria": {
+    "book": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:enchanted_book",
+            "predicates": {
+              "minecraft:stored_enchantments": [
+                {
+                  "enchantments": "minecraft:breach"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "book"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "magic-revamped:rune/breach"
+    ]
+  }
+}
