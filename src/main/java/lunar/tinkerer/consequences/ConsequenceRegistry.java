@@ -9,9 +9,11 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3i;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ConsequenceRegistry {
@@ -27,6 +29,7 @@ public class ConsequenceRegistry {
     public static final Consequence WITHER_SKELETON_SKULL;
     public static final Consequence GILDED_BLACKSTONE;
     public static final Consequence SEA_LANTERN;
+    public static final Consequence END_ROD;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -180,6 +183,19 @@ public class ConsequenceRegistry {
                 ),
                 false,
                 1
+            )
+        );
+        END_ROD = register(
+            "end_rod",
+            new Consequence(
+                "End rod",
+                Ingredient.ofItem(Items.END_ROD),
+                List.of(
+                    new TransformBlock(Ingredient.ofItem(Items.END_ROD), Blocks.AIR.getDefaultState()),
+                    new Teleport(25, 50)
+                ),
+                false,
+                2
             )
         );
     }
