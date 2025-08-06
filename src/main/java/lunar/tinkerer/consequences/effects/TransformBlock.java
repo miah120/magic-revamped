@@ -22,7 +22,7 @@ public record TransformBlock(Ingredient target, BlockState result) implements Co
             .filter(blockPos1 -> this.test(world.getBlockState(blockPos1).getBlock()))
             .toList();
         BlockPos target = targets.get(world.random.nextInt(targets.size()));
-        if (world.getBlockState(target).getBlock() instanceof TallPlantBlock) {
+        if (result.getBlock() instanceof TallPlantBlock) {
             TallPlantBlock.placeAt(world, result, blockPos, 2);
         } else {
             world.setBlockState(target, this.result);
