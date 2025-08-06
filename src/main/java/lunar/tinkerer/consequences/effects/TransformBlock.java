@@ -4,6 +4,7 @@ import lunar.tinkerer.consequences.ConsequenceEffect;
 import lunar.tinkerer.enchantingTable.ModEnchantingTableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.TallPlantBlock;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -21,7 +22,11 @@ public record TransformBlock(Ingredient target, BlockState result) implements Co
             .filter(blockPos1 -> this.test(world.getBlockState(blockPos1).getBlock()))
             .toList();
         BlockPos target = targets.get(world.random.nextInt(targets.size()));
-        world.setBlockState(target, this.result);
+        if (world.getBlockState(target).getBlock() instanceof TallPlantBlock) {
+            TallPlantBlock.placeAt(world, result, blockPos, 2);
+        } else {
+            world.setBlockState(target, this.result);
+        }
         return ItemStack.EMPTY;
     }
 

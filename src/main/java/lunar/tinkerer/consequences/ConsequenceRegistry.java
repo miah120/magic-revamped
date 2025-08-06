@@ -1,13 +1,16 @@
 package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.MagicRevamped;
+import lunar.tinkerer.ModBlocks;
 import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundEvents;
@@ -30,6 +33,7 @@ public class ConsequenceRegistry {
     public static final Consequence GILDED_BLACKSTONE;
     public static final Consequence SEA_LANTERN;
     public static final Consequence END_ROD;
+    public static final Consequence PLANT;
 
     //TODO: Implement the rest of the Consequences
     static {
@@ -196,6 +200,19 @@ public class ConsequenceRegistry {
                 ),
                 false,
                 2
+            )
+        );
+        PLANT = register(
+            "plant",
+            new Consequence(
+                "Plant",
+                Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)),
+                List.of(
+                    new TransformBlock(Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.ofItem(ModBlocks.ENCHANTING_TABLE.asItem()), Blocks.ROSE_BUSH.getDefaultState())
+                ),
+                false,
+                1
             )
         );
     }
