@@ -1,7 +1,11 @@
 package lunar.tinkerer;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderLayerHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.BlockRenderLayer;
+import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
 public class MagicRevampedClient implements ClientModInitializer {
@@ -12,5 +16,6 @@ public class MagicRevampedClient implements ClientModInitializer {
 				ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER,
 				ModEnchantmentScreen::new
 		);
+		BlockRenderLayerMap.putBlock(ModBlocks.MANATHIEF, BlockRenderLayer.CUTOUT);
 	}
 }

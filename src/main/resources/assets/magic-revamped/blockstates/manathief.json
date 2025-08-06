@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "magic-revamped:block/manathief_bottom"
+    },
+    "half=upper": {
+      "model": "magic-revamped:block/manathief_top"
+    }
+  }
+}

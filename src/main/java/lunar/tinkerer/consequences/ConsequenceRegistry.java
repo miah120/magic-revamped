@@ -35,7 +35,6 @@ public class ConsequenceRegistry {
     public static final Consequence END_ROD;
     public static final Consequence PLANT;
 
-    //TODO: Implement the rest of the Consequences
     static {
         DEFAULT = register("default", Consequence.EMPTY);
         OBSIDIAN = register(
@@ -209,7 +208,7 @@ public class ConsequenceRegistry {
                 Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)),
                 List.of(
                     new TransformBlock(Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)), Blocks.AIR.getDefaultState()),
-                    new TransformBlock(Ingredient.ofItem(ModBlocks.ENCHANTING_TABLE.asItem()), Blocks.ROSE_BUSH.getDefaultState())
+                    new TransformBlock(Ingredient.ofItem(ModBlocks.ENCHANTING_TABLE.asItem()), ModBlocks.MANATHIEF.getDefaultState())
                 ),
                 false,
                 1
