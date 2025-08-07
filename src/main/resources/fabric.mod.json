@@ -37,5 +37,8 @@
 		"minecraft": "~1.21.6",
 		"java": ">=21",
 		"fabric-api": "*"
+	},
+	"recommends": {
+		"villagerconfig": ">=4.4.6"
 	}
 }
