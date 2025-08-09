@@ -17,6 +17,11 @@ public class ModBlockEntities {
             ModEnchantingTableBlockEntity::new,
             ModBlocks.ENCHANTING_TABLE
     );
+    public static final BlockEntityType<ManathiefBlockEntity> MANATHIEF_BLOCK_ENTITY = registerBlockEntity(
+            "manathief",
+            ManathiefBlockEntity::new,
+            ModBlocks.MANATHIEF
+    );
     public static final ScreenHandlerType<ModEnchantmentScreenHandler> ENCHANTMENT_SCREEN_HANDLER = Registry.register(
             Registries.SCREEN_HANDLER,
             MagicRevamped.identifier("enchanting_table"),

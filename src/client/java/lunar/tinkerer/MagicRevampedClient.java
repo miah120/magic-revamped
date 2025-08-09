@@ -12,6 +12,7 @@ public class MagicRevampedClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		BlockEntityRendererFactories.register(ModBlockEntities.ENCHANTING_TABLE_BLOCK_ENTITY, ModEnchantingTableBlockEntityRenderer::new);
+		BlockEntityRendererFactories.register(ModBlockEntities.MANATHIEF_BLOCK_ENTITY, ManathiefBlockEntityRenderer::new);
 		HandledScreens.register(
 				ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER,
 				ModEnchantmentScreen::new

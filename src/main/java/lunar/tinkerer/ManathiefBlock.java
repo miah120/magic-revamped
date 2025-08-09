@@ -4,31 +4,26 @@ import com.mojang.serialization.MapCodec;
 import java.util.function.Function;
 
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCollisionHandler;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.RavagerEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
-import net.minecraft.world.tick.ScheduledTickView;
 import org.jetbrains.annotations.Nullable;
 
-public class ManathiefBlock extends TallPlantBlock {
+public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvider {
     public static final MapCodec<ManathiefBlock> CODEC = createCodec(ManathiefBlock::new);
     public static final EnumProperty<DoubleBlockHalf> HALF = TallPlantBlock.HALF;
     private static final VoxelShape LOWER_COLLISION_SHAPE = Block.createColumnShape(10.0, -1.0, 5.0);
@@ -97,4 +92,20 @@ public class ManathiefBlock extends TallPlantBlock {
         return false;
     }
 
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return state.get(HALF) == DoubleBlockHalf.UPPER ? new ManathiefBlockEntity(pos, state) : null;
+    }
+
+    @Override
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return world.isClient ? ManathiefBlock.validateTicker(type, ManathiefBlockEntity::tick) : null;
+    }
+
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> validateTicker(
+            BlockEntityType<A> givenType, BlockEntityTicker<? super E> ticker
+    ) {
+        return ModBlockEntities.MANATHIEF_BLOCK_ENTITY == givenType ? (BlockEntityTicker<A>) ticker : null;
+    }
 }
