@@ -7,7 +7,6 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.entity.model.BookModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.SpriteIdentifier;
@@ -21,34 +20,26 @@ import net.minecraft.util.math.Vec3d;
 public class ManathiefBlockEntityRenderer
         implements BlockEntityRenderer<ManathiefBlockEntity> {
     public static final SpriteIdentifier BOOK_TEXTURE = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, Identifier.ofVanilla("entity/enchanting_table_book"));
-    private final BookModel book;
+    private final ManathiefFaceModel face;
 
     public ManathiefBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.book = new BookModel(ctx.getLayerModelPart(EntityModelLayers.BOOK));
+        this.face = new ManathiefFaceModel(ctx.getLayerModelPart(EntityModelLayers.BOOK));
     }
 
     @Override
-    public void render(ManathiefBlockEntity enchantingTableBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, Vec3d vec3d) {
-        float h;
+    public void render(ManathiefBlockEntity manathiefBlockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j, Vec3d vec3d) {
         matrixStack.push();
         matrixStack.translate(0.5f, 0.75f, 0.5f);
-        float g = (float)enchantingTableBlockEntity.ticks + f;
+        float g = (float) manathiefBlockEntity.ticks + f;
         matrixStack.translate(0.0f, 0.1f + MathHelper.sin(g * 0.1f) * 0.01f, 0.0f);
-        for (h = enchantingTableBlockEntity.bookRotation - enchantingTableBlockEntity.lastBookRotation; h >= (float)Math.PI; h -= (float)Math.PI * 2) {
-        }
-        while (h < (float)(-Math.PI)) {
-            h += (float)Math.PI * 2;
-        }
-        float k = enchantingTableBlockEntity.lastBookRotation + h * f;
+        float h2 = ManathiefBlockEntity.normalizeRotation(manathiefBlockEntity.bookRotation - manathiefBlockEntity.lastBookRotation);
+        float k = manathiefBlockEntity.lastBookRotation + h2 * f;
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(-k));
-        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(80.0f));
-        float l = MathHelper.lerp(f, enchantingTableBlockEntity.pageAngle, enchantingTableBlockEntity.nextPageAngle);
-        float m = MathHelper.fractionalPart(l + 0.25f) * 1.6f - 0.3f;
-        float n = MathHelper.fractionalPart(l + 0.75f) * 1.6f - 0.3f;
-        float o = MathHelper.lerp(f, enchantingTableBlockEntity.pageTurningSpeed, enchantingTableBlockEntity.nextPageTurningSpeed);
-        this.book.setPageAngles(g, MathHelper.clamp(m, 0.0f, 1.0f), MathHelper.clamp(n, 0.0f, 1.0f), o);
+        ////matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(80.0f));
+        //matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(-p));
+        this.face.setPageAngles(g, 1, 0, 1);
         VertexConsumer vertexConsumer = BOOK_TEXTURE.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntitySolid);
-        this.book.render(matrixStack, vertexConsumer, i, j);
+        this.face.render(matrixStack, vertexConsumer, i, j);
         matrixStack.pop();
     }
 }
