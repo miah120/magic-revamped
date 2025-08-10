@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvider {
     public static final MapCodec<ManathiefBlock> CODEC = createCodec(ManathiefBlock::new);
     public static final EnumProperty<DoubleBlockHalf> HALF = TallPlantBlock.HALF;
-    private static final VoxelShape LOWER_COLLISION_SHAPE = Block.createColumnShape(10.0, -1.0, 5.0);
+    private static final VoxelShape LOWER_COLLISION_SHAPE = Block.createColumnShape(16.0, 0, 8.0);
     private final Function<BlockState, VoxelShape> shapeFunction = this.createShapeFunction();
 
     @Override
@@ -40,7 +40,7 @@ public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvide
 
     private Function<BlockState, VoxelShape> createShapeFunction() {
         return this.createShapeFunction(state -> switch (state.get(HALF)) {
-            case LOWER -> Block.createColumnShape(10, -1.0, 16);
+            case LOWER -> Block.createColumnShape(10, 0, 16);
             case UPPER -> Block.createColumnShape(10, 0.0, 15);
         });
     }
