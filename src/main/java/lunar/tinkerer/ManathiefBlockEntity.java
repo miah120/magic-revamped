@@ -40,8 +40,6 @@ public class ManathiefBlockEntity
             double d = playerEntity.getX() - ((double) pos.getX() + 0.5);
             double e = playerEntity.getZ() - ((double) pos.getZ() + 0.5);
             blockEntity.targetBookRotation = (float) MathHelper.atan2(e, d);
-        } else {
-            blockEntity.targetBookRotation += 0.02f;
         }
         blockEntity.bookRotation = normalizeRotation(blockEntity.bookRotation);
         blockEntity.targetBookRotation = normalizeRotation(blockEntity.targetBookRotation);

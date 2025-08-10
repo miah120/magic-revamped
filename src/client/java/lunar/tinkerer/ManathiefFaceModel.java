@@ -1,39 +1,47 @@
 package lunar.tinkerer;
 
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.math.MathHelper;
 
 
-public class ManathiefFaceModel extends Model {
-    private final ModelPart leftCover;
-    private final ModelPart rightCover;
-    private final ModelPart leftPages;
-    private final ModelPart rightPages;
-    private final ModelPart leftFlippingPage;
-    private final ModelPart rightFlippingPage;
+public class ManathiefFaceModel extends Model implements EntityModelLayerRegistry.TexturedModelDataProvider {
+    private final ModelPart face;
+    private final ModelPart leaf1;
+    private final ModelPart leaf2;
+    private final ModelPart leaf3;
 
     public ManathiefFaceModel(ModelPart root) {
         super(root, RenderLayer::getEntitySolid);
-        this.leftCover = root.getChild("left_lid");
-        this.rightCover = root.getChild("right_lid");
-        this.leftPages = root.getChild("left_pages");
-        this.rightPages = root.getChild("right_pages");
-        this.leftFlippingPage = root.getChild("flip_page1");
-        this.rightFlippingPage = root.getChild("flip_page2");
+        this.face = root.getChild("face");
+        this.leaf1 = root.getChild("leaf1");
+        this.leaf2 = root.getChild("leaf2");
+        this.leaf3 = root.getChild("leaf3");
     }
 
     public void setPageAngles(float pageTurnAmount, float leftFlipAmount, float rightFlipAmount, float pageTurnSpeed) {
-        float f = (MathHelper.sin(pageTurnAmount * 0.02F) * 0.1F + 1.25F) * pageTurnSpeed;
-        this.leftCover.yaw = (float)Math.PI + f;
-        this.rightCover.yaw = -f;
-        this.leftPages.yaw = f;
-        this.rightPages.yaw = -f;
-        this.leftFlippingPage.yaw = f - f * 2.0F * leftFlipAmount;
-        this.rightFlippingPage.yaw = f - f * 2.0F * rightFlipAmount;
-        this.leftPages.originX = MathHelper.sin(f);
-        this.rightPages.originX = MathHelper.sin(f);
-        this.leftFlippingPage.originX = MathHelper.sin(f);
-        this.rightFlippingPage.originX = MathHelper.sin(f);
+    }
+
+    public static TexturedModelData getTexturedModelData() {
+		ModelData modelData = new ModelData();
+		ModelPartData modelPartData = modelData.getRoot();
+		ModelPartData face =  modelPartData.addChild("face", ModelPartBuilder.create().uv(-8, 8).cuboid(-4.0F, -1.0F, -4.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.rotation(0.0F, 24.0F, 0.0F));
+		ModelPartData leaf1 = modelPartData.addChild("leaf1", ModelPartBuilder.create().uv(-8, 0).cuboid(-8.0F, 0.0F, -8.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(1.0F, 0.0F, 1.0F, -0.0873F, 0.0F, 0.0873F));
+		ModelPartData leaf2 = modelPartData.addChild("leaf2", ModelPartBuilder.create().uv(-8, 0).cuboid(-8.0F, 0.0F, -8.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(-1.0F, 0.0F, 0.0F, 0.0F, -2.0944F, -0.1745F));
+		ModelPartData leaf3 = modelPartData.addChild("leaf3", ModelPartBuilder.create().uv(-8, 0).cuboid(-8.0F, 0.0F, -8.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, -1.0F, -0.2618F, 2.0944F, -0.1745F));
+		return TexturedModelData.of(modelData, 16, 16);
+	}
+
+
+    @Override
+    public TexturedModelData createModelData() {
+        ModelData modelData = new ModelData();
+        ModelPartData modelPartData = modelData.getRoot();
+        ModelPartData face =  modelPartData.addChild("face", ModelPartBuilder.create().uv(-8, 8).cuboid(-4.0F, -1.0F, -4.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.rotation(0.0F, 24.0F, 0.0F));
+        ModelPartData leaf1 = modelPartData.addChild("leaf1", ModelPartBuilder.create().uv(-8, 0).cuboid(-8.0F, 0.0F, -8.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(1.0F, 0.0F, 1.0F, -0.0873F, 0.0F, 0.0873F));
+        ModelPartData leaf2 = modelPartData.addChild("leaf2", ModelPartBuilder.create().uv(-8, 0).cuboid(-8.0F, 0.0F, -8.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(-1.0F, 0.0F, 0.0F, 0.0F, -2.0944F, -0.1745F));
+        ModelPartData leaf3 = modelPartData.addChild("leaf3", ModelPartBuilder.create().uv(-8, 0).cuboid(-8.0F, 0.0F, -8.0F, 8.0F, 0.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, -1.0F, -0.2618F, 2.0944F, -0.1745F));
+        return TexturedModelData.of(modelData, 16, 16);
     }
 }
