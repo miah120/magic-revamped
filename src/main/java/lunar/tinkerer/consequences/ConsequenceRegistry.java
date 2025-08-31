@@ -113,6 +113,7 @@ public class ConsequenceRegistry {
                 "Lightning Rod",
                 Ingredient.ofItem(Items.LIGHTNING_ROD),
                 List.of(
+                    new TransformBlock(Ingredient.ofItem(Items.LIGHTNING_ROD), Blocks.AIR.getDefaultState()),
                     new SummonLightning()
                 ),
                 false,
