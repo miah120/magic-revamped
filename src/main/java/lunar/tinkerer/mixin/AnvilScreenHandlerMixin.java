@@ -80,6 +80,9 @@ public class AnvilScreenHandlerMixin {
 					}
 				}
 			}
+			if (result.isDamageable()) {
+				result.set(DataComponentTypes.MAX_DAMAGE, result.getMaxDamage() + 1);
+			}
 		}
 		if (accessor.getNewItemName() == null || StringHelper.isBlank(accessor.getNewItemName())) {
 			if (input.contains(DataComponentTypes.CUSTOM_NAME)) {
