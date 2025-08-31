@@ -578,7 +578,6 @@ public class ModEnchantmentScreenHandler
                 .map(blockPos1 -> blockPos1.add(blockPos))
                 .toList()
         );
-        MagicRevamped.LOGGER.info(consequence.description());
         return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
     }
 

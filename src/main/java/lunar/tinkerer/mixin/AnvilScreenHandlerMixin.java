@@ -24,7 +24,6 @@ public class AnvilScreenHandlerMixin {
 
 	@Unique
 	public void myUpdateResult() {
-		MagicRevamped.LOGGER.info("We anvilling");
 		AnvilScreenHandler thisObject = (AnvilScreenHandler) (Object)this;
 		AnvilScreenHandlerAccessor accessor = (AnvilScreenHandlerAccessor) thisObject;
 		ForgingScreenHandlerAccessor forgingAccessor = (ForgingScreenHandlerAccessor) thisObject;
