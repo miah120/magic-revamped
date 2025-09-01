@@ -297,9 +297,6 @@ public class ModEnchantmentScreenHandler
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
         } else if (conduit.isOf(ModItems.RUNE)) {
             itemStack = stabilize(craftingInventory);
-        } else if (conduit.isOf(Items.BOOK)) {
-            //TODO: Implement inscribing
-            itemStack = ItemStack.EMPTY;
         } else {
             itemStack = enchant(craftingInventory);
         }
@@ -360,7 +357,7 @@ public class ModEnchantmentScreenHandler
 
     public static ItemStack enchant(RecipeInputInventory craftingInventory) {
         ItemStack conduit = craftingInventory.getStack(0);
-        if (!EnchantmentHelper.canHaveEnchantments(conduit)) {
+        if (!EnchantmentHelper.canHaveEnchantments(conduit) && !conduit.isOf(Items.BOOK)) {
             return ItemStack.EMPTY;
         }
 
@@ -389,7 +386,8 @@ public class ModEnchantmentScreenHandler
                 var charged2 = itemStack2.get(ModItems.CHARGED) != null ? 10 : 0;
                 return open1 + charged1 - open2 - charged2;
             })
-            .reduce( conduit.copy(),
+            .reduce(
+                conduit.isOf(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : conduit.copy(),
                 (subResult, rune) -> {
                     RegistryEntry<Enchantment> entry = rune.get(ModItems.ENCHANTMENT);
                     Enchantment enchantment = entry != null ? entry.value() : null;
@@ -415,7 +413,7 @@ public class ModEnchantmentScreenHandler
         boolean isAcceptable = runeEnchantmentRegistryEntryOptional
             .map(RegistryEntry::value)
             .map(enchantment ->
-                 enchantment.isAcceptableItem(conduit) || conduit.isOf(Items.ENCHANTED_BOOK)
+                 enchantment.isAcceptableItem(conduit) || conduit.isOf(Items.ENCHANTED_BOOK) || conduit.isOf(Items.BOOK)
             )
             .orElse(false);
         if (!isAcceptable) return false;
