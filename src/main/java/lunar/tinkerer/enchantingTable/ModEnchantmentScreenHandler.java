@@ -204,11 +204,9 @@ public class ModEnchantmentScreenHandler
             case 1,2,3,4,5,6,7,8,9 -> quickMoveFromTable(slot);
             default -> quickMoveFromPlayer(slot);
         };
-        if (itemStack.isEmpty()) {
-            sourceSlot.setStack(ItemStack.EMPTY);
-        } else {
-            sourceSlot.markDirty();
-        }
+
+        sourceSlot.markDirty();
+
         if (original.getCount() == itemStack.getCount()) {
             return ItemStack.EMPTY;
         }
