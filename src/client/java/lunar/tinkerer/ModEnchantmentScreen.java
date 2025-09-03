@@ -159,7 +159,7 @@ public class ModEnchantmentScreen
 
         int color = this.handler.resultSlot.canTakeItems(this.handler.player) ? -8323296 : 0xDFd31b1b;
 
-        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory);
+        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory, this.handler.player.getWorld());
         EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
         StringVisitable riskLabel = EnchantingPhrases.getInstance()
             .generatePhrase(

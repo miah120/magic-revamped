@@ -471,7 +471,7 @@ public class ModEnchantmentScreenHandler
         return this.seed.get();
     }
 
-    public static int getFlux(RecipeInputInventory input) {
+    public static int getFlux(RecipeInputInventory input, World world) {
         int flux = input.getHeldStacks()
             .subList(1, 9)
             .stream()
@@ -480,12 +480,22 @@ public class ModEnchantmentScreenHandler
             )
             .reduce(0, Integer::sum);
 
-        return flux * getLevelRequirement(input);
+        return flux * getLevelRequirement(input, world);
     }
 
-    public static int getLevelRequirement(RecipeInputInventory input) {
-        return Math.min(
-            input.getHeldStacks().stream()
+    public static double getMoonBonus(int moonPhase, boolean isNight) {
+        if (!isNight) return 1;
+        return switch (moonPhase) {
+            case 0 -> 0.51;
+            case 1, 7 -> 0.91;
+            case 2, 6 -> 0.96;
+            case 3, 5 -> 0.99;
+            default -> 1;
+        };
+    }
+
+    public static int getRuneCost(RecipeInputInventory input) {
+        return input.getHeldStacks().stream()
                 .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
                 .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
                 .filter(Objects::nonNull)
@@ -493,23 +503,29 @@ public class ModEnchantmentScreenHandler
                 .filter(Objects::nonNull)
                 .map(Enchantment::getAnvilCost)
                 .reduce(0, (integer, integer2) ->
-                    2 * integer + integer2
-                )
-                    +
-                RuneItem.getEnchantments(input.getStack(0))
-                    .map(leveledEnchantment -> {
-                        int level = leveledEnchantment.level();
-                        int enchantmentCost = Optional
-                                .of(leveledEnchantment)
-                                .map(RuneItem.LeveledEnchantment::enchantment)
-                                .map(RegistryEntry::value)
-                                .map(Enchantment::getAnvilCost)
-                                .orElse(8);
-                        return level * enchantmentCost;
-                    })
-                    .reduce(0, Integer::sum)
-                ,
-            99
+                        2 * integer + integer2
+                );
+    }
+
+    public static int getInputCost(RecipeInputInventory input) {
+        return RuneItem.getEnchantments(input.getStack(0))
+                .map(leveledEnchantment -> {
+                    int level = leveledEnchantment.level();
+                    int enchantmentCost = Optional
+                            .of(leveledEnchantment)
+                            .map(RuneItem.LeveledEnchantment::enchantment)
+                            .map(RegistryEntry::value)
+                            .map(Enchantment::getAnvilCost)
+                            .orElse(8);
+                    return level * enchantmentCost;
+                })
+                .reduce(0, Integer::sum);
+    }
+
+    public static int getLevelRequirement(RecipeInputInventory input, World world) {
+        return Math.clamp(
+            (int) Math.ceil(getMoonBonus(world.getMoonPhase(), world.isNight()) * (getRuneCost(input) + getInputCost(input))),
+            0, 99
         );
     }
 
@@ -519,7 +535,7 @@ public class ModEnchantmentScreenHandler
         World world,
         BlockPos blockPos
     ) {
-        int flux = ModEnchantmentScreenHandler.getFlux(input);
+        int flux = ModEnchantmentScreenHandler.getFlux(input, world);
         int playerCheck = player.getRandom().nextBetween(0, 1000);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextBetween(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
@@ -550,7 +566,7 @@ public class ModEnchantmentScreenHandler
                 Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
                 stack.setCount(result.entry().getCount());
                 stack.applyComponentsFrom(result.entry().getComponents());
-                player.addExperienceLevels(-getLevelRequirement(this.craftingInventory));
+                player.addExperienceLevels(-getLevelRequirement(this.craftingInventory, world));
                 if (!result.success()) return;
             }
 
