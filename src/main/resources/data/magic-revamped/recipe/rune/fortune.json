@@ -2,40 +2,42 @@
   "type": "magic-revamped:enchanting",
   "ingredients": [
     "minecraft:lapis_lazuli",
+    {
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "magic-revamped:luck"
+      },
+      "strict": true
+    },
     "minecraft:emerald",
+    {
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "magic-revamped:luck"
+      },
+      "strict": true
+    },
     "minecraft:emerald",
+    {
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "magic-revamped:luck"
+      },
+      "strict": true
+    },
     "minecraft:emerald",
+    {
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "magic-revamped:luck"
+      },
+      "strict": true
+    },
     "minecraft:emerald"
-  ],
-  "special_ingredients": [
-    {
-      "count": 1,
-      "id": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      }
-    },
-    {
-      "count": 1,
-      "id": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      }
-    },
-    {
-      "count": 1,
-      "id": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      }
-    },
-    {
-      "count": 1,
-      "id": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      }
-    }
   ],
   "result": {
     "count": 1,

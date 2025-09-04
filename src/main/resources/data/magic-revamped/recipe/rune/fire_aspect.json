@@ -5,15 +5,14 @@
     "minecraft:fire_charge",
     "minecraft:fire_charge",
     "minecraft:fire_charge",
-    "minecraft:fire_charge"
-  ],
-  "special_ingredients": [
+    "minecraft:fire_charge",
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "minecraft:sharpness"
-      }
+      },
+      "strict": true
     }
   ],
   "result": {

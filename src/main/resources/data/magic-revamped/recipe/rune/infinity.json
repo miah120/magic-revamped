@@ -3,50 +3,54 @@
   "ingredients": [
     "minecraft:lapis_lazuli",
     "minecraft:arrow",
-    "minecraft:arrow"
-  ],
-  "special_ingredients": [
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "magic-revamped:luck"
-      }
+      },
+      "strict": true
     },
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "magic-revamped:luck"
-      }
+      },
+      "strict": true
     },
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "magic-revamped:luck"
-      }
+      },
+      "strict": true
+    },
+    "minecraft:arrow",
+    {
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "magic-revamped:luck"
+      },
+      "strict": true
     },
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "magic-revamped:luck"
-      }
+      },
+      "strict": true
     },
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "magic-revamped:luck"
-      }
-    },
-    {
-      "count": 1,
-      "id": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      }
+      },
+      "strict": true
     }
   ],
   "result": {

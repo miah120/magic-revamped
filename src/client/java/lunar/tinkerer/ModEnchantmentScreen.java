@@ -83,7 +83,6 @@ public class ModEnchantmentScreen
                 EnchantmentRecipeDisplay enchantmentRecipeDisplay = (EnchantmentRecipeDisplay) display;
                 List<Slot> list2 = this.craftingScreenHandler.getInputSlots();
                 List<SlotDisplay> list = enchantmentRecipeDisplay.ingredients();
-                list.addAll(enchantmentRecipeDisplay.specialIngredients());
                 int i = Math.min(list.size(), list2.size());
                 for (int j = 0; j < i; ++j) {
                     ((GhostRecipeInvoker) ghostRecipe).invokeAddInputs(

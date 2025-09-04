@@ -2,22 +2,22 @@
   "type": "magic-revamped:enchanting",
   "ingredients": [
     "minecraft:lapis_lazuli",
-    "minecraft:fermented_spider_eye"
-  ],
-  "special_ingredients": [
+    "minecraft:fermented_spider_eye",
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "minecraft:sharpness"
-      }
+      },
+      "strict": true
     },
     {
-      "count": 1,
-      "id": "magic-revamped:rune",
+      "fabric:type": "fabric:components",
+      "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "minecraft:sharpness"
-      }
+      },
+      "strict": true
     }
   ],
   "result": {

@@ -3,6 +3,7 @@ package lunar.tinkerer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.fabricmc.fabric.impl.recipe.ingredient.ShapelessMatch;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -17,22 +18,28 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public final String group;
     public final ItemStack result;
-    public final List<ItemStack> specialIngredients;
     public final List<Ingredient> ingredients;
     @Nullable
     private IngredientPlacement ingredientPlacement;
+    private boolean fabric_requiresTesting = false;
 
-    public EnchantmentRecipe(String group, ItemStack result, List<Ingredient> ingredients, List<ItemStack> specialIngredients) {
+    public EnchantmentRecipe(String group, ItemStack result, List<Ingredient> ingredients) {
         this.group = group;
         this.result = result;
         this.ingredients = ingredients;
-        this.specialIngredients = specialIngredients;
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.requiresTesting()) {
+                fabric_requiresTesting = true;
+                break;
+            }
+        }
     }
 
     @Override
@@ -60,51 +67,26 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
 
     @Override
     public boolean matches(CraftingRecipeInput craftingRecipeInput, World world) {
-        if (craftingRecipeInput.getStackCount() != this.ingredients.size() + this.specialIngredients.size()) {
+        if (fabric_requiresTesting) {
+            List<ItemStack> nonEmptyStacks = new ArrayList<>(craftingRecipeInput.getStackCount());
+
+            for (int i = 0; i < craftingRecipeInput.size(); ++i) {
+                ItemStack stack = craftingRecipeInput.getStackInSlot(i);
+
+                if (!stack.isEmpty()) {
+                    nonEmptyStacks.add(stack);
+                }
+            }
+
+            return ShapelessMatch.isMatch(nonEmptyStacks, ingredients);
+        }
+        if (craftingRecipeInput.getStackCount() != this.ingredients.size()) {
             return false;
+        } else {
+            return craftingRecipeInput.size() == 1 && this.ingredients.size() == 1
+                ? this.ingredients.getFirst().test(craftingRecipeInput.getStackInSlot(0))
+                : craftingRecipeInput.getRecipeMatcher().isCraftable(this, null);
         }
-        if(!this.specialIngredients.isEmpty()) {
-            return matchesSpecial(craftingRecipeInput);
-        }
-        if (craftingRecipeInput.size() == 1 && this.ingredients.size() == 1) {
-            return this.ingredients.getFirst().test(craftingRecipeInput.getStackInSlot(0));
-        }
-        return craftingRecipeInput.getRecipeMatcher().isCraftable(this, null);
-    }
-
-    public boolean matchesSpecial(CraftingRecipeInput craftingRecipeInput) {
-        if (
-            !containsAllSpecialIngredients(this.specialIngredients, craftingRecipeInput.getStacks())
-        ) {
-            return false;
-        }
-        return craftingRecipeInput.getRecipeMatcher().isCraftable(this, null);
-    }
-
-    public static boolean containsAllSpecialIngredients(List<ItemStack> requirements, List<ItemStack> present) {
-        return requirements.stream().distinct()
-            .allMatch(
-                itemStack -> countMatching(
-                    present,
-                    itemStack1 -> containsAllComponentChanges(itemStack, itemStack1)
-                ) == countMatching(
-                    requirements,
-                    itemStack1 -> containsAllComponentChanges(itemStack, itemStack1)
-                )
-            );
-    }
-
-    public static boolean containsAllComponentChanges(ItemStack required, ItemStack present) {
-        return ItemStack.areItemsEqual(required, present) && required.getComponentChanges().entrySet().stream()
-            .allMatch(componentTypeOptionalEntry ->
-                componentTypeOptionalEntry.getValue()
-                    .map(v -> v == present.get(componentTypeOptionalEntry.getKey()))
-                    .orElse(true)
-            );
-    }
-
-    public static int countMatching(List<ItemStack> stacks, Predicate<? super ItemStack> predicate) {
-        return stacks.stream().filter(predicate).toList().size();
     }
 
     @Override
@@ -116,9 +98,6 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     public List<RecipeDisplay> getDisplays() {
         return List.of(new EnchantmentRecipeDisplay(
                 this.ingredients.stream().map(Ingredient::toDisplay).toList(),
-                this.specialIngredients.stream().map(
-                        itemStack -> (SlotDisplay) new SlotDisplay.StackSlotDisplay(itemStack)
-                ).toList(),
                 new SlotDisplay.StackSlotDisplay(this.result),
                 new SlotDisplay.ItemSlotDisplay(ModBlocks.ENCHANTING_TABLE.asItem())
         ));
@@ -127,10 +106,6 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
     @Override
     public RecipeBookCategory getRecipeBookCategory() {
         return ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY;
-    }
-
-    public DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input) {
-        return CraftingRecipe.collectRecipeRemainders(input);
     }
 
     public static class Serializer
@@ -145,11 +120,7 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
                 Ingredient.CODEC
                         .listOf(1, 9)
                         .fieldOf("ingredients")
-                        .forGetter(recipe -> recipe.ingredients),
-                ItemStack.VALIDATED_CODEC
-                        .listOf(0, 8)
-                        .optionalFieldOf("special_ingredients", List.of())
-                        .forGetter(recipe -> recipe.specialIngredients)
+                        .forGetter(recipe -> recipe.ingredients)
             ).apply(instance, EnchantmentRecipe::new));
         public static final PacketCodec<RegistryByteBuf, EnchantmentRecipe> PACKET_CODEC = PacketCodec.tuple(
                 PacketCodecs.STRING,
@@ -158,8 +129,6 @@ public class EnchantmentRecipe implements Recipe<CraftingRecipeInput> {
                 recipe -> recipe.result,
                 Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()),
                 recipe -> recipe.ingredients,
-                ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()),
-                recipe -> recipe.specialIngredients,
                 EnchantmentRecipe::new
         );
 
