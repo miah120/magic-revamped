@@ -57,14 +57,19 @@ public class ModEnchantmentScreen
             private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla("recipe_book/filter_disabled"), Identifier.ofVanilla("recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla("recipe_book/filter_disabled_highlighted"));
             private static final Text TOGGLE_CRAFTABLE_TEXT = Text.translatable("gui.recipebook.toggleRecipes.craftable");
 
-            @Override
-            protected boolean isValid(Slot slot) {
-                return this.craftingScreenHandler.getOutputSlot() == slot || this.craftingScreenHandler.getInputSlots().contains(slot);
-            }
+            //            @Override
+            //            protected boolean isValid(Slot slot) {
+            //                return this.craftingScreenHandler.getOutputSlot() == slot || this.craftingScreenHandler.getInputSlots().contains(slot);
+            //            }
 
             @Override
             protected void setBookButtonTexture() {
                 this.toggleCraftableButton.setTextures(TEXTURES);
+            }
+
+            @Override
+            protected boolean isCraftingSlot(Slot slot) {
+                return false;
             }
 
             @Override
@@ -158,7 +163,7 @@ public class ModEnchantmentScreen
 
         int color = this.handler.resultSlot.canTakeItems(this.handler.player) ? -8323296 : 0xDFd31b1b;
 
-        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory, this.handler.player.getWorld());
+        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory, this.handler.player.getEntityWorld());
         EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
         StringVisitable riskLabel = EnchantingPhrases.getInstance()
             .generatePhrase(

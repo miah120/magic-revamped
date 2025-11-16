@@ -2,12 +2,12 @@ package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.ModBlocks;
+import lunar.tinkerer.ModItems;
 import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
@@ -16,7 +16,6 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3i;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ConsequenceRegistry {
@@ -111,9 +110,9 @@ public class ConsequenceRegistry {
             "lightning_rod",
             new Consequence(
                 "Lightning Rod",
-                Ingredient.ofItem(Items.LIGHTNING_ROD),
+                Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)),
                 List.of(
-                    new TransformBlock(Ingredient.ofItem(Items.LIGHTNING_ROD), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)), Blocks.AIR.getDefaultState()),
                     new SummonLightning()
                 ),
                 false,

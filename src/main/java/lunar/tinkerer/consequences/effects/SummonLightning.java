@@ -29,7 +29,7 @@ public record SummonLightning() implements ConsequenceEffect {
                 new Vec3d(r2, 0, -r2),
                 new Vec3d(-r2, 0, -r2)
         ).map(
-            pos -> pos.add(player.getPos())
+            pos -> pos.add(player.getSyncedPos())
         ).map(pos -> {
             var bolt = new LightningEntity(EntityType.LIGHTNING_BOLT, world);
             bolt.setPosition(pos);

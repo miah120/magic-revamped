@@ -16,7 +16,7 @@ import net.minecraft.world.event.GameEvent;
 public record Teleport(int min, int max) implements ConsequenceEffect {
     @Override
     public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
-        var target = player.getPos().add(getTarget(world));
+        var target = player.getSyncedPos().add(getTarget(world));
         teleportTo(world, player, target.getX(), target.getY(), target.getZ());
         return ItemStack.EMPTY;
     }
@@ -41,7 +41,7 @@ public record Teleport(int min, int max) implements ConsequenceEffect {
         boolean bl = blockState.blocksMovement();
         boolean bl2 = blockState.getFluidState().isIn(FluidTags.WATER);
         if (bl && !bl2) {
-            Vec3d vec3d = player.getPos();
+            Vec3d vec3d = player.getSyncedPos();
             boolean bl3 = player.teleport(x, y, z, true);
             if (bl3) {
                 world.emitGameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Emitter.of(player));

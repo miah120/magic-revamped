@@ -31,7 +31,7 @@ public class ItemStackMixin {
     )
     private void init(int amount, LivingEntity entity, EquipmentSlot slot, CallbackInfo ci) {
         ItemStack thisObj = (ItemStack)(Object) this;
-        World world = entity.getWorld();
+        World world = entity.getEntityWorld();
         if (!(world instanceof ServerWorld serverWorld)) {
             ci.cancel();
             return;

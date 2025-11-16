@@ -271,7 +271,7 @@ public class ModEnchantmentScreenHandler
 
                 @Override
                 public boolean matches(RecipeEntry<EnchantmentRecipe> entry) {
-                    return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.createRecipeInput(), ModEnchantmentScreenHandler.this.getPlayer().getWorld());
+                    return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.createRecipeInput(), ModEnchantmentScreenHandler.this.getPlayer().getEntityWorld());
                 }
             }, 3, 3, list, list, inventory, recipeEntry, craftAll, creative);
         } finally {

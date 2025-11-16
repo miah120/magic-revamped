@@ -3,10 +3,11 @@ package lunar.tinkerer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 
-public class ManathiefFaceModel extends Model implements EntityModelLayerRegistry.TexturedModelDataProvider {
+public class ManathiefFaceModel extends Model<Identifier> implements EntityModelLayerRegistry.TexturedModelDataProvider {
     private final ModelPart face;
     private final ModelPart leaf1;
     private final ModelPart leaf2;
@@ -18,9 +19,6 @@ public class ManathiefFaceModel extends Model implements EntityModelLayerRegistr
         this.leaf1 = root.getChild("leaf1");
         this.leaf2 = root.getChild("leaf2");
         this.leaf3 = root.getChild("leaf3");
-    }
-
-    public void setPageAngles(float pageTurnAmount, float leftFlipAmount, float rightFlipAmount, float pageTurnSpeed) {
     }
 
     public static TexturedModelData getTexturedModelData() {

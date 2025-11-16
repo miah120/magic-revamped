@@ -21,7 +21,7 @@ public class EnchantingResultSlot extends CraftingResultSlot {
     @Override
     public boolean canTakeItems(PlayerEntity playerEntity) {
         if (this.handler.timeout.get() > 0) return false;
-        int levelRequirement = getLevelRequirement(this.input, this.handler.player.getWorld());
+        int levelRequirement = getLevelRequirement(this.input, this.handler.player.getEntityWorld());
         return playerEntity.experienceLevel >= levelRequirement;
     }
 

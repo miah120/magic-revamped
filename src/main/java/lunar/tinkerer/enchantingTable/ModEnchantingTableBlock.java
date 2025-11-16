@@ -50,7 +50,7 @@ public class ModEnchantingTableBlock extends EnchantingTableBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? ModEnchantingTableBlock.validateTicker(type, ModBlockEntities.ENCHANTING_TABLE_BLOCK_ENTITY, ModEnchantingTableBlockEntity::tick) : null;
+        return world.isClient() ? ModEnchantingTableBlock.validateTicker(type, ModBlockEntities.ENCHANTING_TABLE_BLOCK_ENTITY, ModEnchantingTableBlockEntity::tick) : null;
     }
 
     @Override

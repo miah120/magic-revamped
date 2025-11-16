@@ -59,6 +59,7 @@ public class ModItems {
     );
 
     public static final TagKey<Item> DROPS_CHARGED_RUNE = TagKey.of(RegistryKeys.ITEM, MagicRevamped.identifier("drops_charged_rune"));
+    public static final TagKey<Item> SUMMONS_LIGHTNING = TagKey.of(RegistryKeys.ITEM, MagicRevamped.identifier("summons_lightning"));
 
     public static void initialize() {
         addBlocksToItemGroup();

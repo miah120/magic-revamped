@@ -76,7 +76,7 @@ public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvide
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
         if (world instanceof ServerWorld serverWorld && entity instanceof RavagerEntity && serverWorld.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
             entity.setOnFireFor(5f);
         }
@@ -100,7 +100,7 @@ public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvide
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? ManathiefBlock.validateTicker(type, ManathiefBlockEntity::tick) : null;
+        return world.isClient() ? ManathiefBlock.validateTicker(type, ManathiefBlockEntity::tick) : null;
     }
 
     protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> validateTicker(
