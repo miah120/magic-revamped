@@ -11,5 +11,7 @@
   "enchantment.minecraft.luck": "Luck",
   "container.repair.cost": "Repair Cost: %1$s",
   "container.enchant.levels": "Need more levels",
-  "tag.item.magic-revamped.drops_charged_rune": "Drops charged rune"
+
+  "tag.item.magic-revamped.drops_charged_rune": "Drops charged rune",
+  "tag.item.magic-revamped.summons_lightning": "Summons lightning"
 }
