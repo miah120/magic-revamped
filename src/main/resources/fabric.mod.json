@@ -33,12 +33,12 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.6",
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.10",
 		"java": ">=21",
 		"fabric-api": "*"
 	},
 	"recommends": {
-		"villagerconfig": ">=4.4.6"
+		"villagerconfig": ">=4.4.9"
 	}
 }
