@@ -3,13 +3,9 @@ package lunar.tinkerer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderLayerHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.BlockRenderLayer;
-import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
 
 public class MagicRevampedClient implements ClientModInitializer {
 	@Override
