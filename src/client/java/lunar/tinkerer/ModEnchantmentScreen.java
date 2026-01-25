@@ -57,14 +57,9 @@ public class ModEnchantmentScreen
             private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla("recipe_book/filter_disabled"), Identifier.ofVanilla("recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla("recipe_book/filter_disabled_highlighted"));
             private static final Text TOGGLE_CRAFTABLE_TEXT = Text.translatable("gui.recipebook.toggleRecipes.craftable");
 
-            //            @Override
-            //            protected boolean isValid(Slot slot) {
-            //                return this.craftingScreenHandler.getOutputSlot() == slot || this.craftingScreenHandler.getInputSlots().contains(slot);
-            //            }
-
             @Override
-            protected void setBookButtonTexture() {
-                this.toggleCraftableButton.setTextures(TEXTURES);
+            protected ButtonTextures getBookButtonTextures() {
+                return TEXTURES;
             }
 
             @Override

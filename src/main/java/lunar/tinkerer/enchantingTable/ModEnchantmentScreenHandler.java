@@ -33,10 +33,11 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.Unit;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.MoonPhase;
 import net.minecraft.world.World;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -483,13 +484,13 @@ public class ModEnchantmentScreenHandler
         return flux * getLevelRequirement(input, world);
     }
 
-    public static double getMoonBonus(int moonPhase, boolean isNight) {
+    public static double getMoonBonus(MoonPhase moonPhase, boolean isNight) {
         if (!isNight) return 1;
         return switch (moonPhase) {
-            case 0 -> 0.51;
-            case 1, 7 -> 0.91;
-            case 2, 6 -> 0.96;
-            case 3, 5 -> 0.99;
+            case MoonPhase.FULL_MOON -> 0.51;
+            case MoonPhase.WANING_GIBBOUS, MoonPhase.WAXING_GIBBOUS -> 0.91;
+            case MoonPhase.THIRD_QUARTER, MoonPhase.FIRST_QUARTER -> 0.96;
+            case MoonPhase.WANING_CRESCENT, MoonPhase.WAXING_CRESCENT -> 0.99;
             default -> 1;
         };
     }
@@ -524,7 +525,7 @@ public class ModEnchantmentScreenHandler
 
     public static int getLevelRequirement(RecipeInputInventory input, World world) {
         return Math.clamp(
-            (int) Math.ceil(getMoonBonus(world.getMoonPhase(), world.isNight()) * (getRuneCost(input) + getInputCost(input))),
+            (int) Math.ceil(getMoonBonus(world.getEnvironmentAttributes().getAttributeValue(EnvironmentAttributes.MOON_PHASE_VISUAL), world.isNight()) * (getRuneCost(input) + getInputCost(input))),
             0, 99
         );
     }

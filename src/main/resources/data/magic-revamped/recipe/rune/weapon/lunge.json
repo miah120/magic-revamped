@@ -1,0 +1,21 @@
+{
+  "type": "magic-revamped:enchanting",
+  "ingredients": [
+    "minecraft:lapis_lazuli",
+    "minecraft:blaze_powder",
+    "minecraft:wind_charge",
+    "minecraft:blaze_powder",
+    "minecraft:wind_charge",
+    "minecraft:blaze_powder",
+    "minecraft:wind_charge",
+    "minecraft:blaze_powder",
+    "minecraft:wind_charge"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magic-revamped:rune",
+    "components": {
+      "magic-revamped:enchantment": "minecraft:lunge"
+    }
+  }
+}

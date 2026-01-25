@@ -3,9 +3,9 @@
 	"id": "magic-revamped",
 	"version": "${version}",
 	"name": "Magic Revamped",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "This mod overhauls the enchanting system, connecting it to the world and reducing frustration with RNG.",
 	"authors": [
-		"Me!"
+		"Mini Miah"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -33,8 +33,8 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.17.3",
-		"minecraft": "~1.21.10",
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*"
 	},

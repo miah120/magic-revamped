@@ -1,8 +1,6 @@
 package lunar.tinkerer;
 
 import com.mojang.serialization.MapCodec;
-import java.util.function.Function;
-
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -19,9 +17,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.rule.GameRules;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvider {
     public static final MapCodec<ManathiefBlock> CODEC = createCodec(ManathiefBlock::new);
@@ -77,7 +77,7 @@ public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvide
 
     @Override
     protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
-        if (world instanceof ServerWorld serverWorld && entity instanceof RavagerEntity && serverWorld.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
+        if (world instanceof ServerWorld serverWorld && entity instanceof RavagerEntity && serverWorld.getGameRules().getValue(GameRules.DO_MOB_GRIEFING)) {
             entity.setOnFireFor(5f);
         }
     }

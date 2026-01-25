@@ -47,7 +47,8 @@
       {"when": "minecraft:thorns", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/thorns"}},
       {"when": "minecraft:unbreaking", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/unbreaking"}},
       {"when": "minecraft:vanishing_curse", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/vanishing_curse"}},
-      {"when": "minecraft:wind_burst", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/wind_burst"}}
+      {"when": "minecraft:wind_burst", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/wind_burst"}},
+      {"when": "minecraft:lunge", "model": { "type":"minecraft:model", "model":"magic-revamped:item/rune/lunge"}}
     ],
     "fallback": {
       "type": "minecraft:model",

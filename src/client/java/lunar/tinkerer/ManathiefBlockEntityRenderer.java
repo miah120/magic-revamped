@@ -3,7 +3,7 @@ package lunar.tinkerer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -67,7 +67,7 @@ public class ManathiefBlockEntityRenderer
                 this.face,
                 faceModelState,
                 matrixStack,
-                TEXTURE.getRenderLayer(RenderLayer::getEntityCutout),
+                TEXTURE.getRenderLayer(RenderLayers::entityCutout),
                 manathiefBlockEntityRenderState.lightmapCoordinates,
                 OverlayTexture.DEFAULT_UV,
                 -1,

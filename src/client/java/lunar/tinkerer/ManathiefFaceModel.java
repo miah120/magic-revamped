@@ -3,13 +3,13 @@ package lunar.tinkerer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 
 
 public class ManathiefFaceModel extends Model<ManathiefFaceModel.ManathiefFaceModelState> {
 
     public ManathiefFaceModel(ModelPart root) {
-        super(root, RenderLayer::getEntitySolid);
+        super(root, RenderLayers::entitySolid);
         root.getChild("face");
         root.getChild("leaf1");
         root.getChild("leaf2");
