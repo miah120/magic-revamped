@@ -2,6 +2,10 @@ package lunar.tinkerer;
 
 import lunar.tinkerer.consequences.ConsequenceRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.particle.SimpleParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,7 @@ public class MagicRevamped implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final SimpleParticleType BREAK_ENCHANT_PARTICLE = FabricParticleTypes.simple();
 
 	@Override
 	public void onInitialize() {
@@ -24,6 +29,7 @@ public class MagicRevamped implements ModInitializer {
 		ModBlockEntities.initialize();
 		ModRecipeTypes.initialize();
 		ConsequenceRegistry.initialize();
+		Registry.register(Registries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
 	}
 
 	public static Identifier identifier(String id) {

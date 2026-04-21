@@ -9,9 +9,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,6 +50,37 @@ public class ItemStackMixin {
                 (Item item) -> {
                     RuneItem.LeveledEnchantment chargedEnchant = getChargedEnchant(thisCopy, enchantments, serverWorld);
                     int flux = getFluxValue(thisCopy);
+                    if (!enchantments.isEmpty()) {
+                        serverWorld.spawnParticles(
+                                MagicRevamped.BREAK_ENCHANT_PARTICLE,
+                                serverPlayerEntity.getX(),
+                                serverPlayerEntity.getEyeY(),
+                                serverPlayerEntity.getZ(),
+                                500,
+                                0,0,0,
+                                1
+                        );
+                        serverWorld.playSound(
+                                null,
+                                serverPlayerEntity.getX(),
+                                serverPlayerEntity.getY(),
+                                serverPlayerEntity.getZ(),
+                                SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,
+                                SoundCategory.BLOCKS,
+                                1F,
+                                2F
+                        );
+                        serverWorld.playSound(
+                                null,
+                                serverPlayerEntity.getX(),
+                                serverPlayerEntity.getY(),
+                                serverPlayerEntity.getZ(),
+                                SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
+                                SoundCategory.BLOCKS,
+                                100F,
+                                0.5F
+                        );
+                    }
                     enchantments.forEach(leveledEnchantment -> {
                         ItemStack itemStack = new ItemStack(ModItems.RUNE, leveledEnchantment.level());
                         itemStack.set(ModItems.OPEN, Unit.INSTANCE);

@@ -1,6 +1,7 @@
 package lunar.tinkerer;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
@@ -18,5 +19,6 @@ public class MagicRevampedClient implements ClientModInitializer {
 				ModEnchantmentScreen::new
 		);
 		BlockRenderLayerMap.putBlock(ModBlocks.MANATHIEF, BlockRenderLayer.CUTOUT);
+		ParticleFactoryRegistry.getInstance().register(MagicRevamped.BREAK_ENCHANT_PARTICLE, BreakEnchantParticle.Factory::new);
 	}
 }
