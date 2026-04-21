@@ -21,12 +21,13 @@ public class BreakEnchantParticle extends AnimatedParticle {
         this.initialVelocityX = velocityX;
         this.initialVelocityY = velocityY;
         this.initialVelocityZ = velocityZ;
+        this.scale *= 0.75F;
         this.maxAge = 50 + this.random.nextInt(22);
         this.updateSprite(spriteProvider);
     }
 
     public static double particleSpeed(double velocity, double initialVelocity) {
-        return velocity - initialVelocity / 60;
+        return velocity - initialVelocity / 65;
     }
 
     @Override
