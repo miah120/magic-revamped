@@ -1,16 +1,15 @@
 package lunar.tinkerer.consequences;
 
-import net.minecraft.block.Block;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-
 import java.util.List;
 import java.util.stream.IntStream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 
 
 public record Consequence(
@@ -22,10 +21,10 @@ public record Consequence(
 ) {
     public static final Consequence EMPTY = new Consequence(
         "default",
-        Ingredient.ofItem(Items.BARRIER),
+        Ingredient.of(Items.BARRIER),
         List.of((world, blockPos, player, input, stack) -> {
-            IntStream.range(1, input.size()).forEach(
-                i -> input.removeStack(i, 1)
+            IntStream.range(1, input.getContainerSize()).forEach(
+                i -> input.removeItem(i, 1)
             );
             return ItemStack.EMPTY;
         }),
@@ -34,7 +33,7 @@ public record Consequence(
     );
     public record Result<T> (T entry, boolean success) {}
 
-    public Result<ItemStack> run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
+    public Result<ItemStack> run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         var results = effectList.stream()
             .map(effect -> effect.run(world, blockPos, player, input, stack))
             .toList();

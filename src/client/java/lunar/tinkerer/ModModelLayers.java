@@ -1,7 +1,8 @@
 package lunar.tinkerer;
 
-import net.minecraft.client.render.entity.model.EntityModelLayer;
+
+import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public class ModModelLayers {
-    public static final EntityModelLayer MANATHIEF_FACE_MODEL_LAYER = new EntityModelLayer(MagicRevamped.identifier("manathief_face"), "main");
+    public static final ModelLayerLocation MANATHIEF_FACE_MODEL_LAYER = new ModelLayerLocation(MagicRevamped.identifier("manathief_face"), "main");
 }

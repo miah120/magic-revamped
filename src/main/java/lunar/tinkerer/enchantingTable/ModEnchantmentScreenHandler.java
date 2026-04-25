@@ -3,41 +3,41 @@ package lunar.tinkerer.enchantingTable;
 import lunar.tinkerer.*;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceManager;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.recipe.InputSlotFiller;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeFinder;
-import net.minecraft.recipe.book.RecipeBookType;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.screen.AbstractRecipeScreenHandler;
-import net.minecraft.screen.Property;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.MoonPhase;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.recipebook.ServerPlaceRecipe;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedItemContents;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.RecipeBookMenu;
+import net.minecraft.world.inventory.RecipeBookType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.MoonPhase;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -47,45 +47,45 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 public class ModEnchantmentScreenHandler
-        extends AbstractRecipeScreenHandler {
-    public final ScreenHandlerContext context;
-    public final PlayerEntity player;
+        extends RecipeBookMenu {
+    public final ContainerLevelAccess context;
+    public final Player player;
     private boolean filling;
     public final static int MAX_TIME_OUT = 20;
-    public final Property timeout = Property.create();
-    public final Property seed = Property.create();
-    public final RecipeInputInventory craftingInventory;
+    public final DataSlot timeout = DataSlot.standalone();
+    public final DataSlot seed = DataSlot.standalone();
+    public final CraftingContainer craftingInventory;
     protected final EnchantingTableResultInventory craftingResultInventory = new EnchantingTableResultInventory();
     public EnchantingResultSlot resultSlot;
 
-    public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
+    public ModEnchantmentScreenHandler(int syncId, Inventory playerInventory) {
+        this(syncId, playerInventory, ContainerLevelAccess.NULL);
     }
 
-    public ModEnchantmentScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+    public ModEnchantmentScreenHandler(int syncId, Inventory playerInventory, ContainerLevelAccess context) {
         super(ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER, syncId);
-        this.addProperty(this.seed).set(playerInventory.player.getEnchantingTableSeed());
-        this.addProperty(this.timeout).set(0);
+        this.addDataSlot(this.seed).set(playerInventory.player.getEnchantmentSeed());
+        this.addDataSlot(this.timeout).set(0);
         this.context = context;
         this.player = playerInventory.player;
-        this.craftingInventory = new RecipeInputInventory() {
-            private final ScreenHandler handler = ModEnchantmentScreenHandler.this;
-            private final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(9, ItemStack.EMPTY);
+        this.craftingInventory = new CraftingContainer() {
+            private final AbstractContainerMenu handler = ModEnchantmentScreenHandler.this;
+            private final NonNullList<ItemStack> stacks = NonNullList.withSize(9, ItemStack.EMPTY);
 
             @Override
-            public void provideRecipeInputs(RecipeFinder finder) {
+            public void fillStackedContents(StackedItemContents finder) {
                 for (ItemStack itemStack : this.stacks) {
-                    finder.addInputIfUsable(itemStack);
+                    finder.accountSimpleStack(itemStack);
                 }
             }
 
             @Override
-            public void clear() {
+            public void clearContent() {
                 this.stacks.clear();
             }
 
             @Override
-            public int size() {
+            public int getContainerSize() {
                 return 9;
             }
 
@@ -95,41 +95,41 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public ItemStack getStack(int slot) {
-                if (slot >= this.size()) {
+            public ItemStack getItem(int slot) {
+                if (slot >= this.getContainerSize()) {
                     return ItemStack.EMPTY;
                 }
                 return this.stacks.get(slot);
             }
 
             @Override
-            public ItemStack removeStack(int slot) {
-                return Inventories.removeStack(this.stacks, slot);
+            public ItemStack removeItemNoUpdate(int slot) {
+                return ContainerHelper.takeItem(this.stacks, slot);
             }
 
 
             @Override
-            public ItemStack removeStack(int slot, int amount) {
-                ItemStack itemStack = Inventories.splitStack(this.stacks, slot, amount);
+            public ItemStack removeItem(int slot, int amount) {
+                ItemStack itemStack = ContainerHelper.removeItem(this.stacks, slot, amount);
                 if (!itemStack.isEmpty()) {
-                    this.handler.onContentChanged(this);
+                    this.handler.slotsChanged(this);
                 }
                 return itemStack;
             }
 
             @Override
-            public void setStack(int slot, ItemStack stack) {
+            public void setItem(int slot, ItemStack stack) {
                 this.stacks.set(slot, stack);
-                this.handler.onContentChanged(this);
+                this.handler.slotsChanged(this);
             }
 
             @Override
-            public void markDirty() {
-                ModEnchantmentScreenHandler.this.onContentChanged(this);
+            public void setChanged() {
+                ModEnchantmentScreenHandler.this.slotsChanged(this);
             }
 
             @Override
-            public boolean canPlayerUse(PlayerEntity player) {
+            public boolean stillValid(Player player) {
                 return true;
             }
 
@@ -144,7 +144,7 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public List<ItemStack> getHeldStacks() {
+            public List<ItemStack> getItems() {
                 return List.copyOf(this.stacks);
             }
         };
@@ -160,10 +160,10 @@ public class ModEnchantmentScreenHandler
         );
         this.addResultSlot();
         this.addInputSlots(44,24);
-        this.addPlayerSlots(playerInventory, 8, 91);
+        this.addStandardInventorySlots(playerInventory, 8, 91);
 
-        context.run((world, blockPos) -> {
-            Objects.requireNonNull(world.getServer()).addServerGuiTickable(this::tickTimeout);
+        context.execute((world, blockPos) -> {
+            Objects.requireNonNull(world.getServer()).addTickable(this::tickTimeout);
         });
     }
 
@@ -186,93 +186,93 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
-        this.context.run((world, pos) -> this.dropInventory(player, this.craftingInventory));
+    public void removed(Player player) {
+        super.removed(player);
+        this.context.execute((world, pos) -> this.clearContainer(player, this.craftingInventory));
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
-        return ModEnchantmentScreenHandler.canUse(this.context, player, ModBlocks.ENCHANTING_TABLE);
+    public boolean stillValid(Player player) {
+        return ModEnchantmentScreenHandler.stillValid(this.context, player, ModBlocks.ENCHANTING_TABLE);
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
+    public ItemStack quickMoveStack(Player player, int slot) {
         Slot sourceSlot = this.slots.get(slot);
-        ItemStack original = sourceSlot.getStack().copy();
+        ItemStack original = sourceSlot.getItem().copy();
         ItemStack itemStack = switch (slot) {
             case 0 -> quickMoveFromResult(player, slot);
             case 1,2,3,4,5,6,7,8,9 -> quickMoveFromTable(slot);
             default -> quickMoveFromPlayer(slot);
         };
 
-        sourceSlot.markDirty();
+        sourceSlot.setChanged();
 
         if (original.getCount() == itemStack.getCount()) {
             return ItemStack.EMPTY;
         }
 
         if (slot == 0) {
-            player.dropItem(itemStack, false);
+            player.drop(itemStack, false);
         } else {
             //onTakeItem handled by quickMoveFromResult
-            sourceSlot.onTakeItem(player, itemStack);
+            sourceSlot.onTake(player, itemStack);
         }
-        this.sendContentUpdates();
+        this.broadcastChanges();
         return itemStack;
     }
 
-    private ItemStack quickMoveFromResult(PlayerEntity player, int slot) {
-        if(!this.resultSlot.canTakeItems(player)) return ItemStack.EMPTY;
-        ItemStack items = this.resultSlot.getStack();
+    private ItemStack quickMoveFromResult(Player player, int slot) {
+        if(!this.resultSlot.mayPickup(player)) return ItemStack.EMPTY;
+        ItemStack items = this.resultSlot.getItem();
         if(items.isEmpty()) return ItemStack.EMPTY;
-        this.resultSlot.onTakeItem(player, items);
-        items.getItem().onCraftByPlayer(items, player);
-        this.insertItem(items, 10, 46, true);
-        this.onContentChanged(this.craftingInventory);
+        this.resultSlot.onTake(player, items);
+        items.getItem().onCraftedBy(items, player);
+        this.moveItemStackTo(items, 10, 46, true);
+        this.slotsChanged(this.craftingInventory);
         return items;
     }
 
     private ItemStack quickMoveFromTable(int slot) {
-        ItemStack items = this.slots.get(slot).getStack();
-        this.insertItem(items, 10, 46, false);
+        ItemStack items = this.slots.get(slot).getItem();
+        this.moveItemStackTo(items, 10, 46, false);
         return items;
     }
 
     private ItemStack quickMoveFromPlayer(int slot) {
-        ItemStack items = this.slots.get(slot).getStack();
-        if(this.insertItem(items, 1, 10, false)) {
+        ItemStack items = this.slots.get(slot).getItem();
+        if(this.moveItemStackTo(items, 1, 10, false)) {
             return items;
         }
 
         if (slot < 37) {
-            this.insertItem(items, 37, 46, false);
+            this.moveItemStackTo(items, 37, 46, false);
         } else {
-            this.insertItem(items, 10, 37, false);
+            this.moveItemStackTo(items, 10, 37, false);
         }
         return items;
     }
 
     @Override
-    public PostFillAction fillInputSlots(boolean craftAll, boolean creative, RecipeEntry<?> recipe, ServerWorld world, PlayerInventory inventory) {
-        RecipeEntry<EnchantmentRecipe> recipeEntry = (RecipeEntry<EnchantmentRecipe>) recipe;
+    public PostPlaceAction handlePlacement(boolean craftAll, boolean creative, RecipeHolder<?> recipe, ServerLevel world, Inventory inventory) {
+        RecipeHolder<EnchantmentRecipe> recipeEntry = (RecipeHolder<EnchantmentRecipe>) recipe;
         this.onInputSlotFillStart();
         try {
             List<Slot> list = this.getInputSlots();
-            return InputSlotFiller.fill(new InputSlotFiller.Handler<>(){
+            return ServerPlaceRecipe.placeRecipe(new ServerPlaceRecipe.CraftingMenuAccess<>(){
                 @Override
-                public void populateRecipeFinder(RecipeFinder finder) {
-                    ModEnchantmentScreenHandler.this.populateRecipeFinder(finder);
+                public void fillCraftSlotsStackedContents(StackedItemContents finder) {
+                    ModEnchantmentScreenHandler.this.fillCraftSlotsStackedContents(finder);
                 }
 
                 @Override
-                public void clear() {
-                    ModEnchantmentScreenHandler.this.craftingInventory.clear();
+                public void clearCraftingContent() {
+                    ModEnchantmentScreenHandler.this.craftingInventory.clearContent();
                 }
 
                 @Override
-                public boolean matches(RecipeEntry<EnchantmentRecipe> entry) {
-                    return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.createRecipeInput(), ModEnchantmentScreenHandler.this.getPlayer().getEntityWorld());
+                public boolean recipeMatches(RecipeHolder<EnchantmentRecipe> entry) {
+                    return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.asCraftInput(), ModEnchantmentScreenHandler.this.getPlayer().level());
                 }
             }, 3, 3, list, list, inventory, recipeEntry, craftAll, creative);
         } finally {
@@ -281,42 +281,42 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public void populateRecipeFinder(RecipeFinder finder) {
-        this.craftingInventory.provideRecipeInputs(finder);
+    public void fillCraftSlotsStackedContents(StackedItemContents finder) {
+        this.craftingInventory.fillStackedContents(finder);
     }
 
-    protected static void updateResult(ModEnchantmentScreenHandler handler, ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
-        ItemStack conduit = craftingInventory.getStack(0);
-        ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
+    protected static void updateResult(ModEnchantmentScreenHandler handler, ServerLevel world, Player player, CraftingContainer craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeHolder<EnchantmentRecipe> recipe) {
+        ItemStack conduit = craftingInventory.getItem(0);
+        ServerPlayer serverPlayerEntity = (ServerPlayer)player;
         ItemStack itemStack;
 
         if (conduit.isEmpty()) {
             itemStack = ItemStack.EMPTY;
-        } else if (conduit.isOf(Items.LAPIS_LAZULI)) {
+        } else if (conduit.is(Items.LAPIS_LAZULI)) {
             itemStack = carveRune(world, player, craftingInventory, resultInventory, recipe);
-        } else if (conduit.isOf(ModItems.RUNE)) {
+        } else if (conduit.is(ModItems.RUNE)) {
             itemStack = stabilize(craftingInventory);
         } else {
             itemStack = enchant(craftingInventory);
         }
-        resultInventory.setStack(0, itemStack);
-        handler.setReceivedStack(0, itemStack);
-        serverPlayerEntity.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, itemStack));
+        resultInventory.setItem(0, itemStack);
+        handler.setRemoteSlot(0, itemStack);
+        serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(handler.containerId, handler.incrementStateId(), 0, itemStack));
     }
 
-    private static ItemStack stabilize(RecipeInputInventory craftingInventory) {
-        ItemStack conduit = craftingInventory.getStack(0);
-        if (!craftingInventory.getHeldStacks().subList(1, 9).stream().allMatch(
-            itemStack -> itemStack.isEmpty() || itemStack.isOf(Items.DIAMOND)
+    private static ItemStack stabilize(CraftingContainer craftingInventory) {
+        ItemStack conduit = craftingInventory.getItem(0);
+        if (!craftingInventory.getItems().subList(1, 9).stream().allMatch(
+            itemStack -> itemStack.isEmpty() || itemStack.is(Items.DIAMOND)
         )) {
             return ItemStack.EMPTY;
         }
 
-        int stabilization = craftingInventory.getHeldStacks()
+        int stabilization = craftingInventory.getItems()
             .subList(1, 9)
             .stream()
             .filter(itemStack -> !itemStack.isEmpty())
-            .filter(itemStack -> itemStack.isOf(Items.DIAMOND))
+            .filter(itemStack -> itemStack.is(Items.DIAMOND))
             .toList()
             .size();
 
@@ -330,14 +330,14 @@ public class ModEnchantmentScreenHandler
         return result;
     }
 
-    private static ItemStack carveRune(ServerWorld world, PlayerEntity player, RecipeInputInventory craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeEntry<EnchantmentRecipe> recipe) {
-        CraftingRecipeInput craftingRecipeInput = craftingInventory.createRecipeInput();
-        ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
+    private static ItemStack carveRune(ServerLevel world, Player player, CraftingContainer craftingInventory, EnchantingTableResultInventory resultInventory, @Nullable RecipeHolder<EnchantmentRecipe> recipe) {
+        CraftingInput craftingRecipeInput = craftingInventory.asCraftInput();
+        ServerPlayer serverPlayerEntity = (ServerPlayer)player;
         ItemStack itemStack = ItemStack.EMPTY;
         if(recipe == null) {
             return itemStack;
         }
-        Optional<RecipeEntry<EnchantmentRecipe>> optional = world.getServer().getRecipeManager().getFirstMatch(
+        Optional<RecipeHolder<EnchantmentRecipe>> optional = world.getServer().getRecipeManager().getRecipeFor(
                 ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE,
                 craftingRecipeInput,
                 world,
@@ -345,32 +345,32 @@ public class ModEnchantmentScreenHandler
         );
         if (optional.isPresent()) {
             ItemStack itemStack2;
-            RecipeEntry<EnchantmentRecipe> recipeEntry = optional.get();
+            RecipeHolder<EnchantmentRecipe> recipeEntry = optional.get();
             EnchantmentRecipe craftingRecipe = recipeEntry.value();
-            if (resultInventory.shouldCraftRecipe(serverPlayerEntity, recipeEntry) && (itemStack2 = craftingRecipe.craft(craftingRecipeInput, world.getRegistryManager())).isItemEnabled(world.getEnabledFeatures())) {
+            if (resultInventory.setRecipeUsed(serverPlayerEntity, recipeEntry) && (itemStack2 = craftingRecipe.assemble(craftingRecipeInput, world.registryAccess())).isItemEnabled(world.enabledFeatures())) {
                 itemStack = itemStack2;
             }
         }
         return itemStack;
     }
 
-    public static ItemStack enchant(RecipeInputInventory craftingInventory) {
-        ItemStack conduit = craftingInventory.getStack(0);
-        if (!EnchantmentHelper.canHaveEnchantments(conduit) && !conduit.isOf(Items.BOOK)) {
+    public static ItemStack enchant(CraftingContainer craftingInventory) {
+        ItemStack conduit = craftingInventory.getItem(0);
+        if (!EnchantmentHelper.canStoreEnchantments(conduit) && !conduit.is(Items.BOOK)) {
             return ItemStack.EMPTY;
         }
 
-        if (!craftingInventory.getHeldStacks().subList(1, 9).stream().allMatch(
+        if (!craftingInventory.getItems().subList(1, 9).stream().allMatch(
                 itemStack -> itemStack.isEmpty() || isValidRuneForItem(itemStack, conduit)
         )) {
             return ItemStack.EMPTY;
         }
 
-        List<ItemStack> inputs = craftingInventory.getHeldStacks()
+        List<ItemStack> inputs = craftingInventory.getItems()
                 .subList(1, 9)
                 .stream()
                 .filter(itemStack -> !itemStack.isEmpty())
-                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
+                .filter(itemStack -> itemStack.is(ModItems.RUNE))
                 .toList();
         if (inputs.isEmpty()) {
             return ItemStack.EMPTY;
@@ -386,58 +386,58 @@ public class ModEnchantmentScreenHandler
                 return open1 + charged1 - open2 - charged2;
             })
             .reduce(
-                conduit.isOf(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : conduit.copy(),
+                conduit.is(Items.BOOK) ? new ItemStack(Items.ENCHANTED_BOOK) : conduit.copy(),
                 (subResult, rune) -> {
-                    RegistryEntry<Enchantment> entry = rune.get(ModItems.ENCHANTMENT);
+                    Holder<Enchantment> entry = rune.get(ModItems.ENCHANTMENT);
                     Enchantment enchantment = entry != null ? entry.value() : null;
                     if (!isValidRuneForItem(rune, subResult)) return subResult;
                     int nextLevel = getResultEnchantmentLevel(subResult, entry, enchantment, rune);
-                    EnchantmentHelper.apply(subResult, builder -> builder.add(entry, nextLevel));
+                    EnchantmentHelper.updateEnchantments(subResult, builder -> builder.upgrade(entry, nextLevel));
                     return subResult;
                 }
             );
 
-        if (result.isDamageable()) {
-            result.set(DataComponentTypes.MAX_DAMAGE, Math.max(result.getMaxDamage() - 1, 1));
+        if (result.isDamageableItem()) {
+            result.set(DataComponents.MAX_DAMAGE, Math.max(result.getMaxDamage() - 1, 1));
         }
 
         return result;
     }
 
     public static boolean isValidRuneForItem(ItemStack rune, ItemStack conduit) {
-        if (!rune.isOf(ModItems.RUNE)) return false;
-        Optional<RegistryEntry<Enchantment>> runeEnchantmentRegistryEntryOptional = Optional
+        if (!rune.is(ModItems.RUNE)) return false;
+        Optional<Holder<Enchantment>> runeEnchantmentRegistryEntryOptional = Optional
                 .ofNullable(rune.get(ModItems.ENCHANTMENT));
         if (runeEnchantmentRegistryEntryOptional.isEmpty()) return false;
         boolean isAcceptable = runeEnchantmentRegistryEntryOptional
-            .map(RegistryEntry::value)
+            .map(Holder::value)
             .map(enchantment ->
-                 enchantment.isAcceptableItem(conduit) || conduit.isOf(Items.ENCHANTED_BOOK) || conduit.isOf(Items.BOOK)
+                 enchantment.canEnchant(conduit) || conduit.is(Items.ENCHANTED_BOOK) || conduit.is(Items.BOOK)
             )
             .orElse(false);
         if (!isAcceptable) return false;
-        RegistryEntry<Enchantment> runeEnchantmentRegistryEntry = runeEnchantmentRegistryEntryOptional.get();
-        return conduit.getEnchantments().getEnchantments().stream()
+        Holder<Enchantment> runeEnchantmentRegistryEntry = runeEnchantmentRegistryEntryOptional.get();
+        return conduit.getEnchantments().keySet().stream()
                 .allMatch(conduitEnchantment ->
                         conduitEnchantment.equals(runeEnchantmentRegistryEntry) ||
-                    Enchantment.canBeCombined(conduitEnchantment, runeEnchantmentRegistryEntry)
+                    Enchantment.areCompatible(conduitEnchantment, runeEnchantmentRegistryEntry)
                 );
     }
 
-    public static int getResultEnchantmentLevel(ItemStack itemStack, RegistryEntry<Enchantment> entry, Enchantment enchantment, ItemStack rune) {
+    public static int getResultEnchantmentLevel(ItemStack itemStack, Holder<Enchantment> entry, Enchantment enchantment, ItemStack rune) {
         if (rune.get(ModItems.OPEN) == null) return 1;
-        int currentLevel = EnchantmentHelper.getEnchantments(itemStack).getLevel(entry);
+        int currentLevel = EnchantmentHelper.getEnchantmentsForCrafting(itemStack).getLevel(entry);
         int maxLevel = rune.get(ModItems.CHARGED) == null ? enchantment.getMaxLevel() : enchantment.getMaxLevel() + 1;
         return Math.min(currentLevel + 1, maxLevel);
     }
 
     @Override
-    public void onContentChanged(Inventory inventory) {
+    public void slotsChanged(Container inventory) {
         if (this.filling) { return; }
-        this.context.run((world, pos) -> {
-            if (world instanceof ServerWorld serverWorld) {
-                CraftingRecipeInput input = this.craftingInventory.createRecipeInput();
-                RecipeEntry<EnchantmentRecipe> recipe = serverWorld.getRecipeManager().getFirstMatch(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).orElse(null);
+        this.context.execute((world, pos) -> {
+            if (world instanceof ServerLevel serverWorld) {
+                CraftingInput input = this.craftingInventory.asCraftInput();
+                RecipeHolder<EnchantmentRecipe> recipe = serverWorld.recipeAccess().getRecipeFor(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).orElse(null);
                 ModEnchantmentScreenHandler.updateResult(this, serverWorld, this.player, this.craftingInventory, this.craftingResultInventory, recipe);
             }
         });
@@ -447,7 +447,7 @@ public class ModEnchantmentScreenHandler
         this.filling = true;
     }
 
-    public void onInputSlotFillFinish(ServerWorld world, RecipeEntry<EnchantmentRecipe> recipe) {
+    public void onInputSlotFillFinish(ServerLevel world, RecipeHolder<EnchantmentRecipe> recipe) {
         this.filling = false;
         ModEnchantmentScreenHandler.updateResult(this, world, this.player, this.craftingInventory, this.craftingResultInventory, recipe);
     }
@@ -459,12 +459,12 @@ public class ModEnchantmentScreenHandler
         return this.slots.getFirst();
     }
 
-    protected PlayerEntity getPlayer() {
+    protected Player getPlayer() {
         return this.player;
     }
 
     @Override
-    public RecipeBookType getCategory() {
+    public RecipeBookType getRecipeBookType() {
         return RecipeBookType.CRAFTING;
     }
 
@@ -472,8 +472,8 @@ public class ModEnchantmentScreenHandler
         return this.seed.get();
     }
 
-    public static int getFlux(RecipeInputInventory input, World world) {
-        int flux = input.getHeldStacks()
+    public static int getFlux(CraftingContainer input, Level world) {
+        int flux = input.getItems()
             .subList(1, 9)
             .stream()
             .map(itemStack ->
@@ -495,12 +495,12 @@ public class ModEnchantmentScreenHandler
         };
     }
 
-    public static int getRuneCost(RecipeInputInventory input) {
-        return input.getHeldStacks().stream()
-                .filter(itemStack -> itemStack.isOf(ModItems.RUNE))
+    public static int getRuneCost(CraftingContainer input) {
+        return input.getItems().stream()
+                .filter(itemStack -> itemStack.is(ModItems.RUNE))
                 .map(itemStack -> itemStack.get(ModItems.ENCHANTMENT))
                 .filter(Objects::nonNull)
-                .map(RegistryEntry::value)
+                .map(Holder::value)
                 .filter(Objects::nonNull)
                 .map(Enchantment::getAnvilCost)
                 .reduce(0, (integer, integer2) ->
@@ -508,14 +508,14 @@ public class ModEnchantmentScreenHandler
                 );
     }
 
-    public static int getInputCost(RecipeInputInventory input) {
-        return RuneItem.getEnchantments(input.getStack(0))
+    public static int getInputCost(CraftingContainer input) {
+        return RuneItem.getEnchantments(input.getItem(0))
                 .map(leveledEnchantment -> {
                     int level = leveledEnchantment.level();
                     int enchantmentCost = Optional
                             .of(leveledEnchantment)
                             .map(RuneItem.LeveledEnchantment::enchantment)
-                            .map(RegistryEntry::value)
+                            .map(Holder::value)
                             .map(Enchantment::getAnvilCost)
                             .orElse(8);
                     return level * enchantmentCost;
@@ -523,23 +523,23 @@ public class ModEnchantmentScreenHandler
                 .reduce(0, Integer::sum);
     }
 
-    public static int getLevelRequirement(RecipeInputInventory input, World world) {
+    public static int getLevelRequirement(CraftingContainer input, Level world) {
         return Math.clamp(
-            (int) Math.ceil(getMoonBonus(world.getEnvironmentAttributes().getAttributeValue(EnvironmentAttributes.MOON_PHASE_VISUAL), world.isNight()) * (getRuneCost(input) + getInputCost(input))),
+            (int) Math.ceil(getMoonBonus(world.environmentAttributes().getDimensionValue(EnvironmentAttributes.MOON_PHASE), world.isDarkOutside()) * (getRuneCost(input) + getInputCost(input))),
             0, 99
         );
     }
 
     public boolean doFluxCheck(
-        PlayerEntity player,
-        RecipeInputInventory input,
-        World world,
+        Player player,
+        CraftingContainer input,
+        Level world,
         BlockPos blockPos
     ) {
         int flux = ModEnchantmentScreenHandler.getFlux(input, world);
-        int playerCheck = player.getRandom().nextBetween(0, 1000);
+        int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 1000);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
-        int bookshelfCheck = player.getRandom().nextBetween(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
+        int bookshelfCheck = player.getRandom().nextIntBetweenInclusive(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
         boolean success = (playerCheck + bookshelfCheck > flux);
         MagicRevamped.LOGGER.info(
             "{} : [{}:1000 + {}:{}] {} {}",
@@ -558,37 +558,37 @@ public class ModEnchantmentScreenHandler
         this.timeout.set(Math.max(0, timeout));
     }
 
-    public void onTakeResult(PlayerEntity player, ItemStack stack) {
-        this.context.run(((world, blockPos) -> {
+    public void onTakeResult(Player player, ItemStack stack) {
+        this.context.execute(((world, blockPos) -> {
             this.timeout.set(MAX_TIME_OUT);
             boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos);
             if (!success) {
-                world.playSound(null, blockPos, SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                world.playSound(null, blockPos, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
                 Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
                 stack.setCount(result.entry().getCount());
-                stack.applyComponentsFrom(result.entry().getComponents());
-                player.addExperienceLevels(-getLevelRequirement(this.craftingInventory, world));
+                stack.applyComponents(result.entry().getComponents());
+                player.giveExperienceLevels(-getLevelRequirement(this.craftingInventory, world));
                 if (!result.success()) return;
             }
 
-            player.incrementStat(Stats.ENCHANT_ITEM);
-            world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
-            this.resultSlot.onCrafted(stack);
-            IntStream.range(0, this.craftingInventory.size()).forEach(
-                i -> this.craftingInventory.removeStack(i, 1)
+            player.awardStat(Stats.ENCHANT_ITEM);
+            world.playSound(null, blockPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+            this.resultSlot.checkTakeAchievements(stack);
+            IntStream.range(0, this.craftingInventory.getContainerSize()).forEach(
+                i -> this.craftingInventory.removeItem(i, 1)
             );
         }));
-        this.craftingInventory.markDirty();
+        this.craftingInventory.setChanged();
     }
 
-    public Consequence.Result<ItemStack> doConsequence(World world, BlockPos blockPos, PlayerEntity player, ItemStack stack) {
-        if (!(world instanceof ServerWorld serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+    public Consequence.Result<ItemStack> doConsequence(Level world, BlockPos blockPos, Player player, ItemStack stack) {
+        if (!(world instanceof ServerLevel serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+        if (!(player instanceof ServerPlayer serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
 
         Consequence consequence = ConsequenceManager.pick(
             world,
             ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
-                .map(blockPos1 -> blockPos1.add(blockPos))
+                .map(blockPos1 -> blockPos1.offset(blockPos))
                 .toList()
         );
         return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
@@ -596,12 +596,12 @@ public class ModEnchantmentScreenHandler
 
     public int getBookBonus(ItemStack itemStack) {
         List<RuneItem.LeveledEnchantment> enchantments = RuneItem.getEnchantments(itemStack).toList();
-        int specialtyBonus = this.craftingInventory.getHeldStacks().subList(1,9).stream()
-            .map(itemStack1 -> Optional.ofNullable(itemStack1.get(ModItems.ENCHANTMENT)).map(RegistryEntry::value))
+        int specialtyBonus = this.craftingInventory.getItems().subList(1,9).stream()
+            .map(itemStack1 -> Optional.ofNullable(itemStack1.get(ModItems.ENCHANTMENT)).map(Holder::value))
             .anyMatch(
                 enchantment -> enchantments.stream()
                     .map(RuneItem.LeveledEnchantment::enchantment)
-                    .map(RegistryEntry::value)
+                    .map(Holder::value)
                     .anyMatch(enchantment1 -> enchantment.filter(value -> value == enchantment1).isPresent())
             ) ? 10 : 0;
 
@@ -619,9 +619,9 @@ public class ModEnchantmentScreenHandler
                 .reduce(1, Integer::max);
     }
 
-    public int getSingleBookshelfBonus(World world, BlockPos blockPos) {
+    public int getSingleBookshelfBonus(Level world, BlockPos blockPos) {
         BlockEntity blockEntity = world.getBlockEntity(blockPos);
-        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity)) {
+        if(!(blockEntity instanceof ChiseledBookShelfBlockEntity chiseledBookshelfBlockEntity)) {
             return 3;
         }
         AtomicInteger levelSum = new AtomicInteger();
@@ -633,12 +633,12 @@ public class ModEnchantmentScreenHandler
         return levelSum.get();
     }
 
-    public int getBookshelfBonus(World world, BlockPos blockPos) {
-        return ModEnchantingTableBlock.POWER_PROVIDER_OFFSETS.stream()
-                                                             .map(blockPos1 -> blockPos1.add(blockPos))
+    public int getBookshelfBonus(Level world, BlockPos blockPos) {
+        return ModEnchantingTableBlock.BOOKSHELF_OFFSETS.stream()
+                                                             .map(blockPos1 -> blockPos1.offset(blockPos))
                                                              .filter(blockPos1 ->
                                                                          world.getBlockState(blockPos1)
-                                                                              .isIn(BlockTags.ENCHANTMENT_POWER_PROVIDER)
+                                                                              .is(BlockTags.ENCHANTMENT_POWER_PROVIDER)
                                                              )
                                                              .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
                                                              .reduce(0, Integer::sum);

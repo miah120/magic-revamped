@@ -3,7 +3,7 @@
   "package": "lunar.tinkerer.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "GhostRecipeInvoker"
+    "GhostSlotsInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

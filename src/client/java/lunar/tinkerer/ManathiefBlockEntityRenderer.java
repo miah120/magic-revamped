@@ -1,81 +1,82 @@
 package lunar.tinkerer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.TexturedRenderLayers;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.command.ModelCommandRenderer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.texture.SpriteHolder;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 @Environment(value=EnvType.CLIENT)
 public class ManathiefBlockEntityRenderer
         implements BlockEntityRenderer<ManathiefBlockEntity, ManathiefBlockEntityRenderState> {
     //TODO: Make this work
-    private static final SpriteIdentifier TEXTURE = TexturedRenderLayers.ENTITY_SPRITE_MAPPER.map(MagicRevamped.identifier("manathief_face"));
+    private static final Material TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.identifier("manathief_face"));
     private final ManathiefFaceModel face;
-    private final SpriteHolder spriteHolder;
+    private final MaterialSet spriteHolder;
 
-    public ManathiefBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
-        this.spriteHolder = ctx.spriteHolder();
-        this.face = new ManathiefFaceModel(ctx.getLayerModelPart(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER));
+    public ManathiefBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
+        this.spriteHolder = ctx.materials();
+        this.face = new ManathiefFaceModel(ctx.bakeLayer(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER));
     }
 
     public ManathiefBlockEntityRenderState createRenderState() {
         return new ManathiefBlockEntityRenderState();
     }
 
-    public void updateRenderState(
+    public void extractRenderState(
             ManathiefBlockEntity manathiefBlockEntity,
             ManathiefBlockEntityRenderState manathiefBlockEntityRenderState,
             float f,
-            Vec3d vec3d,
-            @Nullable ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlayCommand
+            @NonNull Vec3 vec3d,
+            @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlayCommand
     ) {
-        BlockEntityRenderer.super.updateRenderState(manathiefBlockEntity, manathiefBlockEntityRenderState, f, vec3d, crumblingOverlayCommand);
+        BlockEntityRenderer.super.extractRenderState(manathiefBlockEntity, manathiefBlockEntityRenderState, f, vec3d, crumblingOverlayCommand);
         manathiefBlockEntityRenderState.ticks = manathiefBlockEntity.ticks + f;
         float g = ManathiefBlockEntity.normalizeRotation(manathiefBlockEntity.bookRotation - manathiefBlockEntity.lastBookRotation);
         manathiefBlockEntityRenderState.bookRotationDegrees = manathiefBlockEntity.lastBookRotation + (g * f);
     }
 
-    public void render(
+    public void submit(
             ManathiefBlockEntityRenderState manathiefBlockEntityRenderState,
-            MatrixStack matrixStack,
-            OrderedRenderCommandQueue orderedRenderCommandQueue,
-            CameraRenderState cameraRenderState
+            PoseStack matrixStack,
+            SubmitNodeCollector orderedRenderCommandQueue,
+            @NonNull CameraRenderState cameraRenderState
     ) {
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(0.5F, 0.75F, 0.5F);
-        matrixStack.translate(0.0F, 0.1F + MathHelper.sin(manathiefBlockEntityRenderState.ticks * 0.1F) * 0.01F, 0.0F);
+        matrixStack.translate(0.0F, 0.1F + Mth.sin(manathiefBlockEntityRenderState.ticks * 0.1F) * 0.01F, 0.0F);
 
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(-manathiefBlockEntityRenderState.bookRotationDegrees));
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-130));
-        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(60.0f));
+        matrixStack.mulPose(Axis.YP.rotation(-manathiefBlockEntityRenderState.bookRotationDegrees));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(-130));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(60.0f));
 
         ManathiefFaceModel.ManathiefFaceModelState faceModelState = new ManathiefFaceModel.ManathiefFaceModelState();
         orderedRenderCommandQueue.submitModel(
                 this.face,
                 faceModelState,
                 matrixStack,
-                TEXTURE.getRenderLayer(RenderLayers::entityCutout),
-                manathiefBlockEntityRenderState.lightmapCoordinates,
-                OverlayTexture.DEFAULT_UV,
+                TEXTURE.renderType(RenderTypes::entityCutout),
+                manathiefBlockEntityRenderState.lightCoords,
+                OverlayTexture.NO_OVERLAY,
                 -1,
-                this.spriteHolder.getSprite(TEXTURE),
+                this.spriteHolder.get(TEXTURE),
                 0,
-                manathiefBlockEntityRenderState.crumblingOverlay
+                manathiefBlockEntityRenderState.breakProgress
         );
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }
 

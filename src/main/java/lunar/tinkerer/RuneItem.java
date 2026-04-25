@@ -1,21 +1,20 @@
 package lunar.tinkerer;
 
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
-
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -23,37 +22,37 @@ import java.util.stream.Stream;
 public class RuneItem extends Item {
     public static final int DEFAULT_RUNE_FLUX = 8;
 
-    public RuneItem(Settings settings) {
+    public RuneItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return stack.get(ModItems.OPEN) != null;
     }
 
     @Override
-    public Text getName(ItemStack stack) {
-        Optional<RegistryEntry<Enchantment>> optional = Optional.ofNullable(stack.get(ModItems.ENCHANTMENT));
+    public Component getName(ItemStack stack) {
+        Optional<Holder<Enchantment>> optional = Optional.ofNullable(stack.get(ModItems.ENCHANTMENT));
         return optional
             .map(
                 enchantment ->
-                    Text.translatableWithFallback(
+                    Component.translatableWithFallback(
                     this._getTranslationKey(stack),
                 "Unknown Rune",
-                        Text.translatable(
-                            Util.createTranslationKey(
+                        Component.translatable(
+                            Util.makeDescriptionId(
                                 "enchantment",
-                                Identifier.of(enchantment.getIdAsString())
+                                Identifier.parse(enchantment.getRegisteredName())
                             )
                         )
                     )
             )
-            .orElse((MutableText) super.getName(stack));
+            .orElse((MutableComponent) super.getName(stack));
     }
 
     public String _getTranslationKey(ItemStack stack) {
-        String base = this.translationKey + ".template";
+        String base = this.descriptionId + ".template";
         Optional<Unit> open = Optional.ofNullable(stack.get(ModItems.OPEN));
         Optional<Unit> charged = Optional.ofNullable(stack.get(ModItems.CHARGED));
         return charged.isPresent()
@@ -64,35 +63,35 @@ public class RuneItem extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
         var flux = stack.getOrDefault(ModItems.FLUX, DEFAULT_RUNE_FLUX);
-        Formatting color;
+        ChatFormatting color;
         if (flux > 6) {
-            color = Formatting.DARK_RED;
+            color = ChatFormatting.DARK_RED;
         } else if (flux > 2) {
-            color = Formatting.GRAY;
+            color = ChatFormatting.GRAY;
         } else {
-            color = Formatting.DARK_GREEN;
+            color = ChatFormatting.DARK_GREEN;
         }
         textConsumer.accept(
-            Text.translatable(this.translationKey + ".flux", flux)
-                .formatted(color)
-                .formatted(Formatting.ITALIC)
+            Component.translatable(this.descriptionId + ".flux", flux)
+                .withStyle(color)
+                .withStyle(ChatFormatting.ITALIC)
         );
     }
 
-    public static void addOpenRunes(ItemGroup.Entries entries, RegistryWrapper<Enchantment> registryWrapper, ItemGroup.StackVisibility stackVisibility) {
-        registryWrapper.streamEntries().map(enchantmentEntry ->
+    public static void addOpenRunes(CreativeModeTab.Output entries, HolderLookup<Enchantment> registryWrapper, CreativeModeTab.TabVisibility stackVisibility) {
+        registryWrapper.listElements().map(enchantmentEntry ->
             {
                 ItemStack itemStack = new ItemStack(ModItems.RUNE);
                 itemStack.set(ModItems.OPEN, Unit.INSTANCE);
                 itemStack.set(ModItems.ENCHANTMENT, enchantmentEntry);
                 return itemStack;
-            }).forEach(stack -> entries.add(stack, stackVisibility));
+            }).forEach(stack -> entries.accept(stack, stackVisibility));
     }
 
-    public static void addOpenAndClosedRunes(ItemGroup.Entries entries, RegistryWrapper<Enchantment> registryWrapper, ItemGroup.StackVisibility stackVisibility) {
-        registryWrapper.streamEntries().flatMap(enchantmentEntry ->
+    public static void addOpenAndClosedRunes(CreativeModeTab.Output entries, HolderLookup<Enchantment> registryWrapper, CreativeModeTab.TabVisibility stackVisibility) {
+        registryWrapper.listElements().flatMap(enchantmentEntry ->
             {
                 ItemStack closed = new ItemStack(ModItems.RUNE);
                 closed.set(ModItems.ENCHANTMENT, enchantmentEntry);
@@ -105,13 +104,13 @@ public class RuneItem extends Item {
                     closed,
                     open
                 );
-            }).forEach(stack -> entries.add(stack, stackVisibility));
+            }).forEach(stack -> entries.accept(stack, stackVisibility));
     }
 
-    public record LeveledEnchantment(RegistryEntry<Enchantment> enchantment, int level) {}
+    public record LeveledEnchantment(Holder<Enchantment> enchantment, int level) {}
     public static Stream<LeveledEnchantment> getEnchantments(ItemStack itemStack) {
-        var enchantments = EnchantmentHelper.getEnchantments(itemStack);
-        return enchantments.getEnchantmentEntries().stream().map(enchantmentRegistryEntryEntry -> {
+        var enchantments = EnchantmentHelper.getEnchantmentsForCrafting(itemStack);
+        return enchantments.entrySet().stream().map(enchantmentRegistryEntryEntry -> {
             var enchantment = enchantmentRegistryEntryEntry.getKey();
             int level = enchantments.getLevel(enchantment);
             return new LeveledEnchantment(enchantment, level);

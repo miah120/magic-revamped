@@ -5,17 +5,16 @@ import lunar.tinkerer.ModBlocks;
 import lunar.tinkerer.ModItems;
 import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Vec3i;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 
 public class ConsequenceRegistry {
@@ -40,10 +39,10 @@ public class ConsequenceRegistry {
             "obsidian",
             new Consequence(
                 "Obsidian",
-                Ingredient.ofItem(Items.OBSIDIAN),
+                Ingredient.of(Items.OBSIDIAN),
                 List.of(
-                    new PlaySound(SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value()),
-                    new TransformBlock(Ingredient.ofItem(Items.OBSIDIAN), Blocks.CRYING_OBSIDIAN.getDefaultState())
+                    new PlaySound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.value()),
+                    new TransformBlock(Ingredient.of(Items.OBSIDIAN), Blocks.CRYING_OBSIDIAN.defaultBlockState())
                 ),
                 false,
                 2
@@ -53,11 +52,11 @@ public class ConsequenceRegistry {
             "candle",
             new Consequence(
                 "Candle",
-                Ingredient.ofItem(Items.CANDLE),
+                Ingredient.of(Items.CANDLE),
                 List.of(
                     new ApplyCurse(),
-                    new PlaySound(SoundEvents.BLOCK_CANDLE_EXTINGUISH),
-                    new TransformBlock(Ingredient.ofItem(Items.CANDLE), Blocks.AIR.getDefaultState())
+                    new PlaySound(SoundEvents.CANDLE_EXTINGUISH),
+                    new TransformBlock(Ingredient.of(Items.CANDLE), Blocks.AIR.defaultBlockState())
                 ),
                 true,
                 1
@@ -67,11 +66,11 @@ public class ConsequenceRegistry {
             "amethyst",
             new Consequence(
                 "Amethyst",
-                Ingredient.ofItems(Items.AMETHYST_CLUSTER, Items.SMALL_AMETHYST_BUD, Items.MEDIUM_AMETHYST_BUD, Items.LARGE_AMETHYST_BUD),
+                Ingredient.of(Items.AMETHYST_CLUSTER, Items.SMALL_AMETHYST_BUD, Items.MEDIUM_AMETHYST_BUD, Items.LARGE_AMETHYST_BUD),
                 List.of(
-                    new PlaySound(SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK),
-                    new TransformBlock(Ingredient.ofItem(Items.AMETHYST_CLUSTER), Blocks.AIR.getDefaultState()),
-                    new TransformBlock(Ingredient.ofItems(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.AMETHYST_BLOCK.getDefaultState())
+                    new PlaySound(SoundEvents.AMETHYST_CLUSTER_BREAK),
+                    new TransformBlock(Ingredient.of(Items.AMETHYST_CLUSTER), Blocks.AIR.defaultBlockState()),
+                    new TransformBlock(Ingredient.of(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.AMETHYST_BLOCK.defaultBlockState())
                 ),
                 false,
                 2
@@ -81,11 +80,11 @@ public class ConsequenceRegistry {
             "glow_berries",
             new Consequence(
                 "Glow Berries",
-                Ingredient.ofItem(Items.GLOW_BERRIES),
+                Ingredient.of(Items.GLOW_BERRIES),
                 List.of(
-                    new PlaySound(SoundEvents.ITEM_BONE_MEAL_USE),
-                    new TransformBlock(Ingredient.ofItem(Items.GLOW_BERRIES), Blocks.AIR.getDefaultState()),
-                    new TransformBlock(Ingredient.ofItems(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.MOSS_BLOCK.getDefaultState())
+                    new PlaySound(SoundEvents.BONE_MEAL_USE),
+                    new TransformBlock(Ingredient.of(Items.GLOW_BERRIES), Blocks.AIR.defaultBlockState()),
+                    new TransformBlock(Ingredient.of(Items.BOOKSHELF, Items.CHISELED_BOOKSHELF), Blocks.MOSS_BLOCK.defaultBlockState())
                 ),
                 false,
                 1
@@ -95,12 +94,12 @@ public class ConsequenceRegistry {
             "soul_lantern",
             new Consequence(
                 "Soul Lantern",
-                Ingredient.ofItems(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH),
+                Ingredient.of(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH),
                 List.of(
-                    new PlaySound(SoundEvents.PARTICLE_SOUL_ESCAPE.value()),
-                    new PlaySound(SoundEvents.BLOCK_LANTERN_BREAK),
-                    new TransformBlock(Ingredient.ofItems(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH), Blocks.AIR.getDefaultState()),
-                    new ApplyEffect(StatusEffects.WITHER)
+                    new PlaySound(SoundEvents.SOUL_ESCAPE.value()),
+                    new PlaySound(SoundEvents.LANTERN_BREAK),
+                    new TransformBlock(Ingredient.of(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH), Blocks.AIR.defaultBlockState()),
+                    new ApplyEffect(MobEffects.WITHER)
                 ),
                 false,
                 1
@@ -110,9 +109,9 @@ public class ConsequenceRegistry {
             "lightning_rod",
             new Consequence(
                 "Lightning Rod",
-                Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)),
+                Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)),
                 List.of(
-                    new TransformBlock(Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)), Blocks.AIR.defaultBlockState()),
                     new SummonLightning()
                 ),
                 false,
@@ -123,9 +122,9 @@ public class ConsequenceRegistry {
             "cobweb",
             new Consequence(
                 "Cobweb",
-                Ingredient.ofItem(Items.COBWEB),
+                Ingredient.of(Items.COBWEB),
                 List.of(
-                    new TransformBlock(Ingredient.ofItem(Items.COBWEB), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.of(Items.COBWEB), Blocks.AIR.defaultBlockState()),
                     new SummonEntity<>(EntityType.CAVE_SPIDER, 3)
                 ),
                 false,
@@ -136,10 +135,10 @@ public class ConsequenceRegistry {
             "skeleton_skull",
             new Consequence(
                 "Skeleton Skull",
-                Ingredient.ofItem(Items.SKELETON_SKULL),
+                Ingredient.of(Items.SKELETON_SKULL),
                 List.of(
                     new EnchantSuccess(),
-                    new TransformBlock(Ingredient.ofItem(Items.SKELETON_SKULL), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.of(Items.SKELETON_SKULL), Blocks.AIR.defaultBlockState()),
                     new SummonEntity<>(EntityType.SKELETON, 3)
                 ),
                 true,
@@ -150,10 +149,10 @@ public class ConsequenceRegistry {
             "wither_skeleton_skull",
             new Consequence(
                 "Wither Skeleton Skull",
-                Ingredient.ofItem(Items.WITHER_SKELETON_SKULL),
+                Ingredient.of(Items.WITHER_SKELETON_SKULL),
                 List.of(
                     new EnchantSuccess(),
-                    new TransformBlock(Ingredient.ofItem(Items.WITHER_SKELETON_SKULL), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.of(Items.WITHER_SKELETON_SKULL), Blocks.AIR.defaultBlockState()),
                     new SummonEntity<>(EntityType.WITHER_SKELETON, 3)
                 ),
                 true,
@@ -164,10 +163,10 @@ public class ConsequenceRegistry {
             "gilded_blackstone",
             new Consequence(
                 "",
-                Ingredient.ofItem(Items.GILDED_BLACKSTONE),
+                Ingredient.of(Items.GILDED_BLACKSTONE),
                 List.of(
                     new EnchantSuccess(),
-                    new TransformBlock(Ingredient.ofItem(Items.GILDED_BLACKSTONE), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.of(Items.GILDED_BLACKSTONE), Blocks.AIR.defaultBlockState()),
                     new Explosion()
                 ),
                 true,
@@ -178,10 +177,10 @@ public class ConsequenceRegistry {
             "sea_lantern",
             new Consequence(
                 "Sea Lantern",
-                Ingredient.ofItem(Items.SEA_LANTERN),
+                Ingredient.of(Items.SEA_LANTERN),
                 List.of(
-                    new TransformArea(new Vec3i(-2, -2, -2), new Vec3i(2, 2, 2), Blocks.WATER.getDefaultState(), Blocks.AIR.getDefaultState()),
-                    new TransformBlock(Ingredient.ofItem(Items.SEA_LANTERN), Blocks.AIR.getDefaultState()),
+                    new TransformArea(new Vec3i(-2, -2, -2), new Vec3i(2, 2, 2), Blocks.WATER.defaultBlockState(), Blocks.AIR.defaultBlockState()),
+                    new TransformBlock(Ingredient.of(Items.SEA_LANTERN), Blocks.AIR.defaultBlockState()),
                     new SummonEntity<>(EntityType.GUARDIAN, 3)
                 ),
                 false,
@@ -192,9 +191,9 @@ public class ConsequenceRegistry {
             "end_rod",
             new Consequence(
                 "End rod",
-                Ingredient.ofItem(Items.END_ROD),
+                Ingredient.of(Items.END_ROD),
                 List.of(
-                    new TransformBlock(Ingredient.ofItem(Items.END_ROD), Blocks.AIR.getDefaultState()),
+                    new TransformBlock(Ingredient.of(Items.END_ROD), Blocks.AIR.defaultBlockState()),
                     new Teleport(25, 50)
                 ),
                 false,
@@ -205,10 +204,10 @@ public class ConsequenceRegistry {
             "plant",
             new Consequence(
                 "Plant",
-                Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)),
+                Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)),
                 List.of(
-                    new TransformBlock(Ingredient.ofTag(Registries.createEntryLookup(Registries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)), Blocks.AIR.getDefaultState()),
-                    new TransformBlock(Ingredient.ofItem(ModBlocks.ENCHANTING_TABLE.asItem()), ModBlocks.MANATHIEF.getDefaultState())
+                    new TransformBlock(Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)), Blocks.AIR.defaultBlockState()),
+                    new TransformBlock(Ingredient.of(ModBlocks.ENCHANTING_TABLE.asItem()), ModBlocks.MANATHIEF.defaultBlockState())
                 ),
                 false,
                 1

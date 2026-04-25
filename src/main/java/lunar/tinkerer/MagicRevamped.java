@@ -3,10 +3,10 @@ package lunar.tinkerer;
 import lunar.tinkerer.consequences.ConsequenceRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +29,10 @@ public class MagicRevamped implements ModInitializer {
 		ModBlockEntities.initialize();
 		ModRecipeTypes.initialize();
 		ConsequenceRegistry.initialize();
-		Registry.register(Registries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
 	}
 
 	public static Identifier identifier(String id) {
-		return Identifier.of(MOD_ID, id);
+		return Identifier.fromNamespaceAndPath(MOD_ID, id);
 	}
 }

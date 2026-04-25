@@ -2,29 +2,28 @@ package lunar.tinkerer;
 
 import com.google.common.base.Function;
 import lunar.tinkerer.enchantingTable.ModEnchantingTableBlock;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.enums.NoteBlockInstrument;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
 
 public class ModBlocks {
 
     public static final Block ENCHANTING_TABLE = register(
             "enchanting_table",
             ModEnchantingTableBlock::new,
-            AbstractBlock.Settings.create()
-                    .mapColor(MapColor.RED)
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
                     .instrument(NoteBlockInstrument.BASEDRUM)
-                    .requiresTool()
-                    .luminance(state -> 7)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> 7)
                     .strength(5.0f, 1200.0f),
             true
     );
@@ -32,43 +31,43 @@ public class ModBlocks {
     public static final Block MANATHIEF = register(
             "manathief",
             ManathiefBlock::new,
-            AbstractBlock.Settings.create()
-                    .mapColor(MapColor.BLACK)
-                    .luminance(state -> 7)
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .lightLevel(state -> 7)
                     .noCollision()
-                    .breakInstantly()
-                    .sounds(BlockSoundGroup.CROP),
+                    .instabreak()
+                    .sound(SoundType.CROP),
             true
     );
 
     public static void initialize() {}
 
-    private static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, boolean shouldRegisterItem) {
+    private static Block register(String name, Function<BlockBehaviour.Properties, Block> blockFactory, BlockBehaviour.Properties settings, boolean shouldRegisterItem) {
         // Create a registry key for the block
-        RegistryKey<Block> blockKey = keyOfBlock(name);
+        ResourceKey<Block> blockKey = keyOfBlock(name);
         // Create the block instance
-        Block block = blockFactory.apply(settings.registryKey(blockKey));
+        Block block = blockFactory.apply(settings.setId(blockKey));
 
         // Sometimes, you may not want to register an item for the block.
         // Eg: if it's a technical block like `minecraft:moving_piston` or `minecraft:end_gateway`
         if (shouldRegisterItem) {
             // Items need to be registered with a different type of registry key, but the ID
             // can be the same.
-            RegistryKey<Item> itemKey = keyOfItem(name);
+            ResourceKey<Item> itemKey = keyOfItem(name);
 
-            BlockItem blockItem = new BlockItem(block, new Item.Settings().registryKey(itemKey));
-            Registry.register(Registries.ITEM, itemKey, blockItem);
+            BlockItem blockItem = new BlockItem(block, new Item.Properties().setId(itemKey));
+            Registry.register(BuiltInRegistries.ITEM, itemKey, blockItem);
         }
 
-        return Registry.register(Registries.BLOCK, blockKey, block);
+        return Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
     }
 
-    private static RegistryKey<Block> keyOfBlock(String name) {
-        return RegistryKey.of(RegistryKeys.BLOCK, MagicRevamped.identifier(name));
+    private static ResourceKey<Block> keyOfBlock(String name) {
+        return ResourceKey.create(Registries.BLOCK, MagicRevamped.identifier(name));
     }
 
-    private static RegistryKey<Item> keyOfItem(String name) {
-        return RegistryKey.of(RegistryKeys.ITEM, MagicRevamped.identifier(name));
+    private static ResourceKey<Item> keyOfItem(String name) {
+        return ResourceKey.create(Registries.ITEM, MagicRevamped.identifier(name));
     }
 
 }

@@ -1,22 +1,22 @@
 package lunar.tinkerer.enchantingTable;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeUnlocker;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
 
-public class EnchantingTableResultInventory implements Inventory,
-        RecipeUnlocker {
-    private final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(1, ItemStack.EMPTY);
+public class EnchantingTableResultInventory implements Container,
+        RecipeCraftingHolder {
+    private final NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
     @Nullable
-    private RecipeEntry<?> lastRecipe;
+    private RecipeHolder<?> lastRecipe;
 
     @Override
-    public int size() {
+    public int getContainerSize() {
         return 1;
     }
 
@@ -30,47 +30,47 @@ public class EnchantingTableResultInventory implements Inventory,
     }
 
     @Override
-    public ItemStack getStack(int slot) {
+    public ItemStack getItem(int slot) {
         return this.stacks.getFirst();
     }
 
     @Override
-    public ItemStack removeStack(int slot, int amount) {
-        return Inventories.removeStack(this.stacks, 0);
+    public ItemStack removeItem(int slot, int amount) {
+        return ContainerHelper.takeItem(this.stacks, 0);
     }
 
     @Override
-    public ItemStack removeStack(int slot) {
-        return Inventories.removeStack(this.stacks, 0);
+    public ItemStack removeItemNoUpdate(int slot) {
+        return ContainerHelper.takeItem(this.stacks, 0);
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
+    public void setItem(int slot, ItemStack stack) {
         this.stacks.set(0, stack);
     }
 
     @Override
-    public void markDirty() {
+    public void setChanged() {
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         this.stacks.clear();
     }
 
     @Override
-    public void setLastRecipe(@Nullable RecipeEntry<?> recipe) {
+    public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
         this.lastRecipe = recipe;
     }
 
     @Override
     @Nullable
-    public RecipeEntry<?> getLastRecipe() {
+    public RecipeHolder<?> getRecipeUsed() {
         return this.lastRecipe;
     }
 }

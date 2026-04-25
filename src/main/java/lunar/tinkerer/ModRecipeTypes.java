@@ -1,12 +1,12 @@
 package lunar.tinkerer;
 
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.RecipeBookCategory;
-import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 
 public class ModRecipeTypes {
     public static Identifier ID = MagicRevamped.identifier("enchanting");
@@ -17,7 +17,7 @@ public class ModRecipeTypes {
     );
 
     public static final RecipeType<EnchantmentRecipe> ENCHANTMENT_RECIPE_TYPE =  Registry.register(
-            Registries.RECIPE_TYPE,
+            BuiltInRegistries.RECIPE_TYPE,
             ID,
             new RecipeType<EnchantmentRecipe>(){
                 @Override
@@ -27,14 +27,14 @@ public class ModRecipeTypes {
             }
     );
 
-    public static final RecipeDisplay.Serializer<EnchantmentRecipeDisplay> ENCHANTMENT_RECIPE_DISPLAY = Registry.register(
-            Registries.RECIPE_DISPLAY,
+    public static final RecipeDisplay.Type<EnchantmentRecipeDisplay> ENCHANTMENT_RECIPE_DISPLAY = Registry.register(
+            BuiltInRegistries.RECIPE_DISPLAY,
             ID,
             EnchantmentRecipeDisplay.SERIALIZER
     );
 
     public static final RecipeBookCategory ENCHANTMENT_RECIPE_BOOK_CATEGORY = Registry.register(
-            Registries.RECIPE_BOOK_CATEGORY,
+            BuiltInRegistries.RECIPE_BOOK_CATEGORY,
             ID,
             new RecipeBookCategory()
     );

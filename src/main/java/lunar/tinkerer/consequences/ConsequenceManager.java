@@ -1,24 +1,23 @@
 package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.registry.ModRegistryKeys;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.util.collection.Weighting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.random.WeightedRandom;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import java.util.List;
 
 public class ConsequenceManager {
-    public static Consequence pick(World world, List<BlockPos> area) {
+    public static Consequence pick(Level world, List<BlockPos> area) {
         List<Block> blocks = area.stream()
              .map(world::getBlockState)
-             .map(AbstractBlock.AbstractBlockState::getBlock)
+             .map(BlockBehaviour.BlockStateBase::getBlock)
              .toList();
-        List<Consequence> consequenceList = world.getRegistryManager()
-            .getOrThrow(ModRegistryKeys.CONSEQUENCE).stream()
+        List<Consequence> consequenceList = world.registryAccess()
+            .lookupOrThrow(ModRegistryKeys.CONSEQUENCE).stream()
             .filter(consequence -> blocks.stream().anyMatch(consequence::test))
             .toList();
-        return Weighting.getRandom(world.random, consequenceList, Consequence::weight).orElse(ConsequenceRegistry.DEFAULT);
+        return WeightedRandom.getRandomItem(world.random, consequenceList, Consequence::weight).orElse(ConsequenceRegistry.DEFAULT);
     }
 }

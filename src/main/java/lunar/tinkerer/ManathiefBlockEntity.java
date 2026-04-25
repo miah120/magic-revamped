@@ -3,21 +3,13 @@
  */
 package lunar.tinkerer;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentsAccess;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
-import net.minecraft.util.Nameable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ManathiefBlockEntity
@@ -27,19 +19,19 @@ public class ManathiefBlockEntity
     public float lastBookRotation;
     public float targetBookRotation;
     public float leafRotation;
-    private static final Random RANDOM = Random.create();
+    private static final RandomSource RANDOM = RandomSource.create();
 
     public ManathiefBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MANATHIEF_BLOCK_ENTITY, pos, state);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, ManathiefBlockEntity blockEntity) {
+    public static void tick(Level world, BlockPos pos, BlockState state, ManathiefBlockEntity blockEntity) {
         blockEntity.lastBookRotation = blockEntity.bookRotation;
-        PlayerEntity playerEntity = world.getClosestPlayer((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, 8.0, false);
+        Player playerEntity = world.getNearestPlayer((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, 8.0, false);
         if (playerEntity != null) {
             double d = playerEntity.getX() - ((double) pos.getX() + 0.5);
             double e = playerEntity.getZ() - ((double) pos.getZ() + 0.5);
-            blockEntity.targetBookRotation = (float) MathHelper.atan2(e, d);
+            blockEntity.targetBookRotation = (float) Mth.atan2(e, d);
         }
         blockEntity.bookRotation = normalizeRotation(blockEntity.bookRotation);
         blockEntity.targetBookRotation = normalizeRotation(blockEntity.targetBookRotation);

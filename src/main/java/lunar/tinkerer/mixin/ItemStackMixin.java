@@ -3,18 +3,18 @@ package lunar.tinkerer.mixin;
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.ModItems;
 import lunar.tinkerer.RuneItem;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Unit;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,23 +27,23 @@ import java.util.List;
 public class ItemStackMixin {
     @Inject(
             at = @At("HEAD"),
-            method = "damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V",
+            method = "hurtAndBreak(ILnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;)V",
             cancellable = true
     )
     private void init(int amount, LivingEntity entity, EquipmentSlot slot, CallbackInfo ci) {
         ItemStack thisObj = (ItemStack)(Object) this;
-        World world = entity.getEntityWorld();
-        if (!(world instanceof ServerWorld serverWorld)) {
+        Level world = entity.level();
+        if (!(world instanceof ServerLevel serverWorld)) {
             ci.cancel();
             return;
         }
-        if (!(entity instanceof ServerPlayerEntity serverPlayerEntity)) {
+        if (!(entity instanceof ServerPlayer serverPlayerEntity)) {
             ci.cancel();
             return;
         }
         List<RuneItem.LeveledEnchantment> enchantments = RuneItem.getEnchantments(thisObj).toList();
         ItemStack thisCopy = thisObj.copy();
-        thisObj.damage(
+        thisObj.hurtAndBreak(
                 amount,
                 serverWorld,
                 serverPlayerEntity,
@@ -51,7 +51,7 @@ public class ItemStackMixin {
                     RuneItem.LeveledEnchantment chargedEnchant = getChargedEnchant(thisCopy, enchantments, serverWorld);
                     int flux = getFluxValue(thisCopy);
                     if (!enchantments.isEmpty()) {
-                        serverWorld.spawnParticles(
+                        serverWorld.sendParticles(
                                 MagicRevamped.BREAK_ENCHANT_PARTICLE,
                                 serverPlayerEntity.getX(),
                                 serverPlayerEntity.getEyeY(),
@@ -65,8 +65,8 @@ public class ItemStackMixin {
                                 serverPlayerEntity.getX(),
                                 serverPlayerEntity.getY(),
                                 serverPlayerEntity.getZ(),
-                                SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,
-                                SoundCategory.BLOCKS,
+                                SoundEvents.ENCHANTMENT_TABLE_USE,
+                                SoundSource.BLOCKS,
                                 1F,
                                 2F
                         );
@@ -75,8 +75,8 @@ public class ItemStackMixin {
                                 serverPlayerEntity.getX(),
                                 serverPlayerEntity.getY(),
                                 serverPlayerEntity.getZ(),
-                                SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
-                                SoundCategory.BLOCKS,
+                                SoundEvents.AMETHYST_BLOCK_CHIME,
+                                SoundSource.BLOCKS,
                                 100F,
                                 0.5F
                         );
@@ -89,19 +89,19 @@ public class ItemStackMixin {
                         if(leveledEnchantment == chargedEnchant) {
                             ItemStack chargedRune = itemStack.split(1);
                             chargedRune.set(ModItems.CHARGED, Unit.INSTANCE);
-                            serverPlayerEntity.dropItem(chargedRune, false);
+                            serverPlayerEntity.drop(chargedRune, false);
                         }
                         if(itemStack.isEmpty()) return;
-                        serverPlayerEntity.dropItem(itemStack, false);
+                        serverPlayerEntity.drop(itemStack, false);
                     });
-                    entity.sendEquipmentBreakStatus(item, slot);
+                    entity.onEquippedItemBroken(item, slot);
                 });
         ci.cancel();
     }
 
     @Unique
-    RuneItem.LeveledEnchantment getChargedEnchant(ItemStack itemStack, List<RuneItem.LeveledEnchantment> enchantments, ServerWorld world) {
-        if (!itemStack.isIn(ModItems.DROPS_CHARGED_RUNE)) {
+    RuneItem.LeveledEnchantment getChargedEnchant(ItemStack itemStack, List<RuneItem.LeveledEnchantment> enchantments, ServerLevel world) {
+        if (!itemStack.is(ModItems.DROPS_CHARGED_RUNE)) {
             return null;
         }
         List<RuneItem.LeveledEnchantment> viable = enchantments.stream().filter(
@@ -116,13 +116,13 @@ public class ItemStackMixin {
 
     @Unique
     int getFluxValue(ItemStack itemStack) {
-        var repairMaterial = itemStack.get(DataComponentTypes.REPAIRABLE);
+        var repairMaterial = itemStack.get(DataComponents.REPAIRABLE);
         if (repairMaterial == null) return 8;
-        if (repairMaterial.matches(new ItemStack(Items.DIAMOND))) return 1;
-        if (repairMaterial.matches(new ItemStack(Items.GOLD_INGOT))) return 4;
-        if (repairMaterial.matches(new ItemStack(Items.IRON_INGOT))) return 6;
-        if (repairMaterial.matches(new ItemStack(Items.COPPER_INGOT))) return 6;
-        if (repairMaterial.matches(new ItemStack(Items.COBBLESTONE))) return 7;
+        if (repairMaterial.isValidRepairItem(new ItemStack(Items.DIAMOND))) return 1;
+        if (repairMaterial.isValidRepairItem(new ItemStack(Items.GOLD_INGOT))) return 4;
+        if (repairMaterial.isValidRepairItem(new ItemStack(Items.IRON_INGOT))) return 6;
+        if (repairMaterial.isValidRepairItem(new ItemStack(Items.COPPER_INGOT))) return 6;
+        if (repairMaterial.isValidRepairItem(new ItemStack(Items.COBBLESTONE))) return 7;
         return 8;
     }
 }

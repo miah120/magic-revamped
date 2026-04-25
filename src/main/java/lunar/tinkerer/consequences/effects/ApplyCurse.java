@@ -1,27 +1,27 @@
 package lunar.tinkerer.consequences.effects;
 
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public record ApplyCurse() implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
-        var optional = world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(EnchantmentTags.CURSE);
+    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+        var optional = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.CURSE);
         if (optional.isEmpty()) return ItemStack.EMPTY;
-        RegistryEntry<Enchantment> curse = EnchantmentHelper
-            .generateEnchantments(player.getRandom(), stack, 25, optional.get().stream())
+        Holder<Enchantment> curse = EnchantmentHelper
+            .selectEnchantment(player.getRandom(), stack, 25, optional.get().stream())
             .getFirst()
             .enchantment();
-        stack.addEnchantment(curse, 1);
+        stack.enchant(curse, 1);
         return stack;
     }
 }

@@ -1,94 +1,96 @@
 package lunar.tinkerer;
 
 import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
-import lunar.tinkerer.mixin.client.GhostRecipeInvoker;
+import lunar.tinkerer.mixin.client.GhostSlotsInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.ScreenPos;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
-import net.minecraft.client.gui.screen.ingame.EnchantingPhrases;
-import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
-import net.minecraft.client.gui.screen.recipebook.GhostRecipe;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
-import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.RecipeFinder;
-import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.recipe.display.SlotDisplay;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.context.ContextParameterMap;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.navigation.ScreenPosition;
+import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.client.gui.screens.inventory.CyclingSlotBackground;
+import net.minecraft.client.gui.screens.inventory.EnchantmentNames;
+import net.minecraft.client.gui.screens.recipebook.GhostSlots;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.StackedItemContents;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
 
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantmentScreen
-        extends RecipeBookScreen<ModEnchantmentScreenHandler> {
+        extends AbstractRecipeBookScreen<ModEnchantmentScreenHandler> {
     protected int backgroundWidth = 176;
     protected int backgroundHeight = 212;
     private static final List<Identifier> CONDUIT_TEXTURES = List.of(
-            Identifier.ofVanilla("container/slot/chestplate"),
-            Identifier.ofVanilla("container/slot/helmet"),
-            Identifier.ofVanilla("container/slot/leggings"),
-            Identifier.ofVanilla("container/slot/boots"),
-            Identifier.ofVanilla("container/slot/axe"),
-            Identifier.ofVanilla("container/slot/pickaxe"),
-            Identifier.ofVanilla("container/slot/hoe"),
-            Identifier.ofVanilla("container/slot/shield"),
-            Identifier.ofVanilla("container/slot/shovel"),
-            Identifier.ofVanilla("container/slot/sword"),
-            Identifier.ofVanilla("container/slot/lapis_lazuli")
+            Identifier.withDefaultNamespace("container/slot/chestplate"),
+            Identifier.withDefaultNamespace("container/slot/helmet"),
+            Identifier.withDefaultNamespace("container/slot/leggings"),
+            Identifier.withDefaultNamespace("container/slot/boots"),
+            Identifier.withDefaultNamespace("container/slot/axe"),
+            Identifier.withDefaultNamespace("container/slot/pickaxe"),
+            Identifier.withDefaultNamespace("container/slot/hoe"),
+            Identifier.withDefaultNamespace("container/slot/shield"),
+            Identifier.withDefaultNamespace("container/slot/shovel"),
+            Identifier.withDefaultNamespace("container/slot/sword"),
+            Identifier.withDefaultNamespace("container/slot/lapis_lazuli")
     );
-    private final CyclingSlotIcon slotIcon = new CyclingSlotIcon(1);
+    private final CyclingSlotBackground slotIcon = new CyclingSlotBackground(1);
 
     private static final Identifier TEXTURE = MagicRevamped.identifier("textures/gui/enchanting_table.png");
 
-    public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
-        super(handler, new RecipeBookWidget<>(handler, List.of(
-                new RecipeBookWidget.Tab(Items.ENCHANTING_TABLE, ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY)
+    public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, Inventory inventory, Component title) {
+        super(handler, new RecipeBookComponent<>(handler, List.of(
+                new RecipeBookComponent.TabInfo(Items.ENCHANTING_TABLE, ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY)
         )) {
-            private static final ButtonTextures TEXTURES = new ButtonTextures(Identifier.ofVanilla("recipe_book/filter_enabled"), Identifier.ofVanilla("recipe_book/filter_disabled"), Identifier.ofVanilla("recipe_book/filter_enabled_highlighted"), Identifier.ofVanilla("recipe_book/filter_disabled_highlighted"));
-            private static final Text TOGGLE_CRAFTABLE_TEXT = Text.translatable("gui.recipebook.toggleRecipes.craftable");
+            private static final WidgetSprites TEXTURES = new WidgetSprites(Identifier.withDefaultNamespace("recipe_book/filter_enabled"), Identifier.withDefaultNamespace("recipe_book/filter_disabled"), Identifier.withDefaultNamespace("recipe_book/filter_enabled_highlighted"), Identifier.withDefaultNamespace("recipe_book/filter_disabled_highlighted"));
+            private static final Component TOGGLE_CRAFTABLE_TEXT = Component.translatable("gui.recipebook.toggleRecipes.craftable");
 
             @Override
-            protected ButtonTextures getBookButtonTextures() {
+            protected WidgetSprites getFilterButtonTextures() {
                 return TEXTURES;
             }
 
             @Override
-            protected boolean isCraftingSlot(Slot slot) {
+            protected boolean isCraftingSlot(@NonNull Slot slot) {
                 return false;
             }
 
             @Override
-            protected Text getToggleCraftableButtonText() {
+            protected Component getRecipeFilterName() {
                 return TOGGLE_CRAFTABLE_TEXT;
             }
 
             @Override
-            protected void populateRecipes(RecipeResultCollection recipeResultCollection, RecipeFinder recipeFinder) {
-                recipeResultCollection.populateRecipes(recipeFinder, (x) -> true);
+            protected void selectMatchingRecipes(RecipeCollection recipeCollection, StackedItemContents stackedItemContents) {
+                recipeCollection.selectRecipes(stackedItemContents, (x) -> true);
             }
+
             @Override
-            protected void showGhostRecipe(GhostRecipe ghostRecipe, RecipeDisplay display, ContextParameterMap context) {
-                ((GhostRecipeInvoker) ghostRecipe).invokeAddResults(this.craftingScreenHandler.getOutputSlot(), context, display.result());
+            protected void fillGhostRecipe(GhostSlots ghostSlots, RecipeDisplay display, ContextMap context) {
+                ((GhostSlotsInvoker) ghostSlots).invokeAddResults(this.menu.getOutputSlot(), context, display.result());
                 Objects.requireNonNull(display);
                 EnchantmentRecipeDisplay enchantmentRecipeDisplay = (EnchantmentRecipeDisplay) display;
-                List<Slot> list2 = this.craftingScreenHandler.getInputSlots();
+                List<Slot> list2 = this.menu.getInputSlots();
                 List<SlotDisplay> list = enchantmentRecipeDisplay.ingredients();
                 int i = Math.min(list.size(), list2.size());
                 for (int j = 0; j < i; ++j) {
-                    ((GhostRecipeInvoker) ghostRecipe).invokeAddInputs(
-                        list2.get(j),
-                        context,
-                        list.get(j)
+                    ((GhostSlotsInvoker) ghostSlots).invokeAddInputs(
+                            list2.get(j),
+                            context,
+                            list.get(j)
                     );
                 }
             }
@@ -97,73 +99,66 @@ public class ModEnchantmentScreen
 
     @Override
     protected void init() {
-        titleY = -18;
-        playerInventoryTitleY = 79;
+        titleLabelY = -18;
+        inventoryLabelY = 79;
         super.init();
     }
 
     @Override
-    protected ScreenPos getRecipeBookButtonPos() {
-        return new ScreenPos(this.x + 149, this.height / 2 - 14);
+    protected ScreenPosition getRecipeBookButtonPosition() {
+        return new ScreenPosition(this.leftPos + 149, this.height / 2 - 14);
     }
 
     @Override
-    public void handledScreenTick() {
-        super.handledScreenTick();
-        this.slotIcon.updateTexture(CONDUIT_TEXTURES);
+    public void containerTick() {
+        super.containerTick();
+        this.slotIcon.tick(CONDUIT_TEXTURES);
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float deltaTicks, int mouseX, int mouseY) {
-        assert this.client != null;
-        assert this.client.player != null;
-        context.drawTexture(
-            RenderPipelines.GUI_TEXTURED,
-            TEXTURE,
-            this.x,
-            (this.height - this.backgroundHeight) / 2,
-            0.0f,
-            0.0f,
-            this.backgroundWidth,
-            this.backgroundHeight,
-            256,
-            256
+    protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j) {
+        guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
+                TEXTURE,
+                this.leftPos,
+                (this.height - this.backgroundHeight) / 2,
+                0.0f,
+                0.0f,
+                this.backgroundWidth,
+                this.backgroundHeight,
+                256,
+                256
         );
-        this.slotIcon.render(this.handler, context, deltaTicks, this.x, this.y);
-        this.renderCooldown(context);
-        this.renderRisk(context);
+        this.slotIcon.render(this.menu, guiGraphics, f, this.leftPos, this.topPos);
+        this.renderCooldown(guiGraphics);
+        this.renderRisk(guiGraphics);
     }
-
-    @Override
-    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
-        super.drawForeground(context, mouseX, mouseY);
-    }
-
-    public void renderCooldown(DrawContext context) {
-        int x = this.handler.resultSlot.x + this.x;
-        int y = this.handler.resultSlot.y + this.y;
-        int timeout = this.handler.timeout.get();
+    
+    public void renderCooldown(GuiGraphics context) {
+        int x = this.menu.resultSlot.x + this.leftPos;
+        int y = this.menu.resultSlot.y + this.topPos;
+        int timeout = this.menu.timeout.get();
         context.fill(
-                RenderPipelines.GUI,
-                x, y + 16 - Math.floorDiv(16 * timeout, ModEnchantmentScreenHandler.MAX_TIME_OUT),
-                x+16, y+16,
-                0xBFBFBFAA
+            RenderPipelines.GUI,
+            x, y + 16 - Math.floorDiv(16 * timeout, ModEnchantmentScreenHandler.MAX_TIME_OUT),
+            x+16, y+16,
+            0xBFBFBFAA
         );
     }
 
-    public void renderRisk(DrawContext context) {
-        if (this.handler.resultSlot.inventory.isEmpty()) return;
-        int x = this.handler.resultSlot.x + this.x - 33;
-        int y = this.handler.resultSlot.y + this.y + 47;
+    public void renderRisk(GuiGraphics context) {
+        if (this.menu.resultSlot.container.isEmpty()) return;
+        int x = this.menu.resultSlot.x + this.leftPos - 33;
+        int y = this.menu.resultSlot.y + this.topPos + 47;
 
-        int color = this.handler.resultSlot.canTakeItems(this.handler.player) ? -8323296 : 0xDFd31b1b;
+        int color = this.menu.resultSlot.mayPickup(this.menu.player) ? -8323296 : 0xDFd31b1b;
 
-        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.handler.craftingInventory, this.handler.player.getEntityWorld());
-        EnchantingPhrases.getInstance().setSeed(this.handler.getSeed());
-        StringVisitable riskLabel = EnchantingPhrases.getInstance()
-            .generatePhrase(
-                this.textRenderer,
-                46 - this.textRenderer.getWidth(risk)
+        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.menu.craftingInventory, this.menu.player.level());
+        EnchantmentNames.getInstance().initSeed(this.menu.getSeed());
+        FormattedText riskLabel = EnchantmentNames.getInstance()
+            .getRandomName(
+                this.font, 
+                46 - this.font.width(risk)
             );
 
         context.fill(
@@ -172,18 +167,19 @@ public class ModEnchantmentScreen
             x + 50, y + 14,
             0x4F000000
         );
-        context.drawWrappedTextWithShadow(
-            this.textRenderer,
+        context.drawWordWrap(
+            this.font,
             riskLabel,
             x + 3,
             y + 3,
             40,
-            color
+            color,
+            true
         );
-        context.drawTextWithShadow(
-            this.textRenderer,
-            risk,
-            x + 3 + this.textRenderer.getWidth(riskLabel),
+        context.drawString(
+            this.font,
+            Component.literal(risk),
+            x + 3 + this.font.width(riskLabel),
             y + 3,
             color
         );

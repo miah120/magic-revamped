@@ -2,14 +2,13 @@ package lunar.tinkerer;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.recipe.display.SlotDisplay;
-import net.minecraft.resource.featuretoggle.FeatureSet;
-
 import java.util.List;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 
 public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, SlotDisplay result, SlotDisplay craftingStation) implements RecipeDisplay {
     public static final MapCodec<EnchantmentRecipeDisplay> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
@@ -23,27 +22,27 @@ public record EnchantmentRecipeDisplay(List<SlotDisplay> ingredients, SlotDispla
                     .fieldOf("crafting_station")
                     .forGetter(EnchantmentRecipeDisplay::craftingStation)
     ).apply(instance, EnchantmentRecipeDisplay::new));
-    public static final PacketCodec<RegistryByteBuf, EnchantmentRecipeDisplay> PACKET_CODEC;
-    public static final RecipeDisplay.Serializer<EnchantmentRecipeDisplay> SERIALIZER;
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentRecipeDisplay> STREAM_CODEC;
+    public static final RecipeDisplay.Type<EnchantmentRecipeDisplay> SERIALIZER;
 
-    public RecipeDisplay.Serializer<EnchantmentRecipeDisplay> serializer() {
+    public RecipeDisplay.Type<EnchantmentRecipeDisplay> type() {
         return SERIALIZER;
     }
 
-    public boolean isEnabled(FeatureSet features) {
+    public boolean isEnabled(FeatureFlagSet features) {
         return this.ingredients.stream().allMatch((ingredient) -> ingredient.isEnabled(features)) && RecipeDisplay.super.isEnabled(features);
     }
 
     static {
-        PACKET_CODEC = PacketCodec.tuple(
-                SlotDisplay.PACKET_CODEC.collect(PacketCodecs.toList()),
+        STREAM_CODEC = StreamCodec.composite(
+                SlotDisplay.STREAM_CODEC.apply(ByteBufCodecs.list()),
                 EnchantmentRecipeDisplay::ingredients,
-                SlotDisplay.PACKET_CODEC,
+                SlotDisplay.STREAM_CODEC,
                 EnchantmentRecipeDisplay::result,
-                SlotDisplay.PACKET_CODEC,
+                SlotDisplay.STREAM_CODEC,
                 EnchantmentRecipeDisplay::craftingStation,
                 EnchantmentRecipeDisplay::new
         );
-        SERIALIZER = new RecipeDisplay.Serializer<>(CODEC, PACKET_CODEC);
+        SERIALIZER = new RecipeDisplay.Type<>(CODEC, STREAM_CODEC);
     }
 }

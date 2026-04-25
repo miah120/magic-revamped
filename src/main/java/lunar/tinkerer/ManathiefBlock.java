@@ -1,106 +1,111 @@
 package lunar.tinkerer;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCollisionHandler;
-import net.minecraft.entity.mob.RavagerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.rule.GameRules;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.entity.monster.Ravager;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class ManathiefBlock extends TallPlantBlock implements BlockEntityProvider {
-    public static final MapCodec<ManathiefBlock> CODEC = createCodec(ManathiefBlock::new);
-    public static final EnumProperty<DoubleBlockHalf> HALF = TallPlantBlock.HALF;
-    private static final VoxelShape LOWER_COLLISION_SHAPE = Block.createColumnShape(16.0, 0, 8.0);
+public class ManathiefBlock extends DoublePlantBlock implements EntityBlock {
+    public static final MapCodec<ManathiefBlock> CODEC = simpleCodec(ManathiefBlock::new);
+    public static final EnumProperty<DoubleBlockHalf> HALF = DoublePlantBlock.HALF;
+    private static final VoxelShape LOWER_COLLISION_SHAPE = Block.column(16.0, 0, 8.0);
     private final Function<BlockState, VoxelShape> shapeFunction = this.createShapeFunction();
 
     @Override
-    public MapCodec<ManathiefBlock> getCodec() {
+    public MapCodec<ManathiefBlock> codec() {
         return CODEC;
     }
 
-    public ManathiefBlock(AbstractBlock.Settings settings) {
+    public ManathiefBlock(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
     private Function<BlockState, VoxelShape> createShapeFunction() {
-        return this.createShapeFunction(state -> switch (state.get(HALF)) {
-            case LOWER -> Block.createColumnShape(10, 0, 16);
-            case UPPER -> Block.createColumnShape(10, 0.0, 15);
+        return this.getShapeForEachState(state -> switch (state.getValue(HALF)) {
+            case LOWER -> Block.column(10, 0, 16);
+            case UPPER -> Block.column(10, 0.0, 15);
         });
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState();
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return this.shapeFunction.apply(state);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return LOWER_COLLISION_SHAPE;
         } else {
-            return VoxelShapes.empty();
+            return Shapes.empty();
         }
     }
 
     @Override
-    protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
+    protected boolean mayPlaceOn(BlockState floor, BlockGetter world, BlockPos pos) {
         return true;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
     }
 
     @Override
-    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
-        if (world instanceof ServerWorld serverWorld && entity instanceof RavagerEntity && serverWorld.getGameRules().getValue(GameRules.DO_MOB_GRIEFING)) {
-            entity.setOnFireFor(5f);
+    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier handler, boolean bl) {
+        if (world instanceof ServerLevel serverWorld && entity instanceof Ravager && serverWorld.getGameRules().get(GameRules.MOB_GRIEFING)) {
+            entity.igniteForSeconds(5f);
         }
     }
 
     @Override
-    public boolean canReplace(BlockState state, ItemPlacementContext context) {
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         return false;
     }
 
     @Override
-    public boolean hasRandomTicks(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return false;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return state.get(HALF) == DoubleBlockHalf.UPPER ? new ManathiefBlockEntity(pos, state) : null;
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? new ManathiefBlockEntity(pos, state) : null;
     }
 
     @Override
     @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient() ? ManathiefBlock.validateTicker(type, ManathiefBlockEntity::tick) : null;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return world.isClientSide() ? ManathiefBlock.validateTicker(type, ManathiefBlockEntity::tick) : null;
     }
 
     protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> validateTicker(

@@ -2,28 +2,29 @@ package lunar.tinkerer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
+import org.jspecify.annotations.NonNull;
 
 @Environment(EnvType.CLIENT)
-public class BreakEnchantParticle extends AnimatedParticle {
+public class BreakEnchantParticle extends SimpleAnimatedParticle {
     double initialVelocityX;
     double initialVelocityY;
     double initialVelocityZ;
 
-    BreakEnchantParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, SpriteProvider spriteProvider) {
+    BreakEnchantParticle(ClientLevel world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, SpriteSet spriteProvider) {
         super(world, x, y, z, spriteProvider, 0F);
-        this.velocityX = velocityX;
-        this.velocityY = velocityY;
-        this.velocityZ = velocityZ;
+        this.xd = velocityX;
+        this.yd = velocityY;
+        this.zd = velocityZ;
         this.initialVelocityX = velocityX;
         this.initialVelocityY = velocityY;
         this.initialVelocityZ = velocityZ;
-        this.scale *= 0.75F;
-        this.maxAge = 50 + this.random.nextInt(22);
-        this.updateSprite(spriteProvider);
+        this.quadSize *= 0.75F;
+        this.lifetime = 50 + this.random.nextInt(22);
+        this.setSpriteFromAge(spriteProvider);
     }
 
     public static double particleSpeed(double velocity, double initialVelocity) {
@@ -32,24 +33,24 @@ public class BreakEnchantParticle extends AnimatedParticle {
 
     @Override
     public void tick() {
-        this.velocityX = particleSpeed(this.velocityX, this.initialVelocityX);
-        this.velocityY = particleSpeed(this.velocityY, this.initialVelocityY);
-        this.velocityZ = particleSpeed(this.velocityZ, this.initialVelocityZ);
+        this.xd = particleSpeed(this.xd, this.initialVelocityX);
+        this.yd = particleSpeed(this.yd, this.initialVelocityY);
+        this.zd = particleSpeed(this.zd, this.initialVelocityZ);
         super.tick();
     }
 
     @Environment(EnvType.CLIENT)
-    public static class Factory implements ParticleFactory<SimpleParticleType> {
-        private final SpriteProvider spriteProvider;
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
+        private final SpriteSet spriteProvider;
 
-        public Factory(SpriteProvider spriteProvider) {
+        public Factory(SpriteSet spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
         public Particle createParticle(
-                SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, Random random
+                SimpleParticleType simpleParticleType, @NonNull ClientLevel clientLevel, double d, double e, double f, double g, double h, double i, @NonNull RandomSource random
         ) {
-            return new BreakEnchantParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
+            return new BreakEnchantParticle(clientLevel, d, e, f, g, h, i, this.spriteProvider);
         }
     }
 }

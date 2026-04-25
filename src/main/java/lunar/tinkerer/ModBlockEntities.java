@@ -3,13 +3,13 @@ package lunar.tinkerer;
 import lunar.tinkerer.enchantingTable.ModEnchantingTableBlockEntity;
 import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.featuretoggle.FeatureSet;
-import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class ModBlockEntities {
     public static final BlockEntityType<ModEnchantingTableBlockEntity> ENCHANTING_TABLE_BLOCK_ENTITY = registerBlockEntity(
@@ -22,15 +22,15 @@ public class ModBlockEntities {
             ManathiefBlockEntity::new,
             ModBlocks.MANATHIEF
     );
-    public static final ScreenHandlerType<ModEnchantmentScreenHandler> ENCHANTMENT_SCREEN_HANDLER = Registry.register(
-            Registries.SCREEN_HANDLER,
+    public static final MenuType<ModEnchantmentScreenHandler> ENCHANTMENT_SCREEN_HANDLER = Registry.register(
+            BuiltInRegistries.MENU,
             MagicRevamped.identifier("enchanting_table"),
-            new ScreenHandlerType<>(ModEnchantmentScreenHandler::new, FeatureSet.empty())
+            new MenuType<>(ModEnchantmentScreenHandler::new, FeatureFlagSet.of())
     );
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block block) {
         return Registry.register(
-                Registries.BLOCK_ENTITY_TYPE,
+                BuiltInRegistries.BLOCK_ENTITY_TYPE,
                 MagicRevamped.identifier(name),
                 FabricBlockEntityTypeBuilder.create(factory, block).build()
         );

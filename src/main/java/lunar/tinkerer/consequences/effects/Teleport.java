@@ -1,53 +1,53 @@
 package lunar.tinkerer.consequences.effects;
 
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import net.minecraft.block.BlockState;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 public record Teleport(int min, int max) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerWorld world, BlockPos blockPos, ServerPlayerEntity player, RecipeInputInventory input, ItemStack stack) {
-        var target = player.getSyncedPos().add(getTarget(world));
-        teleportTo(world, player, target.getX(), target.getY(), target.getZ());
+    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+        var target = player.trackingPosition().add(getTarget(world));
+        teleportTo(world, player, target.x(), target.y(), target.z());
         return ItemStack.EMPTY;
     }
 
-    public Vec3d getTarget(ServerWorld world) {
-        int size = world.random.nextBetween(min, max);
+    public Vec3 getTarget(ServerLevel world) {
+        int size = world.random.nextIntBetweenInclusive(min, max);
         double x = world.random.nextDouble();
         double y = world.random.nextDouble();
         double z = world.random.nextDouble();
 
-        return new Vec3d(x, y, z).normalize().multiply(size);
+        return new Vec3(x, y, z).normalize().scale(size);
     }
 
-    public static void teleportTo(ServerWorld world, ServerPlayerEntity player, double x, double y, double z) {
-        BlockPos.Mutable mutable = new BlockPos.Mutable(x, y, z);
+    public static void teleportTo(ServerLevel world, ServerPlayer player, double x, double y, double z) {
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(x, y, z);
 
-        while (mutable.getY() > world.getBottomY() && !world.getBlockState(mutable).blocksMovement()) {
+        while (mutable.getY() > world.getMinY() && !world.getBlockState(mutable).blocksMotion()) {
             mutable.move(Direction.DOWN);
         }
 
         BlockState blockState = world.getBlockState(mutable);
-        boolean bl = blockState.blocksMovement();
-        boolean bl2 = blockState.getFluidState().isIn(FluidTags.WATER);
+        boolean bl = blockState.blocksMotion();
+        boolean bl2 = blockState.getFluidState().is(FluidTags.WATER);
         if (bl && !bl2) {
-            Vec3d vec3d = player.getSyncedPos();
-            boolean bl3 = player.teleport(x, y, z, true);
+            Vec3 vec3d = player.trackingPosition();
+            boolean bl3 = player.randomTeleport(x, y, z, true);
             if (bl3) {
-                world.emitGameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Emitter.of(player));
+                world.gameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Context.of(player));
                 if (!player.isSilent()) {
-                    world.playSound(null, player.lastX, player.lastY, player.lastZ, SoundEvents.ENTITY_ENDERMAN_TELEPORT, player.getSoundCategory(), 1.0F, 1.0F);
-                    player.playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+                    world.playSound(null, player.xo, player.yo, player.zo, SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 1.0F);
+                    player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
                 }
             }
         }
