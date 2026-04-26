@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public record PlaySound(SoundEvent soundEvent) implements ConsequenceEffect {
     @Override
     public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        world.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+        world.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0f, world.getRandom().nextFloat() * 0.1f + 0.9f);
         return ItemStack.EMPTY;
     }
 }

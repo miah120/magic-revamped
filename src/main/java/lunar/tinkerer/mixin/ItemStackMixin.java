@@ -110,7 +110,7 @@ public class ItemStackMixin {
         if (viable.isEmpty()) {
             return null;
         }
-        int pickedSlot = world.random.nextInt(viable.size());
+        int pickedSlot = world.getRandom().nextInt(viable.size());
         return viable.get(pickedSlot);
     }
 

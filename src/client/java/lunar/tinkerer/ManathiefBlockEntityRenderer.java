@@ -10,10 +10,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -23,12 +23,12 @@ import org.jspecify.annotations.NonNull;
 public class ManathiefBlockEntityRenderer
         implements BlockEntityRenderer<ManathiefBlockEntity, ManathiefBlockEntityRenderState> {
     //TODO: Make this work
-    private static final Material TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.identifier("manathief_face"));
+    private static final SpriteId TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.identifier("manathief_face"));
     private final ManathiefFaceModel face;
-    private final MaterialSet spriteHolder;
+    private final SpriteGetter spriteHolder;
 
     public ManathiefBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.spriteHolder = ctx.materials();
+        this.spriteHolder = ctx.sprites();
         this.face = new ManathiefFaceModel(ctx.bakeLayer(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER));
     }
 

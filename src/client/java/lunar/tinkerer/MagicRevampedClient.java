@@ -1,17 +1,15 @@
 package lunar.tinkerer;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 
 public class MagicRevampedClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		EntityModelLayerRegistry.registerModelLayer(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER, ManathiefFaceModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER, ManathiefFaceModel::createBodyLayer);
 		BlockEntityRenderers.register(ModBlockEntities.ENCHANTING_TABLE_BLOCK_ENTITY, ModEnchantingTableBlockEntityRenderer::new);
 		BlockEntityRenderers.register(ModBlockEntities.MANATHIEF_BLOCK_ENTITY, ManathiefBlockEntityRenderer::new);
 		MenuScreens.register(

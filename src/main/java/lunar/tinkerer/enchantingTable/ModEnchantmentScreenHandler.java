@@ -347,7 +347,7 @@ public class ModEnchantmentScreenHandler
             ItemStack itemStack2;
             RecipeHolder<EnchantmentRecipe> recipeEntry = optional.get();
             EnchantmentRecipe craftingRecipe = recipeEntry.value();
-            if (resultInventory.setRecipeUsed(serverPlayerEntity, recipeEntry) && (itemStack2 = craftingRecipe.assemble(craftingRecipeInput, world.registryAccess())).isItemEnabled(world.enabledFeatures())) {
+            if (resultInventory.setRecipeUsed(serverPlayerEntity, recipeEntry) && (itemStack2 = craftingRecipe.assemble(craftingRecipeInput)).isItemEnabled(world.enabledFeatures())) {
                 itemStack = itemStack2;
             }
         }
@@ -563,7 +563,7 @@ public class ModEnchantmentScreenHandler
             this.timeout.set(MAX_TIME_OUT);
             boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos);
             if (!success) {
-                world.playSound(null, blockPos, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                world.playSound(null, blockPos, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.BLOCKS, 1.0f, world.getRandom().nextFloat() * 0.1f + 0.9f);
                 Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
                 stack.setCount(result.entry().getCount());
                 stack.applyComponents(result.entry().getComponents());
@@ -572,7 +572,7 @@ public class ModEnchantmentScreenHandler
             }
 
             player.awardStat(Stats.ENCHANT_ITEM);
-            world.playSound(null, blockPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+            world.playSound(null, blockPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0f, world.getRandom().nextFloat() * 0.1f + 0.9f);
             this.resultSlot.checkTakeAchievements(stack);
             IntStream.range(0, this.craftingInventory.getContainerSize()).forEach(
                 i -> this.craftingInventory.removeItem(i, 1)

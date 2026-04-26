@@ -18,6 +18,6 @@ public class ConsequenceManager {
             .lookupOrThrow(ModRegistryKeys.CONSEQUENCE).stream()
             .filter(consequence -> blocks.stream().anyMatch(consequence::test))
             .toList();
-        return WeightedRandom.getRandomItem(world.random, consequenceList, Consequence::weight).orElse(ConsequenceRegistry.DEFAULT);
+        return WeightedRandom.getRandomItem(world.getRandom(), consequenceList, Consequence::weight).orElse(ConsequenceRegistry.DEFAULT);
     }
 }

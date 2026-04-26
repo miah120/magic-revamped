@@ -14,10 +14,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.EnchantTableRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -25,12 +26,12 @@ import org.jspecify.annotations.NonNull;
 
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantingTableBlockEntityRenderer implements BlockEntityRenderer<ModEnchantingTableBlockEntity, EnchantTableRenderState> {
-    public static final Material BOOK_TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchanting_table_book");
-    private final MaterialSet materialSet;
+    public static final SpriteId BOOK_TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchanting_table_book");
+    private final SpriteGetter materialSet;
     private final BookModel book;
 
     public ModEnchantingTableBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
-        this.materialSet = ctx.materials();
+        this.materialSet = ctx.sprites();
         this.book = new BookModel(ctx.bakeLayer(ModelLayers.BOOK));
     }
 
@@ -95,7 +96,7 @@ public class ModEnchantingTableBlockEntityRenderer implements BlockEntityRendere
     private static BookModel.State getBookModelState(EnchantTableRenderState enchantTableRenderState) {
         float g = Mth.frac(enchantTableRenderState.flip + 0.25F) * 1.6F - 0.3F;
         float h = Mth.frac(enchantTableRenderState.flip + 0.75F) * 1.6F - 0.3F;
-        return new BookModel.State(
+        return BookModel.State.forAnimation(
                 enchantTableRenderState.time,
                 Mth.clamp(g, 0.0F, 1.0F),
                 Mth.clamp(h, 0.0F, 1.0F),

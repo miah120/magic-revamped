@@ -22,10 +22,10 @@ public record Teleport(int min, int max) implements ConsequenceEffect {
     }
 
     public Vec3 getTarget(ServerLevel world) {
-        int size = world.random.nextIntBetweenInclusive(min, max);
-        double x = world.random.nextDouble();
-        double y = world.random.nextDouble();
-        double z = world.random.nextDouble();
+        int size = world.getRandom().nextIntBetweenInclusive(min, max);
+        double x = world.getRandom().nextDouble();
+        double y = world.getRandom().nextDouble();
+        double z = world.getRandom().nextDouble();
 
         return new Vec3(x, y, z).normalize().scale(size);
     }

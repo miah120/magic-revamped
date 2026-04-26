@@ -13,6 +13,6 @@ public class ModRegistries {
     }
 
     private static <T> Registry<T> create(ResourceKey<Registry<T>> registryKey) {
-        return FabricRegistryBuilder.createSimple(registryKey).buildAndRegister();
+        return FabricRegistryBuilder.create(registryKey).buildAndRegister();
     }
 }

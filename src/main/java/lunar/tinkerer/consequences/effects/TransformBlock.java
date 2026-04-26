@@ -20,7 +20,7 @@ public record TransformBlock(Ingredient target, BlockState result) implements Co
             .map(blockPos1 -> blockPos1.offset(blockPos))
             .filter(blockPos1 -> this.test(world.getBlockState(blockPos1).getBlock()))
             .toList();
-        BlockPos target = targets.get(world.random.nextInt(targets.size()));
+        BlockPos target = targets.get(world.getRandom().nextInt(targets.size()));
         if (result.getBlock() instanceof DoublePlantBlock) {
             DoublePlantBlock.placeAt(world, result, blockPos, 2);
         } else {

@@ -1,7 +1,7 @@
 package lunar.tinkerer;
 
 import com.google.common.base.Function;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
@@ -64,14 +64,20 @@ public class ModItems {
     }
 
     public static void addBlocksToItemGroup() {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(content ->
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(content ->
             content.getContext().holders().lookup(Registries.ENCHANTMENT).ifPresent(registryWrapper -> {
                 RuneItem.addOpenRunes(content, registryWrapper, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
                 RuneItem.addOpenAndClosedRunes(content, registryWrapper, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
             })
         );
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(content -> {
-            content.addAfter(Items.ENCHANTING_TABLE, ModBlocks.ENCHANTING_TABLE);
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(content ->
+            content.getContext().holders().lookup(Registries.ENCHANTMENT).ifPresent(registryWrapper -> {
+                RuneItem.addOpenRunes(content, registryWrapper, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+                RuneItem.addOpenAndClosedRunes(content, registryWrapper, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+            })
+        );
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(content -> {
+            content.insertAfter(Items.ENCHANTING_TABLE, ModBlocks.ENCHANTING_TABLE);
         });
     }
 

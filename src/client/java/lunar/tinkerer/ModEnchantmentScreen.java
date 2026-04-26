@@ -4,7 +4,7 @@ import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import lunar.tinkerer.mixin.client.GhostSlotsInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
@@ -116,7 +116,7 @@ public class ModEnchantmentScreen
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
         guiGraphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
@@ -129,12 +129,12 @@ public class ModEnchantmentScreen
                 256,
                 256
         );
-        this.slotIcon.render(this.menu, guiGraphics, f, this.leftPos, this.topPos);
+        this.slotIcon.extractRenderState(this.menu, guiGraphics, f, this.leftPos, this.topPos);
         this.renderCooldown(guiGraphics);
         this.renderRisk(guiGraphics);
     }
     
-    public void renderCooldown(GuiGraphics context) {
+    public void renderCooldown(GuiGraphicsExtractor context) {
         int x = this.menu.resultSlot.x + this.leftPos;
         int y = this.menu.resultSlot.y + this.topPos;
         int timeout = this.menu.timeout.get();
@@ -146,7 +146,7 @@ public class ModEnchantmentScreen
         );
     }
 
-    public void renderRisk(GuiGraphics context) {
+    public void renderRisk(GuiGraphicsExtractor context) {
         if (this.menu.resultSlot.container.isEmpty()) return;
         int x = this.menu.resultSlot.x + this.leftPos - 33;
         int y = this.menu.resultSlot.y + this.topPos + 47;
@@ -167,7 +167,7 @@ public class ModEnchantmentScreen
             x + 50, y + 14,
             0x4F000000
         );
-        context.drawWordWrap(
+        context.textWithWordWrap(
             this.font,
             riskLabel,
             x + 3,
@@ -176,7 +176,7 @@ public class ModEnchantmentScreen
             color,
             true
         );
-        context.drawString(
+        context.text(
             this.font,
             Component.literal(risk),
             x + 3 + this.font.width(riskLabel),

@@ -9,13 +9,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.PlacementInfo;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeBookCategory;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
@@ -26,13 +21,13 @@ import java.util.List;
 
 public class EnchantmentRecipe implements Recipe<CraftingInput> {
     public final String group;
-    public final ItemStack result;
+    public final ItemStackTemplate result;
     public final List<Ingredient> ingredients;
     @Nullable
     private PlacementInfo ingredientPlacement;
     private boolean fabric_requiresTesting = false;
 
-    public EnchantmentRecipe(String group, ItemStack result, List<Ingredient> ingredients) {
+    public EnchantmentRecipe(String group, ItemStackTemplate result, List<Ingredient> ingredients) {
         this.group = group;
         this.result = result;
         this.ingredients = ingredients;
@@ -92,8 +87,13 @@ public class EnchantmentRecipe implements Recipe<CraftingInput> {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput recipeInput, HolderLookup.Provider provider) {
-        return this.result.copy();
+    public ItemStack assemble(CraftingInput recipeInput) {
+        return this.result.create();
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
     }
 
     @Override
@@ -110,38 +110,22 @@ public class EnchantmentRecipe implements Recipe<CraftingInput> {
         return ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY;
     }
 
-    public static class Serializer
-            implements RecipeSerializer<EnchantmentRecipe> {
-        private static final MapCodec<EnchantmentRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Codec.STRING
-                        .optionalFieldOf("group", "")
-                        .forGetter(recipe -> recipe.group),
-                ItemStack.STRICT_CODEC
-                        .fieldOf("result")
-                        .forGetter(recipe -> recipe.result),
-                Ingredient.CODEC
-                        .listOf(1, 9)
-                        .fieldOf("ingredients")
-                        .forGetter(recipe -> recipe.ingredients)
-            ).apply(instance, EnchantmentRecipe::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentRecipe> PACKET_CODEC = StreamCodec.composite(
-                ByteBufCodecs.STRING_UTF8,
-                recipe -> recipe.group,
-                ItemStack.STREAM_CODEC,
-                recipe -> recipe.result,
-                Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
-                recipe -> recipe.ingredients,
-                EnchantmentRecipe::new
-        );
-
-        @Override
-        public MapCodec<EnchantmentRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, EnchantmentRecipe> streamCodec() {
-            return PACKET_CODEC;
-        }
-    }
+    public static final MapCodec<EnchantmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(
+    i -> i.group(
+                Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
+                ItemStackTemplate.CODEC.fieldOf("result").forGetter(o -> o.result),
+                Ingredient.CODEC.listOf(1, 9).fieldOf("ingredients").forGetter(o -> o.ingredients)
+            )
+            .apply(i, EnchantmentRecipe::new)
+    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentRecipe> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8,
+            recipe -> recipe.group,
+            ItemStackTemplate.STREAM_CODEC,
+            o -> o.result,
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
+            o -> o.ingredients,
+            EnchantmentRecipe::new
+    );
+    public static final RecipeSerializer<EnchantmentRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 }

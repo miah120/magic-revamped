@@ -5,15 +5,17 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeSerializers;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 
 public class ModRecipeTypes {
     public static Identifier ID = MagicRevamped.identifier("enchanting");
 
-    public static final RecipeSerializer<EnchantmentRecipe> ENCHANTMENT_RECIPE_SERIALIZER = RecipeSerializer.register(
+    public static final RecipeSerializer<EnchantmentRecipe> ENCHANTMENT_RECIPE_SERIALIZER = Registry.register(
+            BuiltInRegistries.RECIPE_SERIALIZER,
             ID.toString(),
-            new EnchantmentRecipe.Serializer()
+            EnchantmentRecipe.SERIALIZER
     );
 
     public static final RecipeType<EnchantmentRecipe> ENCHANTMENT_RECIPE_TYPE =  Registry.register(
