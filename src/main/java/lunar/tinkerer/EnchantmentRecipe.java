@@ -93,7 +93,7 @@ public class EnchantmentRecipe implements Recipe<CraftingInput> {
 
     @Override
     public boolean showNotification() {
-        return false;
+        return true;
     }
 
     @Override

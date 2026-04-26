@@ -26,7 +26,7 @@ import org.jspecify.annotations.NonNull;
 
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantingTableBlockEntityRenderer implements BlockEntityRenderer<ModEnchantingTableBlockEntity, EnchantTableRenderState> {
-    public static final SpriteId BOOK_TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchanting_table_book");
+    public static final SpriteId BOOK_TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchantment/enchanting_table_book");
     private final SpriteGetter materialSet;
     private final BookModel book;
 
