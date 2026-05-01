@@ -1,6 +1,5 @@
 package lunar.tinkerer.mixin;
 
-import lunar.tinkerer.MagicRevamped;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -97,7 +96,7 @@ public class AnvilScreenHandlerMixin {
 		if (i <= 0) {
 			result = ItemStack.EMPTY;
 		}
-		forgingAccessor.getInputSlots().setItem(0, result);
+		forgingAccessor.getResultSlots().setItem(0, result);
 		thisObject.broadcastChanges();
 	}
 
