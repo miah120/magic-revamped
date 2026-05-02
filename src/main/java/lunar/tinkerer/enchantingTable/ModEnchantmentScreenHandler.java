@@ -634,7 +634,7 @@ public class ModEnchantmentScreenHandler
     }
 
     public int getBookshelfBonus(Level world, BlockPos blockPos) {
-        return ModEnchantingTableBlock.BOOKSHELF_OFFSETS.stream()
+        return ModEnchantingTableBlock.POWER_PROVIDER_OFFSETS.stream()
                                                              .map(blockPos1 -> blockPos1.offset(blockPos))
                                                              .filter(blockPos1 ->
                                                                          world.getBlockState(blockPos1)
