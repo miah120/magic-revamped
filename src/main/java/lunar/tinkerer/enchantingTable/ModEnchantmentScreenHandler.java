@@ -481,7 +481,7 @@ public class ModEnchantmentScreenHandler
             )
             .reduce(0, Integer::sum);
 
-        return flux * getLevelRequirement(input, world);
+        return flux * getLevelRequirement(input, world) * 2;
     }
 
     public static double getMoonBonus(MoonPhase moonPhase, boolean isNight) {
@@ -537,12 +537,12 @@ public class ModEnchantmentScreenHandler
         BlockPos blockPos
     ) {
         int flux = ModEnchantmentScreenHandler.getFlux(input, world);
-        int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 1000);
+        int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 200);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextIntBetweenInclusive(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
         boolean success = (playerCheck + bookshelfCheck > flux);
         MagicRevamped.LOGGER.info(
-            "{} : [{}:1000 + {}:{}] {} {}",
+            "{} : [{}:200 + {}:{}] {} {}",
             success ? "Success!" : "Failure :(",
             playerCheck,
             bookshelfCheck,
