@@ -28,6 +28,7 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -472,7 +473,8 @@ public class ModEnchantmentScreenHandler
         return this.seed.get();
     }
 
-    public static int getFlux(CraftingContainer input, Level world) {
+    public int getFlux(CraftingContainer input, Level world, ItemStack stack) {
+        int penalty = stack.is(ModItems.RUNE) ? 1 : 2;
         int flux = input.getItems()
             .subList(1, 9)
             .stream()
@@ -481,7 +483,7 @@ public class ModEnchantmentScreenHandler
             )
             .reduce(0, Integer::sum);
 
-        return flux * getLevelRequirement(input, world) * 2;
+        return flux * getLevelRequirement(input, world) * penalty;
     }
 
     public static double getMoonBonus(MoonPhase moonPhase, boolean isNight) {
@@ -534,9 +536,10 @@ public class ModEnchantmentScreenHandler
         Player player,
         CraftingContainer input,
         Level world,
-        BlockPos blockPos
+        BlockPos blockPos,
+        ItemStack stack
     ) {
-        int flux = ModEnchantmentScreenHandler.getFlux(input, world);
+        int flux = this.getFlux(input, world, stack);
         int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 200);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextIntBetweenInclusive(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
@@ -561,7 +564,7 @@ public class ModEnchantmentScreenHandler
     public void onTakeResult(Player player, ItemStack stack) {
         this.context.execute(((world, blockPos) -> {
             this.timeout.set(MAX_TIME_OUT);
-            boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos);
+            boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos, stack);
             if (!success) {
                 world.playSound(null, blockPos, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.BLOCKS, 1.0f, world.getRandom().nextFloat() * 0.1f + 0.9f);
                 Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
