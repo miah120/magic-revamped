@@ -31,7 +31,7 @@ public record Consequence(
         false,
         0
     );
-    public record Result<T> (T entry, boolean success) {}
+    public record Result<T> (T entry, boolean success, boolean decorationsPresent) {}
 
     public Result<ItemStack> run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         var results = effectList.stream()
@@ -39,7 +39,8 @@ public record Consequence(
             .toList();
         return new Result<>(
             results.isEmpty() ? ItemStack.EMPTY : results.getFirst(),
-            this.succeeds
+            this.succeeds,
+            this != ConsequenceRegistry.DEFAULT
         );
     }
 

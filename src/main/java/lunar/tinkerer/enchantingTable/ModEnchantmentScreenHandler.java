@@ -3,6 +3,7 @@ package lunar.tinkerer.enchantingTable;
 import lunar.tinkerer.*;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceManager;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -571,7 +572,24 @@ public class ModEnchantmentScreenHandler
                 stack.setCount(result.entry().getCount());
                 stack.applyComponents(result.entry().getComponents());
                 player.giveExperienceLevels(-getLevelRequirement(this.craftingInventory, world));
+                if (player instanceof ServerPlayer serverPlayer) {
+                    MagicRevamped.CriteriaTriggers.ENCHANTED_ITEM.trigger(
+                        serverPlayer,
+                        false,
+                        result.decorationsPresent(),
+                        false
+                    );
+                }
                 if (!result.success()) return;
+            } else {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    MagicRevamped.CriteriaTriggers.ENCHANTED_ITEM.trigger(
+                            serverPlayer,
+                            true,
+                            false,
+                            this.craftingInventory.getItem(0).getEnchantments() == stack.getEnchantments()
+                    );
+                }
             }
 
             player.awardStat(Stats.ENCHANT_ITEM);
@@ -585,8 +603,8 @@ public class ModEnchantmentScreenHandler
     }
 
     public Consequence.Result<ItemStack> doConsequence(Level world, BlockPos blockPos, Player player, ItemStack stack) {
-        if (!(world instanceof ServerLevel serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false);
-        if (!(player instanceof ServerPlayer serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false);
+        if (!(world instanceof ServerLevel serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false, false);
+        if (!(player instanceof ServerPlayer serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false, false);
 
         Consequence consequence = ConsequenceManager.pick(
             world,
@@ -646,5 +664,7 @@ public class ModEnchantmentScreenHandler
                                                              .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
                                                              .reduce(0, Integer::sum);
     }
+
+    public record ConsequenceResult(ItemStack itemStack, boolean success, boolean decorationPresent) {}
 }
 

@@ -1,0 +1,29 @@
+{
+  "parent": "magic-revamped:story/enchant_item",
+  "criteria": {
+    "enchanted_item": {
+      "trigger": "minecraft:enchant_item",
+      "conditions": {
+        "success": false
+      }
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.story.failed_enchant.description"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "minecraft:crying_obsidian"
+    },
+    "title": {
+      "translate": "advancements.story.failed_enchant.title"
+    }
+  },
+  "requirements": [
+    [
+      "enchanted_item"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

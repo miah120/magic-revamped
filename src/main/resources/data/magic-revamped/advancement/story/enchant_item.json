@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:story/mine_diamond",
+  "criteria": {
+    "enchanted_item": {
+      "trigger": "minecraft:enchant_item",
+      "conditions": {
+        "success": true
+      }
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.story.enchant_item.description"
+    },
+    "icon": {
+      "id": "magic-revamped:rune",
+      "components": {
+        "magic-revamped:enchantment": "minecraft:efficiency"
+      }
+    },
+    "title": {
+      "translate": "advancements.story.enchant_item.title"
+    }
+  },
+  "requirements": [
+    [
+      "enchanted_item"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

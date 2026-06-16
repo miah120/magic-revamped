@@ -1,0 +1,29 @@
+{
+  "parent": "magic-revamped:story/failed_enchant",
+  "criteria": {
+    "enchanted_item": {
+      "trigger": "minecraft:enchant_item",
+      "conditions": {
+        "success": false,
+        "decoration_present": true
+      }
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.story.failed_enchant_with_decoration.description"
+    },
+    "icon": {
+      "id": "minecraft:amethyst_cluster"
+    },
+    "title": {
+      "translate": "advancements.story.failed_enchant_with_decoration.title"
+    }
+  },
+  "requirements": [
+    [
+      "enchanted_item"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

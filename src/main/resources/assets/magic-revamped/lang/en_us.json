@@ -13,5 +13,14 @@
   "container.enchant.levels": "Need more levels",
 
   "tag.item.magic-revamped.drops_charged_rune": "Drops charged rune",
-  "tag.item.magic-revamped.summons_lightning": "Summons lightning"
+  "tag.item.magic-revamped.summons_lightning": "Summons lightning",
+
+  "advancements.story.failed_enchant.title": "Cosmic Folly",
+  "advancements.story.failed_enchant.description": "Fail to enchant an item",
+
+  "advancements.story.failed_enchant_with_decoration.title": "Magical Redirection",
+  "advancements.story.failed_enchant_with_decoration.description": "Use a decoration to preserve your runes. \nAt least you're not a potted plant",
+
+  "advancements.story.enchant_without_effect.title": "Oops",
+  "advancements.story.enchant_without_effect.description": "Enchant an item to no effect. \nMaybe keep a better eye on things next time"
 }

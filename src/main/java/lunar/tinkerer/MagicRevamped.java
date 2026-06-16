@@ -1,8 +1,11 @@
 package lunar.tinkerer;
 
+import com.mojang.serialization.Codec;
 import lunar.tinkerer.consequences.ConsequenceRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,10 +32,17 @@ public class MagicRevamped implements ModInitializer {
 		ModBlockEntities.initialize();
 		ModRecipeTypes.initialize();
 		ConsequenceRegistry.initialize();
+		CriteriaTriggers.init();
 		Registry.register(BuiltInRegistries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
 	}
 
 	public static Identifier identifier(String id) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, id);
+	}
+
+	public class CriteriaTriggers {
+		public static final EnchantItemTrigger ENCHANTED_ITEM = net.minecraft.advancements.CriteriaTriggers.register("enchant_item", new EnchantItemTrigger());
+
+		public static void init() {}
 	}
 }

@@ -1,0 +1,30 @@
+{
+  "parent": "magic-revamped:story/enchant_item",
+  "criteria": {
+    "enchanted_item": {
+      "trigger": "minecraft:enchant_item",
+      "conditions": {
+        "success": true,
+        "change_made": false
+      }
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.story.enchant_without_effect.description"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "minecraft:enchanted_book"
+    },
+    "title": {
+      "translate": "advancements.story.enchant_without_effect.title"
+    }
+  },
+  "requirements": [
+    [
+      "enchanted_item"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
