@@ -1,7 +1,6 @@
 package lunar.tinkerer;
 
 import com.google.common.base.Function;
-import lunar.tinkerer.enchantingTable.ModEnchantingTableBlock;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -11,23 +10,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 
 public class ModBlocks {
-
-    public static final Block ENCHANTING_TABLE = register(
-            "enchanting_table",
-            ModEnchantingTableBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_RED)
-                    .instrument(NoteBlockInstrument.BASEDRUM)
-                    .requiresCorrectToolForDrops()
-                    .lightLevel(state -> 7)
-                    .strength(5.0f, 1200.0f),
-            true
-    );
-
     public static final Block MANATHIEF = register(
             "manathief",
             ManathiefBlock::new,

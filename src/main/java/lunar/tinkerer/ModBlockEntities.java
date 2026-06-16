@@ -1,6 +1,5 @@
 package lunar.tinkerer;
 
-import lunar.tinkerer.enchantingTable.ModEnchantingTableBlockEntity;
 import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
@@ -12,11 +11,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class ModBlockEntities {
-    public static final BlockEntityType<ModEnchantingTableBlockEntity> ENCHANTING_TABLE_BLOCK_ENTITY = registerBlockEntity(
-            "enchanting_table",
-            ModEnchantingTableBlockEntity::new,
-            ModBlocks.ENCHANTING_TABLE
-    );
     public static final BlockEntityType<ManathiefBlockEntity> MANATHIEF_BLOCK_ENTITY = registerBlockEntity(
             "manathief",
             ManathiefBlockEntity::new,

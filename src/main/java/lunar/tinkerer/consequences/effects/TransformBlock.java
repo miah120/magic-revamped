@@ -1,5 +1,6 @@
 package lunar.tinkerer.consequences.effects;
 
+import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import lunar.tinkerer.enchantingTable.ModEnchantingTableBlock;
 import net.minecraft.core.BlockPos;
@@ -16,7 +17,7 @@ import java.util.List;
 public record TransformBlock(Ingredient target, BlockState result) implements ConsequenceEffect {
     @Override
     public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        List<BlockPos> targets = ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
+        List<BlockPos> targets = MagicRevamped.DECORATION_OFFSETS.stream()
             .map(blockPos1 -> blockPos1.offset(blockPos))
             .filter(blockPos1 -> this.test(world.getBlockState(blockPos1).getBlock()))
             .toList();

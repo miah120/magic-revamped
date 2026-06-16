@@ -76,9 +76,6 @@ public class ModItems {
                 RuneItem.addOpenAndClosedRunes(content, registryWrapper, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
             })
         );
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(content -> {
-            content.insertAfter(Items.ENCHANTING_TABLE, ModBlocks.ENCHANTING_TABLE);
-        });
     }
 
     public static Item register(String name, Function<Item.Properties, Item> itemFactory, Item.Properties settings) {

@@ -38,6 +38,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -195,7 +196,7 @@ public class ModEnchantmentScreenHandler
 
     @Override
     public boolean stillValid(Player player) {
-        return ModEnchantmentScreenHandler.stillValid(this.context, player, ModBlocks.ENCHANTING_TABLE);
+        return ModEnchantmentScreenHandler.stillValid(this.context, player, Blocks.ENCHANTING_TABLE);
     }
 
     @Override
@@ -608,7 +609,7 @@ public class ModEnchantmentScreenHandler
 
         Consequence consequence = ConsequenceManager.pick(
             world,
-            ModEnchantingTableBlock.DECORATION_OFFSETS.stream()
+            MagicRevamped.DECORATION_OFFSETS.stream()
                 .map(blockPos1 -> blockPos1.offset(blockPos))
                 .toList()
         );
@@ -655,14 +656,14 @@ public class ModEnchantmentScreenHandler
     }
 
     public int getBookshelfBonus(Level world, BlockPos blockPos) {
-        return ModEnchantingTableBlock.POWER_PROVIDER_OFFSETS.stream()
-                                                             .map(blockPos1 -> blockPos1.offset(blockPos))
-                                                             .filter(blockPos1 ->
-                                                                         world.getBlockState(blockPos1)
-                                                                              .is(BlockTags.ENCHANTMENT_POWER_PROVIDER)
-                                                             )
-                                                             .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
-                                                             .reduce(0, Integer::sum);
+        return MagicRevamped.POWER_PROVIDER_OFFSETS.stream()
+             .map(blockPos1 -> blockPos1.offset(blockPos))
+             .filter(blockPos1 ->
+                 world.getBlockState(blockPos1)
+                      .is(BlockTags.ENCHANTMENT_POWER_PROVIDER)
+             )
+             .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
+             .reduce(0, Integer::sum);
     }
 
     public record ConsequenceResult(ItemStack itemStack, boolean success, boolean decorationPresent) {}

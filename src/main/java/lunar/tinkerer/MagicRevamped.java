@@ -6,12 +6,15 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class MagicRevamped implements ModInitializer {
 	public static final String MOD_ID = "magic-revamped";
@@ -21,6 +24,14 @@ public class MagicRevamped implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static final SimpleParticleType BREAK_ENCHANT_PARTICLE = FabricParticleTypes.simple();
+	public static List<BlockPos> DECORATION_OFFSETS = BlockPos
+			.betweenClosedStream(-3, -1, -3, 3, 1, 3)
+			.map(BlockPos::immutable).toList();
+	public static List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos
+			.betweenClosedStream(-3, 0, -3, 3, 1, 3)
+			.filter(
+					pos -> Math.abs(pos.getX()) > 1 || Math.abs(pos.getZ()) > 1
+			).map(BlockPos::immutable).toList();
 
 	@Override
 	public void onInitialize() {

@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class EnchantmentRecipe implements Recipe<CraftingInput> {
         return List.of(new EnchantmentRecipeDisplay(
                 this.ingredients.stream().map(Ingredient::display).toList(),
                 new SlotDisplay.ItemStackSlotDisplay(this.result),
-                new SlotDisplay.ItemSlotDisplay(ModBlocks.ENCHANTING_TABLE.asItem())
+                new SlotDisplay.ItemSlotDisplay(Blocks.ENCHANTING_TABLE.asItem())
         ));
     }
 

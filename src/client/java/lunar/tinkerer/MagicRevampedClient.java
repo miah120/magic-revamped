@@ -11,7 +11,6 @@ public class MagicRevampedClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
         ModelLayerRegistry.registerModelLayer(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER, ManathiefFaceModel::createBodyLayer);
-		BlockEntityRenderers.register(ModBlockEntities.ENCHANTING_TABLE_BLOCK_ENTITY, ModEnchantingTableBlockEntityRenderer::new);
 		BlockEntityRenderers.register(ModBlockEntities.MANATHIEF_BLOCK_ENTITY, ManathiefBlockEntityRenderer::new);
 		MenuScreens.register(
 				ModBlockEntities.ENCHANTMENT_SCREEN_HANDLER,

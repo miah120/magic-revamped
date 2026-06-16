@@ -207,7 +207,7 @@ public class ConsequenceRegistry {
                 Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)),
                 List.of(
                     new TransformBlock(Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)), Blocks.AIR.defaultBlockState()),
-                    new TransformBlock(Ingredient.of(ModBlocks.ENCHANTING_TABLE.asItem()), ModBlocks.MANATHIEF.defaultBlockState())
+                    new TransformBlock(Ingredient.of(Blocks.ENCHANTING_TABLE.asItem()), ModBlocks.MANATHIEF.defaultBlockState())
                 ),
                 false,
                 1
