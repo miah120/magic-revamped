@@ -2,7 +2,6 @@ package lunar.tinkerer.consequences.effects;
 
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import lunar.tinkerer.enchantingTable.ModEnchantingTableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
