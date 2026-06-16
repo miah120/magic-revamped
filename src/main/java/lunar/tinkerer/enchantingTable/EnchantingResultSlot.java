@@ -2,6 +2,7 @@ package lunar.tinkerer.enchantingTable;
 
 import static lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler.getLevelRequirement;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -21,7 +22,7 @@ public class EnchantingResultSlot extends ResultSlot {
     @Override
     public boolean mayPickup(Player playerEntity) {
         if (this.handler.timeout.get() > 0) return false;
-        int levelRequirement = getLevelRequirement(this.input, this.handler.player.level());
+        int levelRequirement = getLevelRequirement(this.input, this.handler.player.level(), this.handler.getBlockPos());
         return playerEntity.experienceLevel >= levelRequirement;
     }
 

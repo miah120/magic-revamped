@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -168,6 +170,10 @@ public class ModEnchantmentScreenHandler
         context.execute((world, blockPos) -> {
             Objects.requireNonNull(world.getServer()).addTickable(this::tickTimeout);
         });
+    }
+
+    public BlockPos getBlockPos() {
+        return this.context.evaluate((_, pos) -> pos, new BlockPos(0, 0, 0));
     }
 
     protected void addResultSlot() {
@@ -475,7 +481,7 @@ public class ModEnchantmentScreenHandler
         return this.seed.get();
     }
 
-    public int getFlux(CraftingContainer input, Level world, ItemStack stack) {
+    public int getFlux(CraftingContainer input, Level world, ItemStack stack, BlockPos blockPos) {
         int penalty = stack.is(ModItems.RUNE) ? 1 : 2;
         int flux = input.getItems()
             .subList(1, 9)
@@ -485,7 +491,7 @@ public class ModEnchantmentScreenHandler
             )
             .reduce(0, Integer::sum);
 
-        return flux * getLevelRequirement(input, world) * penalty;
+        return flux * getLevelRequirement(input, world, blockPos) * penalty;
     }
 
     public static double getMoonBonus(MoonPhase moonPhase, boolean isNight) {
@@ -527,9 +533,13 @@ public class ModEnchantmentScreenHandler
                 .reduce(0, Integer::sum);
     }
 
-    public static int getLevelRequirement(CraftingContainer input, Level world) {
+    public static int getLevelRequirement(CraftingContainer input, Level world, BlockPos blockPos) {
+        double moonBonus = getMoonBonus(world.environmentAttributes().getDimensionValue(EnvironmentAttributes.MOON_PHASE), world.isDarkOutside());
+        int cost = getRuneCost(input) + getInputCost(input);
+        long helperBonus = world.getEntities(null, new AABB(blockPos).inflate(25))
+            .stream().filter(e -> e.is(MagicRevamped.EntityTags.ENCHANTMENT_HELPERS)).count();
         return Math.clamp(
-            (int) Math.ceil(getMoonBonus(world.environmentAttributes().getDimensionValue(EnvironmentAttributes.MOON_PHASE), world.isDarkOutside()) * (getRuneCost(input) + getInputCost(input))),
+            (int) Math.ceil(moonBonus * cost) - Math.clamp(helperBonus, 0, 4),
             0, 99
         );
     }
@@ -541,7 +551,7 @@ public class ModEnchantmentScreenHandler
         BlockPos blockPos,
         ItemStack stack
     ) {
-        int flux = this.getFlux(input, world, stack);
+        int flux = this.getFlux(input, world, stack, blockPos);
         int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 200);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextIntBetweenInclusive(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
@@ -572,7 +582,7 @@ public class ModEnchantmentScreenHandler
                 Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
                 stack.setCount(result.entry().getCount());
                 stack.applyComponents(result.entry().getComponents());
-                player.giveExperienceLevels(-getLevelRequirement(this.craftingInventory, world));
+                player.giveExperienceLevels(-getLevelRequirement(this.craftingInventory, world, blockPos));
                 if (player instanceof ServerPlayer serverPlayer) {
                     MagicRevamped.CriteriaTriggers.ENCHANTED_ITEM.trigger(
                         serverPlayer,

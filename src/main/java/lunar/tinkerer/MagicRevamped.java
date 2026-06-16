@@ -10,7 +10,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +56,16 @@ public class MagicRevamped implements ModInitializer {
 
 	public class CriteriaTriggers {
 		public static final EnchantItemTrigger ENCHANTED_ITEM = net.minecraft.advancements.CriteriaTriggers.register("enchant_item", new EnchantItemTrigger());
+
+		public static void init() {}
+	}
+
+	public class EntityTags {
+		public static final TagKey<EntityType<?>> ENCHANTMENT_HELPERS = create("enchantment_helpers");
+
+		private static TagKey<EntityType<?>> create(final String name) {
+			return TagKey.create(Registries.ENTITY_TYPE, identifier(name));
+		}
 
 		public static void init() {}
 	}

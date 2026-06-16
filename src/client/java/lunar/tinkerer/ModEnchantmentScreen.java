@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.recipebook.GhostSlots;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
@@ -153,7 +154,7 @@ public class ModEnchantmentScreen
 
         int color = this.menu.resultSlot.mayPickup(this.menu.player) ? -8323296 : 0xDFd31b1b;
 
-        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.menu.craftingInventory, this.menu.player.level());
+        String risk = ": " + ModEnchantmentScreenHandler.getLevelRequirement(this.menu.craftingInventory, this.menu.player.level(), this.menu.getBlockPos());
         EnchantmentNames.getInstance().initSeed(this.menu.getSeed());
         FormattedText riskLabel = EnchantmentNames.getInstance()
             .getRandomName(
