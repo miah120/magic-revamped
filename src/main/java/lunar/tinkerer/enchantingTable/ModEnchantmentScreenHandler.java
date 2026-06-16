@@ -173,7 +173,7 @@ public class ModEnchantmentScreenHandler
     }
 
     public BlockPos getBlockPos() {
-        return this.context.evaluate((_, pos) -> pos, new BlockPos(0, 0, 0));
+        return this.context.evaluate((_, pos) -> pos, this.player.blockPosition());
     }
 
     protected void addResultSlot() {
@@ -537,7 +537,9 @@ public class ModEnchantmentScreenHandler
         double moonBonus = getMoonBonus(world.environmentAttributes().getDimensionValue(EnvironmentAttributes.MOON_PHASE), world.isDarkOutside());
         int cost = getRuneCost(input) + getInputCost(input);
         long helperBonus = world.getEntities(null, new AABB(blockPos).inflate(25))
-            .stream().filter(e -> e.is(MagicRevamped.EntityTags.ENCHANTMENT_HELPERS)).count();
+            .stream()
+            .filter(e -> e.is(MagicRevamped.EntityTags.ENCHANTMENT_HELPERS))
+            .count();
         return Math.clamp(
             (int) Math.ceil(moonBonus * cost) - Math.clamp(helperBonus, 0, 4),
             0, 99
