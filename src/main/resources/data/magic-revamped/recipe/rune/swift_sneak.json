@@ -1,15 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:echo_shard",
-    "minecraft:sugar",
-    "minecraft:echo_shard",
-    "minecraft:sugar",
-    "minecraft:echo_shard",
-    "minecraft:sugar",
-    "minecraft:echo_shard",
-    "minecraft:sugar"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:sugar",
+    "S": "minecraft:echo_shard"
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BSB"
   ],
   "result": {
     "count": 1,

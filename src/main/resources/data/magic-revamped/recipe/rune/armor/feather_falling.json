@@ -1,11 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:diamond",
-    "minecraft:diamond",
-    "minecraft:phantom_membrane",
-    "minecraft:phantom_membrane"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond",
+    "G": "minecraft:phantom_membrane"
+  },
+  "pattern": [
+    " D ",
+    "GLG",
+    " D "
   ],
   "result": {
     "count": 1,

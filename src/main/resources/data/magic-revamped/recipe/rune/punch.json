@@ -1,15 +1,15 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:arrow",
-    "minecraft:blaze_powder",
-    "minecraft:gunpowder",
-    "minecraft:blaze_powder",
-    "minecraft:gunpowder",
-    "minecraft:blaze_powder",
-    "minecraft:gunpowder",
-    "minecraft:blaze_powder"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:blaze_powder",
+    "S": "minecraft:gunpowder",
+    "A": "minecraft:arrow"
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BAB"
   ],
   "result": {
     "count": 1,

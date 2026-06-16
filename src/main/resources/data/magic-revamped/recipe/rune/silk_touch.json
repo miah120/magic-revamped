@@ -1,12 +1,9 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:ender_pearl",
-    "minecraft:ender_pearl",
-    "minecraft:ender_pearl",
-    "minecraft:ender_pearl",
-    {
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:ender_pearl",
+    "S": {
       "fabric:type": "fabric:components",
       "base": "magic-revamped:rune",
       "components": {
@@ -14,6 +11,11 @@
       },
       "strict": true
     }
+  },
+  "pattern": [
+    "BSB",
+    " L ",
+    "B B"
   ],
   "result": {
     "count": 1,

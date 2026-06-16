@@ -1,15 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:blaze_powder",
-    "minecraft:prismarine_crystals",
-    "minecraft:blaze_powder",
-    "minecraft:prismarine_crystals",
-    "minecraft:blaze_powder",
-    "minecraft:prismarine_crystals",
-    "minecraft:blaze_powder",
-    "minecraft:prismarine_crystals"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:blaze_powder",
+    "S": "minecraft:prismarine_crystals"
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BSB"
   ],
   "result": {
     "count": 1,

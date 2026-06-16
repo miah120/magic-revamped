@@ -1,11 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:diamond",
-    "minecraft:diamond",
-    "minecraft:arrow",
-    "minecraft:arrow"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond",
+    "G": "minecraft:arrow"
+  },
+  "pattern": [
+    " D ",
+    "GLG",
+    " D "
   ],
   "result": {
     "count": 1,

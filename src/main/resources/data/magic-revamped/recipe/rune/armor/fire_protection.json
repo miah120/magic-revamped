@@ -1,10 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:diamond",
-    "minecraft:diamond",
-    "minecraft:magma_cream"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond",
+    "G": "minecraft:magma_cream"
+  },
+  "pattern": [
+    " D ",
+    "GLG",
+    " D "
   ],
   "result": {
     "count": 1,

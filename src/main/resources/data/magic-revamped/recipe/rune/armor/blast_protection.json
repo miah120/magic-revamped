@@ -1,11 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:diamond",
-    "minecraft:diamond",
-    "minecraft:gunpowder",
-    "minecraft:gunpowder"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond",
+    "G": "minecraft:gunpowder"
+  },
+  "pattern": [
+    " D ",
+    "GLG",
+    " D "
   ],
   "result": {
     "count": 1,

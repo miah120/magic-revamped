@@ -1,5 +1,15 @@
 {
   "type": "magic-revamped:enchanting",
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond",
+    "G": "minecraft:turtle_helmet"
+  },
+  "pattern": [
+    "DGD",
+    " L ",
+    "DGD"
+  ],
   "ingredients": [
     "minecraft:lapis_lazuli",
     "minecraft:diamond",

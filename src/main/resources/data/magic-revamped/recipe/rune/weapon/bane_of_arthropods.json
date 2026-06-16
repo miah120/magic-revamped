@@ -1,15 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:blaze_powder",
-    "minecraft:spider_eye",
-    "minecraft:blaze_powder",
-    "minecraft:spider_eye",
-    "minecraft:blaze_powder",
-    "minecraft:spider_eye",
-    "minecraft:blaze_powder",
-    "minecraft:spider_eye"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:blaze_powder",
+    "S": "minecraft:spider_eye"
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BSB"
   ],
   "result": {
     "count": 1,

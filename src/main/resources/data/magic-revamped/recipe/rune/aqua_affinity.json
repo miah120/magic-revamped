@@ -1,19 +1,21 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    {
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:prismarine_crystals",
+    "S": {
       "fabric:type": "fabric:components",
       "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "minecraft:efficiency"
       },
       "strict": true
-    },
-    "minecraft:prismarine_crystals",
-    "minecraft:prismarine_crystals",
-    "minecraft:prismarine_crystals",
-    "minecraft:prismarine_crystals"
+    }
+  },
+  "pattern": [
+    "BSB",
+    " L ",
+    "B B"
   ],
   "result": {
     "count": 1,

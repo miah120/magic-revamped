@@ -1,11 +1,13 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:dragon_breath",
-    "minecraft:dragon_breath",
-    "minecraft:dragon_breath",
-    "minecraft:dragon_breath"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:dragon_breath"
+  },
+  "pattern": [
+    "B B",
+    " L ",
+    "B B"
   ],
   "result": {
     "count": 1,

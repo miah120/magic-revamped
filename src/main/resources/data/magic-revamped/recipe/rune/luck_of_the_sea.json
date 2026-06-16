@@ -1,43 +1,21 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    {
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "S": "minecraft:nautilus_shell",
+    "B": {
       "fabric:type": "fabric:components",
       "base": "magic-revamped:rune",
       "components": {
         "magic-revamped:enchantment": "magic-revamped:luck"
       },
       "strict": true
-    },
-    "minecraft:nautilus_shell",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    "minecraft:nautilus_shell",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    "minecraft:nautilus_shell",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    "minecraft:nautilus_shell"
+    }
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BSB"
   ],
   "result": {
     "count": 1,

@@ -1,15 +1,13 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:obsidian",
-    "minecraft:obsidian",
-    "minecraft:obsidian",
-    "minecraft:obsidian",
-    "minecraft:obsidian",
-    "minecraft:obsidian",
-    "minecraft:obsidian",
-    "minecraft:obsidian"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:obsidian"
+  },
+  "pattern": [
+    "BBB",
+    "BLB",
+    "BBB"
   ],
   "result": {
     "count": 1,

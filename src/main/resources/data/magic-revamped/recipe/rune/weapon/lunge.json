@@ -1,15 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:blaze_powder",
-    "minecraft:wind_charge",
-    "minecraft:blaze_powder",
-    "minecraft:wind_charge",
-    "minecraft:blaze_powder",
-    "minecraft:wind_charge",
-    "minecraft:blaze_powder",
-    "minecraft:wind_charge"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:blaze_powder",
+    "S": "minecraft:wind_charge"
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BSB"
   ],
   "result": {
     "count": 1,

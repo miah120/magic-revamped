@@ -1,9 +1,8 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:arrow",
-    {
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": {
       "fabric:type": "fabric:components",
       "base": "magic-revamped:rune",
       "components": {
@@ -11,47 +10,12 @@
       },
       "strict": true
     },
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    "minecraft:arrow",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    },
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "magic-revamped:luck"
-      },
-      "strict": true
-    }
+    "S": "minecraft:arrow"
+  },
+  "pattern": [
+    "BSB",
+    "BLB",
+    "BSB"
   ],
   "result": {
     "count": 1,

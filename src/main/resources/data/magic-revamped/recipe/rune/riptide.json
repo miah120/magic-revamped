@@ -1,12 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:nautilus_shell",
-    "minecraft:nautilus_shell",
-    "minecraft:nautilus_shell",
-    "minecraft:nautilus_shell",
-    "minecraft:heart_of_the_sea"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:nautilus_shell",
+    "S": "minecraft:heart_of_the_sea"
+  },
+  "pattern": [
+    "BSB",
+    " L ",
+    "B B"
   ],
   "result": {
     "count": 1,

@@ -1,15 +1,14 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:pitcher_plant",
-    "minecraft:sugar",
-    "minecraft:pitcher_plant",
-    "minecraft:sugar",
-    "minecraft:pitcher_plant",
-    "minecraft:sugar",
-    "minecraft:pitcher_plant",
-    "minecraft:sugar"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "B": "minecraft:sugar",
+    "S": "minecraft:pitcher_plant"
+  },
+  "pattern": [
+    "BSB",
+    "SLS",
+    "BSB"
   ],
   "result": {
     "count": 1,

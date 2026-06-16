@@ -24,11 +24,13 @@ import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @Environment(value=EnvType.CLIENT)
 public class ModEnchantmentScreen
@@ -83,9 +85,12 @@ public class ModEnchantmentScreen
             protected void fillGhostRecipe(GhostSlots ghostSlots, RecipeDisplay display, ContextMap context) {
                 ((GhostSlotsInvoker) ghostSlots).invokeAddResults(this.menu.getOutputSlot(), context, display.result());
                 Objects.requireNonNull(display);
-                EnchantmentRecipeDisplay enchantmentRecipeDisplay = (EnchantmentRecipeDisplay) display;
+                ShapedCraftingRecipeDisplay enchantmentRecipeDisplay = (ShapedCraftingRecipeDisplay) display;
                 List<Slot> list2 = this.menu.getInputSlots();
-                List<SlotDisplay> list = enchantmentRecipeDisplay.ingredients();
+                //Reorder so recipe JSON matches display
+                List<SlotDisplay> list = Stream.of(4, 1, 2, 5, 8, 7, 6, 3, 0)
+                    .map(i -> i < enchantmentRecipeDisplay.ingredients().size() ? enchantmentRecipeDisplay.ingredients().get(i) : SlotDisplay.Empty.INSTANCE)
+                    .toList();
                 int i = Math.min(list.size(), list2.size());
                 for (int j = 0; j < i; ++j) {
                     ((GhostSlotsInvoker) ghostSlots).invokeAddInputs(

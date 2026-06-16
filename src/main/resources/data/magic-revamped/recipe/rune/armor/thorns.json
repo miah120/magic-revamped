@@ -1,11 +1,15 @@
 {
   "type": "magic-revamped:enchanting",
-  "ingredients": [
-    "minecraft:lapis_lazuli",
-    "minecraft:diamond",
-    "minecraft:diamond",
-    "minecraft:blaze_powder",
-    "minecraft:prismarine_shard"
+  "key": {
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond",
+    "B": "minecraft:blaze_powder",
+    "G": "minecraft:prismarine_shard"
+  },
+  "pattern": [
+    " B ",
+    "DLD",
+    " G "
   ],
   "result": {
     "count": 1,
