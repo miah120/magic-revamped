@@ -2,17 +2,13 @@
   "type": "magic-revamped:enchanting",
   "ingredients": [
     "minecraft:lapis_lazuli",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "minecraft:sharpness"
-      },
-      "strict": true
-    },
+    "minecraft:blaze_powder",
     "minecraft:gunpowder",
+    "minecraft:blaze_powder",
     "minecraft:gunpowder",
+    "minecraft:blaze_powder",
     "minecraft:gunpowder",
+    "minecraft:blaze_powder",
     "minecraft:gunpowder"
   ],
   "result": {

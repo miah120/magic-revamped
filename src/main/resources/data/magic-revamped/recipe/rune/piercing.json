@@ -2,15 +2,14 @@
   "type": "magic-revamped:enchanting",
   "ingredients": [
     "minecraft:lapis_lazuli",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "minecraft:power"
-      },
-      "strict": true
-    },
-    "minecraft:tripwire_hook"
+    "minecraft:arrow",
+    "minecraft:blaze_powder",
+    "minecraft:blaze_powder",
+    "minecraft:string",
+    "minecraft:tripwire_hook",
+    "minecraft:string",
+    "minecraft:blaze_powder",
+    "minecraft:blaze_powder"
   ],
   "result": {
     "count": 1,

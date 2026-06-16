@@ -2,18 +2,14 @@
   "type": "magic-revamped:enchanting",
   "ingredients": [
     "minecraft:lapis_lazuli",
+    "minecraft:blaze_powder",
     "minecraft:fire_charge",
+    "minecraft:blaze_powder",
     "minecraft:fire_charge",
+    "minecraft:blaze_powder",
     "minecraft:fire_charge",
-    "minecraft:fire_charge",
-    {
-      "fabric:type": "fabric:components",
-      "base": "magic-revamped:rune",
-      "components": {
-        "magic-revamped:enchantment": "minecraft:sharpness"
-      },
-      "strict": true
-    }
+    "minecraft:blaze_powder",
+    "minecraft:fire_charge"
   ],
   "result": {
     "count": 1,
