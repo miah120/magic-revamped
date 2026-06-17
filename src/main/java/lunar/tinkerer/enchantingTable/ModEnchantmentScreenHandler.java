@@ -598,6 +598,7 @@ public class ModEnchantmentScreenHandler
                         false
                     );
                 }
+                boostPlayerEnchantingSkill(1);
                 if (!result.success()) return;
             } else {
                 if (player instanceof ServerPlayer serverPlayer) {
@@ -608,7 +609,7 @@ public class ModEnchantmentScreenHandler
                             false,
                             !newEnchantments.isEmpty() && !original.equals(newEnchantments.toString())
                     );
-                    player.modifyAttached(MagicRevamped.DataAttachments.ENCHANTMENT_SKILL, skill -> Math.clamp(skill + 5, 0, 100));
+                    boostPlayerEnchantingSkill(5);
                 }
             }
 
@@ -620,6 +621,10 @@ public class ModEnchantmentScreenHandler
             );
         }));
         this.craftingInventory.setChanged();
+    }
+
+    public void boostPlayerEnchantingSkill(int value) {
+        player.modifyAttached(MagicRevamped.DataAttachments.ENCHANTMENT_SKILL, skill -> Math.clamp(skill + value, 0, 100));
     }
 
     public Consequence.Result<ItemStack> doConsequence(Level world, BlockPos blockPos, Player player, ItemStack stack) {
