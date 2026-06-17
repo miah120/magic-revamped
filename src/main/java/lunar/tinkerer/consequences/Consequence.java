@@ -34,9 +34,14 @@ public record Consequence(
     public record Result<T> (T entry, boolean success, boolean decorationsPresent) {}
 
     public Result<ItemStack> run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        var results = effectList.stream()
-            .map(effect -> effect.run(world, blockPos, player, input, stack))
-            .toList();
+        List<ItemStack> results;
+        try {
+            results = effectList.stream()
+                .map(effect -> effect.run(world, blockPos, player, input, stack))
+                .toList();
+        } catch (Exception _) {
+            results = List.of();
+        }
         return new Result<>(
             results.isEmpty() ? ItemStack.EMPTY : results.getFirst(),
             this.succeeds,
