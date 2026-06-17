@@ -333,7 +333,18 @@
           "functions": [
             {
               "function": "minecraft:enchant_randomly",
-              "options": "#minecraft:on_random_loot"
+              "options": "#magic-revamped:on_random_books"
+            }
+          ],
+          "name": "minecraft:book",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly",
+              "options": "minecraft:swift_sneak"
             }
           ],
           "name": "minecraft:book",

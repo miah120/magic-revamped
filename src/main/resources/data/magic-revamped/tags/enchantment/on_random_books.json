@@ -1,0 +1,17 @@
+{
+  "values": [
+    "#minecraft:non_treasure",
+    "minecraft:binding_curse",
+    "minecraft:vanishing_curse",
+    "minecraft:frost_walker",
+    "minecraft:mending",
+    "minecraft:protection",
+    "minecraft:feather_falling",
+    "minecraft:respiration",
+    "minecraft:thorns",
+    "minecraft:sharpness",
+    "minecraft:unbreaking",
+    "minecraft:power"
+
+  ]
+}

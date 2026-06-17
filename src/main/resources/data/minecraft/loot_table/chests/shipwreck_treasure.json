@@ -8,17 +8,12 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
+              "function": "minecraft:enchant_randomly",
+              "options": "#magic-revamped:on_random_books"
             }
           ],
-          "name": "minecraft:diamond",
-          "weight": 3
+          "name": "minecraft:book",
+          "weight": 15
         },
         {
           "type": "minecraft:item",
@@ -34,87 +29,7 @@
             }
           ],
           "name": "minecraft:iron_ingot",
-          "weight": 10
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 7.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:gold_ingot",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:bamboo",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:emerald",
-          "weight": 2
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 6.0,
-                "min": 4.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:bone",
-          "weight": 20
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 7.0,
-                "min": 3.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:rotten_flesh",
-          "weight": 16
+          "weight": 90
         },
         {
           "type": "minecraft:item",
@@ -129,37 +44,97 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:leather",
-          "weight": 3
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_horse_armor"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:golden_horse_armor"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:diamond_horse_armor"
+          "name": "minecraft:gold_ingot",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:enchant_with_levels",
-              "levels": 30.0,
-              "options": "#magic-revamped:on_random_books"
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:book",
-          "weight": 2
+          "name": "minecraft:emerald",
+          "weight": 40
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:experience_bottle",
+          "weight": 5
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
         "max": 6.0,
+        "min": 3.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 10.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:iron_nugget",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 10.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:gold_nugget",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 10.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:lapis_lazuli",
+          "weight": 20
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 5.0,
         "min": 2.0
       }
     },
@@ -168,7 +143,7 @@
       "entries": [
         {
           "type": "minecraft:empty",
-          "weight": 2
+          "weight": 5
         },
         {
           "type": "minecraft:item",
@@ -179,7 +154,7 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:wild_armor_trim_smithing_template"
+          "name": "minecraft:coast_armor_trim_smithing_template"
         }
       ],
       "rolls": 1.0
@@ -188,20 +163,60 @@
       "bonus_rolls": 0.0,
       "entries": [
         {
+          "type": "minecraft:empty",
+          "weight": 148
+        },
+        {
           "type": "minecraft:item",
-          "name": "magic-revamped:rune",
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "magic-revamped:enchantment": "minecraft:sweeping_edge"
-              }
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
             }
-          ]
+          ],
+          "name": "minecraft:copper_nautilus_armor",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:iron_nautilus_armor",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:golden_nautilus_armor",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:diamond_nautilus_armor",
+          "weight": 2
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecraft:chests/jungle_temple"
+  "random_sequence": "minecraft:chests/shipwreck_treasure"
 }
