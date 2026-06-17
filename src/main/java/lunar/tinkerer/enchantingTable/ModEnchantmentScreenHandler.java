@@ -3,7 +3,6 @@ package lunar.tinkerer.enchantingTable;
 import lunar.tinkerer.*;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceManager;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -16,10 +15,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedItemContents;
@@ -30,13 +31,13 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.RecipeBookMenu;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.block.Blocks;
@@ -44,6 +45,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -78,7 +80,7 @@ public class ModEnchantmentScreenHandler
             private final NonNullList<ItemStack> stacks = NonNullList.withSize(9, ItemStack.EMPTY);
 
             @Override
-            public void fillStackedContents(StackedItemContents finder) {
+            public void fillStackedContents(@NonNull StackedItemContents finder) {
                 for (ItemStack itemStack : this.stacks) {
                     finder.accountSimpleStack(itemStack);
                 }
@@ -100,7 +102,7 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public ItemStack getItem(int slot) {
+            public @NonNull ItemStack getItem(int slot) {
                 if (slot >= this.getContainerSize()) {
                     return ItemStack.EMPTY;
                 }
@@ -108,13 +110,13 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public ItemStack removeItemNoUpdate(int slot) {
+            public @NonNull ItemStack removeItemNoUpdate(int slot) {
                 return ContainerHelper.takeItem(this.stacks, slot);
             }
 
 
             @Override
-            public ItemStack removeItem(int slot, int amount) {
+            public @NonNull ItemStack removeItem(int slot, int amount) {
                 ItemStack itemStack = ContainerHelper.removeItem(this.stacks, slot, amount);
                 if (!itemStack.isEmpty()) {
                     this.handler.slotsChanged(this);
@@ -123,7 +125,7 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public void setItem(int slot, ItemStack stack) {
+            public void setItem(int slot, @NonNull ItemStack stack) {
                 this.stacks.set(slot, stack);
                 this.handler.slotsChanged(this);
             }
@@ -134,7 +136,7 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public boolean stillValid(Player player) {
+            public boolean stillValid(@NonNull Player player) {
                 return true;
             }
 
@@ -149,7 +151,7 @@ public class ModEnchantmentScreenHandler
             }
 
             @Override
-            public List<ItemStack> getItems() {
+            public @NonNull List<ItemStack> getItems() {
                 return List.copyOf(this.stacks);
             }
         };
@@ -195,18 +197,18 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public void removed(Player player) {
+    public void removed(@NonNull Player player) {
         super.removed(player);
         this.context.execute((world, pos) -> this.clearContainer(player, this.craftingInventory));
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NonNull Player player) {
         return ModEnchantmentScreenHandler.stillValid(this.context, player, Blocks.ENCHANTING_TABLE);
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int slot) {
+    public @NonNull ItemStack quickMoveStack(@NonNull Player player, int slot) {
         Slot sourceSlot = this.slots.get(slot);
         ItemStack original = sourceSlot.getItem().copy();
         ItemStack itemStack = switch (slot) {
@@ -263,14 +265,14 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public PostPlaceAction handlePlacement(boolean craftAll, boolean creative, RecipeHolder<?> recipe, ServerLevel world, Inventory inventory) {
+    public @NonNull PostPlaceAction handlePlacement(boolean craftAll, boolean creative, @NonNull RecipeHolder<?> recipe, @NonNull ServerLevel world, @NonNull Inventory inventory) {
         RecipeHolder<EnchantmentRecipe> recipeEntry = (RecipeHolder<EnchantmentRecipe>) recipe;
         this.onInputSlotFillStart();
         try {
             List<Slot> list = this.getInputSlots();
             return ServerPlaceRecipe.placeRecipe(new ServerPlaceRecipe.CraftingMenuAccess<>(){
                 @Override
-                public void fillCraftSlotsStackedContents(StackedItemContents finder) {
+                public void fillCraftSlotsStackedContents(@NonNull StackedItemContents finder) {
                     ModEnchantmentScreenHandler.this.fillCraftSlotsStackedContents(finder);
                 }
 
@@ -280,7 +282,7 @@ public class ModEnchantmentScreenHandler
                 }
 
                 @Override
-                public boolean recipeMatches(RecipeHolder<EnchantmentRecipe> entry) {
+                public boolean recipeMatches(@NonNull RecipeHolder<EnchantmentRecipe> entry) {
                     return entry.value().matches(ModEnchantmentScreenHandler.this.craftingInventory.asCraftInput(), ModEnchantmentScreenHandler.this.getPlayer().level());
                 }
             }, 3, 3, list, list, inventory, recipeEntry, craftAll, creative);
@@ -290,7 +292,7 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public void fillCraftSlotsStackedContents(StackedItemContents finder) {
+    public void fillCraftSlotsStackedContents(@NonNull StackedItemContents finder) {
         this.craftingInventory.fillStackedContents(finder);
     }
 
@@ -441,9 +443,9 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public void slotsChanged(Container inventory) {
+    public void slotsChanged(@NonNull Container inventory) {
         if (this.filling) { return; }
-        this.context.execute((world, pos) -> {
+        this.context.execute((world, _) -> {
             if (world instanceof ServerLevel serverWorld) {
                 CraftingInput input = this.craftingInventory.asCraftInput();
                 RecipeHolder<EnchantmentRecipe> recipe = serverWorld.recipeAccess().getRecipeFor(ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE, input, serverWorld).orElse(null);
@@ -473,7 +475,7 @@ public class ModEnchantmentScreenHandler
     }
 
     @Override
-    public RecipeBookType getRecipeBookType() {
+    public @NonNull RecipeBookType getRecipeBookType() {
         return RecipeBookType.CRAFTING;
     }
 
@@ -554,14 +556,16 @@ public class ModEnchantmentScreenHandler
         ItemStack stack
     ) {
         int flux = this.getFlux(input, world, stack, blockPos);
-        int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 200);
+        int playerSkill = player.getAttachedOrSet(MagicRevamped.DataAttachments.ENCHANTMENT_SKILL, 0);
+        int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 150 + playerSkill);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextIntBetweenInclusive(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
         boolean success = (playerCheck + bookshelfCheck > flux);
         MagicRevamped.LOGGER.info(
-            "{} : [{}:200 + {}:{}] {} {}",
+            "{} : [{}:{} + {}:{}] {} {}",
             success ? "Success!" : "Failure :(",
             playerCheck,
+            150 + playerSkill,
             bookshelfCheck,
             bookshelfBonus,
             success ? ">" : "<",
@@ -576,6 +580,7 @@ public class ModEnchantmentScreenHandler
     }
 
     public void onTakeResult(Player player, ItemStack stack) {
+        String original = this.craftingInventory.getItems().getFirst().getEnchantments().toString();
         this.context.execute(((world, blockPos) -> {
             this.timeout.set(MAX_TIME_OUT);
             boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos, stack);
@@ -596,12 +601,14 @@ public class ModEnchantmentScreenHandler
                 if (!result.success()) return;
             } else {
                 if (player instanceof ServerPlayer serverPlayer) {
+                    ItemEnchantments newEnchantments = stack.getEnchantments();
                     MagicRevamped.CriteriaTriggers.ENCHANTED_ITEM.trigger(
                             serverPlayer,
                             true,
                             false,
-                            this.craftingInventory.getItem(0).getEnchantments() == stack.getEnchantments()
+                            !newEnchantments.isEmpty() && !original.equals(newEnchantments.toString())
                     );
+                    player.modifyAttached(MagicRevamped.DataAttachments.ENCHANTMENT_SKILL, skill -> Math.clamp(skill + 5, 0, 100));
                 }
             }
 
@@ -677,7 +684,5 @@ public class ModEnchantmentScreenHandler
              .map(blockPos1 -> this.getSingleBookshelfBonus(world, blockPos1))
              .reduce(0, Integer::sum);
     }
-
-    public record ConsequenceResult(ItemStack itemStack, boolean success, boolean decorationPresent) {}
 }
 

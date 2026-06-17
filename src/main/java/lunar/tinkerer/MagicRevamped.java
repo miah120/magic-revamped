@@ -3,21 +3,33 @@ package lunar.tinkerer;
 import com.mojang.serialization.Codec;
 import lunar.tinkerer.consequences.ConsequenceRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityDataRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class MagicRevamped implements ModInitializer {
 	public static final String MOD_ID = "magic-revamped";
@@ -54,19 +66,28 @@ public class MagicRevamped implements ModInitializer {
 		return Identifier.fromNamespaceAndPath(MOD_ID, id);
 	}
 
-	public class CriteriaTriggers {
+	public static class CriteriaTriggers {
 		public static final EnchantItemTrigger ENCHANTED_ITEM = net.minecraft.advancements.CriteriaTriggers.register("enchant_item", new EnchantItemTrigger());
 
 		public static void init() {}
 	}
 
-	public class EntityTags {
+	public static class EntityTags {
 		public static final TagKey<EntityType<?>> ENCHANTMENT_HELPERS = create("enchantment_helpers");
 
 		private static TagKey<EntityType<?>> create(final String name) {
 			return TagKey.create(Registries.ENTITY_TYPE, identifier(name));
 		}
+	}
 
-		public static void init() {}
+	public static class DataAttachments {
+		public static final AttachmentType<Integer> ENCHANTMENT_SKILL = AttachmentRegistry.create(
+			identifier("enchantment_skill"),
+			builder -> builder
+				.initializer(() -> 0)
+				.persistent(ExtraCodecs.NON_NEGATIVE_INT)
+				.syncWith(ByteBufCodecs.INT, AttachmentSyncPredicate.targetOnly())
+				.copyOnDeath()
+		);
 	}
 }
