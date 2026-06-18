@@ -59,6 +59,7 @@ public class MagicRevamped implements ModInitializer {
 		ModRecipeTypes.initialize();
 		ConsequenceRegistry.initialize();
 		CriteriaTriggers.init();
+		DataAttachments.init();
 		Registry.register(BuiltInRegistries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
 	}
 
@@ -89,5 +90,7 @@ public class MagicRevamped implements ModInitializer {
 				.syncWith(ByteBufCodecs.INT, AttachmentSyncPredicate.targetOnly())
 				.copyOnDeath()
 		);
+
+		public static void init() {}
 	}
 }

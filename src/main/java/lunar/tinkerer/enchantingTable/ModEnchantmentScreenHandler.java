@@ -556,7 +556,7 @@ public class ModEnchantmentScreenHandler
         ItemStack stack
     ) {
         int flux = this.getFlux(input, world, stack, blockPos);
-        int playerSkill = player.getAttachedOrSet(MagicRevamped.DataAttachments.ENCHANTMENT_SKILL, 0);
+        int playerSkill = player.getAttachedOrCreate(MagicRevamped.DataAttachments.ENCHANTMENT_SKILL);
         int playerCheck = player.getRandom().nextIntBetweenInclusive(0, 150 + playerSkill);
         int bookshelfBonus = this.getBookshelfBonus(world, blockPos);
         int bookshelfCheck = player.getRandom().nextIntBetweenInclusive(Math.floorDiv(bookshelfBonus, 10), bookshelfBonus);
