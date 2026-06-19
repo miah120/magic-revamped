@@ -1,0 +1,11 @@
+{
+  "decoration": "minecraft:candle",
+  "effects": [
+    {
+      "type": "magic-revamped:apply_curse",
+      "enchantments": "#minecraft:curse"
+    }
+  ],
+  "succeeds": true,
+  "weight": 1
+}

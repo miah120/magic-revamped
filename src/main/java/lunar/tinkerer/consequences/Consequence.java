@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.effects.ApplyCurse;
+import lunar.tinkerer.registry.ModRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -41,11 +45,19 @@ public record Consequence(
 
     public static final Consequence EMPTY = new Consequence(
         Ingredient.of(Items.BARRIER),
-        List.of((_, _, _, input, _) -> {
-            IntStream.range(1, input.getContainerSize()).forEach(
-                i -> input.removeItem(i, 1)
-            );
-            return ItemStack.EMPTY;
+        List.of(new ConsequenceEffect() {
+            @Override
+            public MapCodec<? extends ConsequenceEffect> codec() {
+                return null;
+            }
+
+            @Override
+            public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+                IntStream.range(1, input.getContainerSize()).forEach(
+                        i -> input.removeItem(i, 1)
+                );
+                return ItemStack.EMPTY;
+            }
         }),
         false,
         0
@@ -64,11 +76,16 @@ public record Consequence(
         return new Result<>(
             results.isEmpty() ? ItemStack.EMPTY : results.getFirst(),
             this.succeeds,
-            this != ConsequenceRegistry.DEFAULT
+            this != Consequence.EMPTY
         );
     }
 
     public boolean test(Block block) {
         return this.decoration.test(new ItemStack(block.asItem()));
     }
+
+    public static Object bootstrap(final Registry<Consequence> registry) {
+        return null;
+    }
+
 }

@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 public record ApplyCurse(HolderSet<Enchantment> enchantments) implements ConsequenceEffect {
-    static MapCodec<ApplyCurse> CODEC = RecordCodecBuilder.mapCodec(
+    public static MapCodec<ApplyCurse> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
                     RegistryCodecs.homogeneousList(Registries.ENCHANTMENT)
                             .fieldOf("enchantments")
