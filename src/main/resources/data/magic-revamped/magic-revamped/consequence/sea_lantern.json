@@ -11,7 +11,7 @@
         "Name": "minecraft:water"
       },
       "only_transform": {
-        "Name": "minecraft:air"
+        "blocks": "minecraft:air"
       }
     },
     {
