@@ -1,0 +1,14 @@
+{
+  "decoration": "minecraft:gilded_blackstone",
+  "effects": [
+    {
+      "type": "magic-revamped:enchant_success"
+    },
+    {
+      "type": "magic-revamped:explosion",
+      "power": 10
+    }
+  ],
+  "succeeds": true,
+  "weight": 3
+}

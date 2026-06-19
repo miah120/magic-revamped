@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.MagicRevamped;
-import lunar.tinkerer.consequences.effects.ApplyCurse;
+import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
 import lunar.tinkerer.registry.ModRegistryKeys;
 import net.minecraft.core.BlockPos;
@@ -30,6 +30,14 @@ public interface ConsequenceEffect {
     ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack);
 
     static Object bootstrap(final Registry<MapCodec<? extends ConsequenceEffect>> registry) {
+        Registry.register(registry, MagicRevamped.identifier("apply_effect"), ApplyEffect.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("transform_area"), TransformArea.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("transform_block"), TransformBlock.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("summon_entity"), SummonEntity.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("summon_lightning"), SummonLightning.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("play_sound"), PlaySound.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("explosion"), Explosion.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("enchant_success"), EnchantSuccess.CODEC);
         return Registry.register(registry, MagicRevamped.identifier("apply_curse"), ApplyCurse.CODEC);
     }
 }
