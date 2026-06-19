@@ -5,14 +5,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+
 import java.util.List;
 
 public class ConsequenceManager {
     public static Consequence pick(Level world, List<BlockPos> area) {
-        List<Block> blocks = area.stream()
-             .map(world::getBlockState)
-             .map(BlockBehaviour.BlockStateBase::getBlock)
+        List<BlockInWorld> blocks = area.stream()
+             .map(blockPos -> new BlockInWorld(world, blockPos, false))
              .toList();
         List<Consequence> consequenceList = world.registryAccess()
             .lookupOrThrow(ModRegistryKeys.CONSEQUENCE).stream()

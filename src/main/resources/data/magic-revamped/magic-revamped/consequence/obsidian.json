@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:obsidian",
+  "decoration": {
+    "blocks": "minecraft:obsidian"
+  },
   "effects": [
     {
       "type": "magic-revamped:play_sound",

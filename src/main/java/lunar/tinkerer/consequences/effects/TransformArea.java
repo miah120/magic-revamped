@@ -20,6 +20,7 @@ public record TransformArea(Vec3i start, Vec3i end, BlockState result, Optional<
                     Vec3i.CODEC.fieldOf("start_offset").forGetter(TransformArea::start),
                     Vec3i.CODEC.fieldOf("end_offset").forGetter(TransformArea::end),
                     BlockState.CODEC.fieldOf("result").forGetter(TransformArea::result),
+                    //TODO: BlockPredicate
                     BlockState.CODEC.optionalFieldOf("only_transform").forGetter(TransformArea::from)
             ).apply(i, TransformArea::new)
     );

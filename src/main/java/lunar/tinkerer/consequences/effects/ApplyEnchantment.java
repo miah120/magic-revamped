@@ -29,7 +29,6 @@ public record ApplyEnchantment(HolderSet<Enchantment> enchantments) implements C
 
     @Override
     public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        //TODO: this isn't quite right...
         List<EnchantmentInstance> enchantmentOptions = EnchantmentHelper.selectEnchantment(
                 player.getRandom(), stack, 25, this.enchantments.stream()
         );

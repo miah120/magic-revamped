@@ -18,6 +18,8 @@ import java.util.List;
 public record TransformBlock(Ingredient target, BlockState result) implements ConsequenceEffect {
     public static MapCodec<TransformBlock> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
+                    //TODO: BlockPredicate
+                    //TODO: remove summons lightning from item tags
                     Ingredient.CODEC.fieldOf("target").forGetter(TransformBlock::target),
                     BlockState.CODEC.fieldOf("result").forGetter(TransformBlock::result)
             ).apply(i, TransformBlock::new)

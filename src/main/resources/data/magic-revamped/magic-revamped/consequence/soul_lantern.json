@@ -1,9 +1,11 @@
 {
-  "decoration": [
-    "minecraft:soul_lantern",
-    "minecraft:soul_campfire",
-    "minecraft:soul_torch"
-  ],
+  "decoration": {
+    "blocks": [
+      "minecraft:soul_lantern",
+      "minecraft:soul_campfire",
+      "minecraft:soul_torch"
+    ]
+  },
   "effects": [
     {
       "type": "magic-revamped:play_sound",

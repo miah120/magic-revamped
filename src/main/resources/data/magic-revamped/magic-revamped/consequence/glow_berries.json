@@ -1,5 +1,13 @@
 {
-  "decoration": "minecraft:glow_berries",
+  "decoration": {
+    "blocks": [
+      "minecraft:cave_vines",
+      "minecraft:cave_vines_plant"
+    ],
+    "state": {
+      "berries": "true"
+    }
+  },
   "effects": [
     {
       "type": "magic-revamped:play_sound",

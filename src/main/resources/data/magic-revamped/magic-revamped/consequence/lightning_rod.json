@@ -1,5 +1,7 @@
 {
-  "decoration": "#magic-revamped:summons_lightning",
+  "decoration": {
+    "blocks": "#magic-revamped:summons_lightning"
+  },
   "effects": [
     {
       "type": "magic-revamped:transform_block",

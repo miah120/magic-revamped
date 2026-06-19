@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:wither_skeleton_skull",
+  "decoration": {
+    "blocks": "minecraft:wither_skeleton_skull"
+  },
   "effects": [
     {
       "type": "magic-revamped:enchant_success"

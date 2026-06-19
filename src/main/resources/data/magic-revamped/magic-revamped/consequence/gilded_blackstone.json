@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:gilded_blackstone",
+  "decoration": {
+    "blocks": "minecraft:gilded_blackstone"
+  },
   "effects": [
     {
       "type": "magic-revamped:enchant_success"

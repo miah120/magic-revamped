@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:cobweb",
+  "decoration": {
+    "blocks": "minecraft:cobweb"
+  },
   "effects": [
     {
       "type": "magic-revamped:transform_block",

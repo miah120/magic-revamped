@@ -1,5 +1,7 @@
 {
-  "decoration": "#minecraft:small_flowers",
+  "decoration": {
+    "blocks": "#minecraft:small_flowers"
+  },
   "effects": [
     {
       "type": "magic-revamped:transform_block",

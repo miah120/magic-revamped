@@ -1,10 +1,12 @@
 {
-  "decoration": [
-    "minecraft:amethyst_cluster",
-    "minecraft:small_amethyst_bud",
-    "minecraft:medium_amethyst_bud",
-    "minecraft:large_amethyst_bud"
-  ],
+  "decoration": {
+    "blocks": [
+      "minecraft:amethyst_cluster",
+      "minecraft:small_amethyst_bud",
+      "minecraft:medium_amethyst_bud",
+      "minecraft:large_amethyst_bud"
+    ]
+  },
   "effects": [
     {
       "type": "magic-revamped:play_sound",

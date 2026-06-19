@@ -22,7 +22,6 @@ import org.jspecify.annotations.NonNull;
 @Environment(value=EnvType.CLIENT)
 public class ManathiefBlockEntityRenderer
         implements BlockEntityRenderer<ManathiefBlockEntity, ManathiefBlockEntityRenderState> {
-    //TODO: Make this work
     private static final SpriteId TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.identifier("manathief_face"));
     private final ManathiefFaceModel face;
     private final SpriteGetter spriteHolder;

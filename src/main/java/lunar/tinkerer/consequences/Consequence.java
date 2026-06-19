@@ -6,7 +6,11 @@ import java.util.stream.IntStream;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
@@ -15,10 +19,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockStateMatchTest;
 
 
 public record Consequence(
-        Ingredient decoration,
+        BlockPredicate decoration,
         List<ConsequenceEffect> effectList,
         Boolean succeeds,
         Integer weight
@@ -26,7 +34,7 @@ public record Consequence(
     public static final Codec<Consequence> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     //TODO: This should be a blockstate instead
-                    Ingredient.CODEC.fieldOf("decoration").forGetter(Consequence::decoration),
+                    BlockPredicate.CODEC.fieldOf("decoration").forGetter(Consequence::decoration),
                     ConsequenceEffect.CODEC.listOf().fieldOf("effects").forGetter(Consequence::effectList),
                     Codec.BOOL.optionalFieldOf("succeeds", false).forGetter(Consequence::succeeds),
                     ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("weight", 1).forGetter(Consequence::weight)
@@ -35,7 +43,7 @@ public record Consequence(
 
 
     public static final Consequence EMPTY = new Consequence(
-        Ingredient.of(Items.BARRIER),
+        BlockPredicate.Builder.block().of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.BLOCK), Blocks.BARRIER).build(),
         List.of(new ConsequenceEffect() {
             @Override
             public MapCodec<? extends ConsequenceEffect> codec() {
@@ -71,8 +79,8 @@ public record Consequence(
         );
     }
 
-    public boolean test(Block block) {
-        return this.decoration.test(new ItemStack(block.asItem()));
+    public boolean test(BlockInWorld blockInWorld) {
+        return this.decoration.matches(blockInWorld);
     }
 
     public static void init() {}

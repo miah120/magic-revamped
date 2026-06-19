@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:sea_lantern",
+  "decoration": {
+    "blocks": "minecraft:sea_lantern"
+  },
   "effects": [
     {
       "type": "magic-revamped:transform_area",

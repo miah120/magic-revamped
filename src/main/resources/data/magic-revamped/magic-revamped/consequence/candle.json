@@ -1,5 +1,7 @@
 {
-  "decoration": "#minecraft:candles",
+  "decoration": {
+    "blocks": "#minecraft:candles"
+  },
   "effects": [
     {
       "type": "magic-revamped:apply_enchantment",

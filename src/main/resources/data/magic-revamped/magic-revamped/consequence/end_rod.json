@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:end_rod",
+  "decoration": {
+    "blocks": "minecraft:end_rod"
+  },
   "effects": [
     {
       "type": "magic-revamped:transform_block",

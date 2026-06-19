@@ -1,5 +1,7 @@
 {
-  "decoration": "minecraft:skeleton_skull",
+  "decoration": {
+    "blocks": "minecraft:skeleton_skull"
+  },
   "effects": [
     {
       "type": "magic-revamped:enchant_success"
