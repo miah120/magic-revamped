@@ -31,6 +31,7 @@ public interface ConsequenceEffect {
 
     static Object bootstrap(final Registry<MapCodec<? extends ConsequenceEffect>> registry) {
         Registry.register(registry, MagicRevamped.identifier("apply_effect"), ApplyEffect.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("teleport"), Teleport.CODEC);
         Registry.register(registry, MagicRevamped.identifier("transform_area"), TransformArea.CODEC);
         Registry.register(registry, MagicRevamped.identifier("transform_block"), TransformBlock.CODEC);
         Registry.register(registry, MagicRevamped.identifier("summon_entity"), SummonEntity.CODEC);

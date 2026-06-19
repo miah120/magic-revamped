@@ -1,0 +1,38 @@
+{
+  "decoration": [
+    "minecraft:amethyst_cluster",
+    "minecraft:small_amethyst_bud",
+    "minecraft:medium_amethyst_bud",
+    "minecraft:large_amethyst_bud"
+  ],
+  "effects": [
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.amethyst_cluster.break"
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": [
+        "minecraft:amethyst_cluster",
+        "minecraft:small_amethyst_bud",
+        "minecraft:medium_amethyst_bud",
+        "minecraft:large_amethyst_bud"
+      ],
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": [
+        "minecraft:bookshelf",
+        "minecraft:chiseled_bookshelf"
+      ],
+      "result": {
+        "Name": "minecraft:amethyst_block"
+      }
+    }
+  ],
+  "succeeds": false,
+  "weight": 2
+}

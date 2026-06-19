@@ -1,0 +1,37 @@
+{
+  "decoration": [
+    "minecraft:soul_lantern",
+    "minecraft:soul_campfire",
+    "minecraft:soul_torch"
+  ],
+  "effects": [
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:particle.soul_escape"
+    },
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.lantern.break"
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": [
+        "minecraft:soul_lantern",
+        "minecraft:soul_campfire",
+        "minecraft:soul_torch"
+      ],
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:apply_effect",
+      "effect": "minecraft:wither",
+      "min_ticks": 600,
+      "max_ticks": 1200,
+      "amplifier": 1
+    }
+  ],
+  "succeeds": false,
+  "weight": 1
+}

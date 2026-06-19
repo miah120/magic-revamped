@@ -1,0 +1,21 @@
+{
+  "decoration": "#minecraft:small_flowers",
+  "effects": [
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "#minecraft:small_flowers",
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "minecraft:enchanting_table",
+      "result": {
+        "Name": "magic-revamped:manathief"
+      }
+    }
+  ],
+  "succeeds": false,
+  "weight": 1
+}

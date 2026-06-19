@@ -4,7 +4,7 @@
     "enchanted_item": {
       "trigger": "minecraft:enchant_item",
       "conditions": {
-        "success": true
+        "change_made": true
       }
     }
   },

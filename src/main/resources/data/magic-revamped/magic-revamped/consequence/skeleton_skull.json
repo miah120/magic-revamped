@@ -1,21 +1,22 @@
 {
-  "decoration": "minecraft:gilded_blackstone",
+  "decoration": "minecraft:skeleton_skull",
   "effects": [
     {
       "type": "magic-revamped:enchant_success"
     },
     {
       "type": "magic-revamped:transform_block",
-      "target": "minecraft:gilded_blackstone",
+      "target": "minecraft:skeleton_skull",
       "result": {
         "Name": "minecraft:air"
       }
     },
     {
-      "type": "magic-revamped:explosion",
-      "power": 10
+      "type": "magic-revamped:summon_entity",
+      "entity_type": "minecraft:skeleton",
+      "count": 3
     }
   ],
   "succeeds": true,
-  "weight": 3
+  "weight": 1
 }

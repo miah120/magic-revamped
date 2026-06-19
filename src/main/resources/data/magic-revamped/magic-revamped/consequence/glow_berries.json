@@ -1,0 +1,28 @@
+{
+  "decoration": "minecraft:glow_berries",
+  "effects": [
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:item.bone_meal.use"
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "minecraft:glow_berries",
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": [
+        "minecraft:bookshelf",
+        "minecraft:chiseled_bookshelf"
+      ],
+      "result": {
+        "Name": "minecraft:moss_block"
+      }
+    }
+  ],
+  "succeeds": false,
+  "weight": 1
+}

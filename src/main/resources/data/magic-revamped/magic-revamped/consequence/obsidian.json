@@ -1,0 +1,18 @@
+{
+  "decoration": "minecraft:obsidian",
+  "effects": [
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.respawn_anchor.deplete"
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "minecraft:obsidian",
+      "result": {
+        "Name": "minecraft:crying_obsidian"
+      }
+    }
+  ],
+  "succeeds": false,
+  "weight": 2
+}

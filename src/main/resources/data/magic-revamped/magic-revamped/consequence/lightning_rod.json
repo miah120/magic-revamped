@@ -1,0 +1,17 @@
+{
+  "decoration": "#magic-revamped:summons_lightning",
+  "effects": [
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "#magic-revamped:summons_lightning",
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:summon_lightning"
+    }
+  ],
+  "succeeds": false,
+  "weight": 3
+}

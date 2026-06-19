@@ -1,0 +1,19 @@
+{
+  "decoration": "minecraft:cobweb",
+  "effects": [
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "minecraft:cobweb",
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:summon_entity",
+      "entity_type": "minecraft:cave_spider",
+      "count": 3
+    }
+  ],
+  "succeeds": false,
+  "weight": 2
+}

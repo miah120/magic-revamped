@@ -591,11 +591,12 @@ public class ModEnchantmentScreenHandler
                 stack.applyComponents(result.entry().getComponents());
                 player.giveExperienceLevels(-getLevelRequirement(this.craftingInventory, world, blockPos));
                 if (player instanceof ServerPlayer serverPlayer) {
+                    ItemEnchantments newEnchantments = stack.getEnchantments();
                     MagicRevamped.CriteriaTriggers.ENCHANTED_ITEM.trigger(
                         serverPlayer,
                         false,
                         result.decorationsPresent(),
-                        false
+                        result.success() && !newEnchantments.isEmpty() && !original.equals(newEnchantments.toString())
                     );
                 }
                 boostPlayerEnchantingSkill(1);

@@ -1,0 +1,30 @@
+{
+  "decoration": "minecraft:sea_lantern",
+  "effects": [
+    {
+      "type": "magic-revamped:transform_area",
+      "start_offset": [-2, -2, -2],
+      "end_offset": [2, 2, 2],
+      "result": {
+        "Name": "minecraft:water"
+      },
+      "only_transform": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:transform_block",
+      "target": "minecraft:sea_lantern",
+      "result": {
+        "Name": "minecraft:air"
+      }
+    },
+    {
+      "type": "magic-revamped:summon_entity",
+      "entity_type": "minecraft:guardian",
+      "count": 3
+    }
+  ],
+  "succeeds": false,
+  "weight": 1
+}
