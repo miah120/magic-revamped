@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public class ModRegistries {
     public static final Registry<MapCodec<? extends ConsequenceEffect>> CONSEQUENCE_EFFECT = create(ModRegistryKeys.CONSEQUENCE_EFFECT, ConsequenceEffect::bootstrap);
-    public static final Registry<Consequence> CONSEQUENCE = create(ModRegistryKeys.CONSEQUENCE, Consequence::bootstrap);
+//    public static final Registry<Consequence> CONSEQUENCE = create(ModRegistryKeys.CONSEQUENCE, Consequence::bootstrap);
 
     public static void init() {
         DynamicRegistries.register(ModRegistryKeys.CONSEQUENCE, Consequence.CODEC);

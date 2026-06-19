@@ -1,5 +1,5 @@
 {
-  "decoration": "minecraft:candle",
+  "decoration": "#minecraft:candles",
   "effects": [
     {
       "type": "magic-revamped:apply_curse",

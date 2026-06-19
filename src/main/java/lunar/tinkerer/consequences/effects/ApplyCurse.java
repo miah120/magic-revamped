@@ -3,6 +3,7 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.consequences.ConsequenceEffect;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -27,11 +28,13 @@ public record ApplyCurse(HolderSet<Enchantment> enchantments) implements Consequ
 
     @Override
     public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+        //TODO: this isn't quite right...
         return this.enchantments.getRandomElement(player.getRandom())
+            .filter(curse -> stack.canBeEnchantedWith(curse, EnchantingContext.ACCEPTABLE))
             .map(curse -> {
                 stack.enchant(curse, 1);
                 return stack;
             })
-            .orElse(ItemStack.EMPTY);
+            .orElse(stack);
     }
 }

@@ -5,6 +5,7 @@ import lunar.tinkerer.ModBlocks;
 import lunar.tinkerer.ModItems;
 import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
+import lunar.tinkerer.registry.ModRegistryKeys;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -29,7 +30,7 @@ public class ConsequenceRegistry {
     static {
         DEFAULT = register("default", Consequence.EMPTY);
         CANDLE = register(
-            "candle",
+            "_candle",
             new Consequence(
                 Ingredient.of(Items.CANDLE),
                 List.of(
@@ -42,7 +43,7 @@ public class ConsequenceRegistry {
     }
 
     private static Consequence register(String id, Consequence consequence) {
-        return Registry.register(ModRegistries.CONSEQUENCE, MagicRevamped.identifier(id), consequence);
+        return consequence;
     }
 
     public static void initialize() {}
