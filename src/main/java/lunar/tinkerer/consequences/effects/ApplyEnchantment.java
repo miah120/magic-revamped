@@ -3,7 +3,6 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -13,14 +12,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
-public record ApplyCurse(HolderSet<Enchantment> enchantments) implements ConsequenceEffect {
-    public static MapCodec<ApplyCurse> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(
-                    RegistryCodecs.homogeneousList(Registries.ENCHANTMENT)
-                            .fieldOf("enchantments")
-                            .forGetter(ApplyCurse::enchantments)
-            ).apply(i, ApplyCurse::new)
+import java.util.List;
+
+public record ApplyEnchantment(HolderSet<Enchantment> enchantments) implements ConsequenceEffect {
+    public static MapCodec<ApplyEnchantment> CODEC = RecordCodecBuilder.mapCodec(
+        i -> i.group(
+            RegistryCodecs.homogeneousList(Registries.ENCHANTMENT).fieldOf("enchantments").forGetter(ApplyEnchantment::enchantments)
+        ).apply(i, ApplyEnchantment::new)
     );
 
     @Override
@@ -29,12 +30,11 @@ public record ApplyCurse(HolderSet<Enchantment> enchantments) implements Consequ
     @Override
     public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         //TODO: this isn't quite right...
-        return this.enchantments.getRandomElement(player.getRandom())
-            .filter(curse -> stack.canBeEnchantedWith(curse, EnchantingContext.ACCEPTABLE))
-            .map(curse -> {
-                stack.enchant(curse, 1);
-                return stack;
-            })
-            .orElse(stack);
+        List<EnchantmentInstance> enchantmentOptions = EnchantmentHelper.selectEnchantment(
+                player.getRandom(), stack, 25, this.enchantments.stream()
+        );
+        if (enchantmentOptions.isEmpty()) return input.getItem(0);
+        stack.enchant(enchantmentOptions.getFirst().enchantment(), 1);
+        return stack;
     }
 }
