@@ -5,11 +5,16 @@ import lunar.tinkerer.ModBlocks;
 import lunar.tinkerer.ModItems;
 import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
@@ -38,7 +43,6 @@ public class ConsequenceRegistry {
         OBSIDIAN = register(
             "obsidian",
             new Consequence(
-                "Obsidian",
                 Ingredient.of(Items.OBSIDIAN),
                 List.of(
                     new PlaySound(SoundEvents.RESPAWN_ANCHOR_DEPLETE.value()),
@@ -51,10 +55,9 @@ public class ConsequenceRegistry {
         CANDLE = register(
             "candle",
             new Consequence(
-                "Candle",
                 Ingredient.of(Items.CANDLE),
                 List.of(
-                    new ApplyCurse(),
+                    new ApplyCurse(HolderSet.direct()),
                     new PlaySound(SoundEvents.CANDLE_EXTINGUISH),
                     new TransformBlock(Ingredient.of(Items.CANDLE), Blocks.AIR.defaultBlockState())
                 ),
@@ -65,7 +68,6 @@ public class ConsequenceRegistry {
         AMETHYST = register(
             "amethyst",
             new Consequence(
-                "Amethyst",
                 Ingredient.of(Items.AMETHYST_CLUSTER, Items.SMALL_AMETHYST_BUD, Items.MEDIUM_AMETHYST_BUD, Items.LARGE_AMETHYST_BUD),
                 List.of(
                     new PlaySound(SoundEvents.AMETHYST_CLUSTER_BREAK),
@@ -79,7 +81,6 @@ public class ConsequenceRegistry {
         GLOW_BERRIES = register(
             "glow_berries",
             new Consequence(
-                "Glow Berries",
                 Ingredient.of(Items.GLOW_BERRIES),
                 List.of(
                     new PlaySound(SoundEvents.BONE_MEAL_USE),
@@ -93,7 +94,6 @@ public class ConsequenceRegistry {
         SOUL_LANTERN = register(
             "soul_lantern",
             new Consequence(
-                "Soul Lantern",
                 Ingredient.of(Items.SOUL_LANTERN, Items.SOUL_CAMPFIRE, Items.SOUL_TORCH),
                 List.of(
                     new PlaySound(SoundEvents.SOUL_ESCAPE.value()),
@@ -108,7 +108,6 @@ public class ConsequenceRegistry {
         LIGHTNING_ROD = register(
             "lightning_rod",
             new Consequence(
-                "Lightning Rod",
                 Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)),
                 List.of(
                     new TransformBlock(Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ModItems.SUMMONS_LIGHTNING)), Blocks.AIR.defaultBlockState()),
@@ -121,7 +120,6 @@ public class ConsequenceRegistry {
         COBWEB = register(
             "cobweb",
             new Consequence(
-                "Cobweb",
                 Ingredient.of(Items.COBWEB),
                 List.of(
                     new TransformBlock(Ingredient.of(Items.COBWEB), Blocks.AIR.defaultBlockState()),
@@ -134,7 +132,6 @@ public class ConsequenceRegistry {
         SKELETON_SKULL = register(
             "skeleton_skull",
             new Consequence(
-                "Skeleton Skull",
                 Ingredient.of(Items.SKELETON_SKULL),
                 List.of(
                     new EnchantSuccess(),
@@ -148,7 +145,6 @@ public class ConsequenceRegistry {
         WITHER_SKELETON_SKULL = register(
             "wither_skeleton_skull",
             new Consequence(
-                "Wither Skeleton Skull",
                 Ingredient.of(Items.WITHER_SKELETON_SKULL),
                 List.of(
                     new EnchantSuccess(),
@@ -162,7 +158,6 @@ public class ConsequenceRegistry {
         GILDED_BLACKSTONE = register(
             "gilded_blackstone",
             new Consequence(
-                "",
                 Ingredient.of(Items.GILDED_BLACKSTONE),
                 List.of(
                     new EnchantSuccess(),
@@ -176,7 +171,6 @@ public class ConsequenceRegistry {
         SEA_LANTERN = register(
             "sea_lantern",
             new Consequence(
-                "Sea Lantern",
                 Ingredient.of(Items.SEA_LANTERN),
                 List.of(
                     new TransformArea(new Vec3i(-2, -2, -2), new Vec3i(2, 2, 2), Blocks.WATER.defaultBlockState(), Blocks.AIR.defaultBlockState()),
@@ -190,7 +184,6 @@ public class ConsequenceRegistry {
         END_ROD = register(
             "end_rod",
             new Consequence(
-                "End rod",
                 Ingredient.of(Items.END_ROD),
                 List.of(
                     new TransformBlock(Ingredient.of(Items.END_ROD), Blocks.AIR.defaultBlockState()),
@@ -203,7 +196,6 @@ public class ConsequenceRegistry {
         PLANT = register(
             "plant",
             new Consequence(
-                "Plant",
                 Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)),
                 List.of(
                     new TransformBlock(Ingredient.of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM).getOrThrow(ItemTags.SMALL_FLOWERS)), Blocks.AIR.defaultBlockState()),

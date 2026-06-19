@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public record SummonLightning() implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         int r = 2;
         double r2 = Math.pow(r, 0.5);
         Stream<Entity> bolts = Stream.of(

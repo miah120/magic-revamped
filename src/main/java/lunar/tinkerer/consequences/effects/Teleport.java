@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 
 public record Teleport(int min, int max) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         var target = player.trackingPosition().add(getTarget(world));
         teleportTo(world, player, target.x(), target.y(), target.z());
         return ItemStack.EMPTY;

@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public record TransformArea(Vec3i start, Vec3i end, BlockState result, BlockState from) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         getBlockPositions(start, end, blockPos).forEach(pos -> {
             if(from != null && world.getBlockState(pos) != from) {
                 return;

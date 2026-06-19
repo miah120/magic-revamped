@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 public record ApplyEffect(Holder<MobEffect> statusEffect) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         player.addEffect(
             new MobEffectInstance(statusEffect, world.getRandom().nextIntBetweenInclusive(600, 1200)),
             player

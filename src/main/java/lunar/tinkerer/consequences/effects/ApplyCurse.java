@@ -1,27 +1,37 @@
 package lunar.tinkerer.consequences.effects;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
-public record ApplyCurse() implements ConsequenceEffect {
+public record ApplyCurse(HolderSet<Enchantment> enchantments) implements ConsequenceEffect {
+    static MapCodec<ApplyCurse> CODEC = RecordCodecBuilder.mapCodec(
+            i -> i.group(
+                    RegistryCodecs.homogeneousList(Registries.ENCHANTMENT)
+                            .fieldOf("enchantments")
+                            .forGetter(ApplyCurse::enchantments)
+            ).apply(i, ApplyCurse::new)
+    );
+
     @Override
-    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        var optional = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(EnchantmentTags.CURSE);
-        if (optional.isEmpty()) return ItemStack.EMPTY;
-        Holder<Enchantment> curse = EnchantmentHelper
-            .selectEnchantment(player.getRandom(), stack, 25, optional.get().stream())
-            .getFirst()
-            .enchantment();
-        stack.enchant(curse, 1);
-        return stack;
+    public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
+
+    @Override
+    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+        return this.enchantments.getRandomElement(player.getRandom())
+            .map(curse -> {
+                stack.enchant(curse, 1);
+                return stack;
+            })
+            .orElse(ItemStack.EMPTY);
     }
 }

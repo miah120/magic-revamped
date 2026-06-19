@@ -2,6 +2,8 @@ package lunar.tinkerer;
 
 import com.mojang.serialization.Codec;
 import lunar.tinkerer.consequences.ConsequenceRegistry;
+import lunar.tinkerer.registry.ModRegistries;
+import lunar.tinkerer.registry.ModRegistryKeys;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -60,6 +62,7 @@ public class MagicRevamped implements ModInitializer {
 		ConsequenceRegistry.initialize();
 		CriteriaTriggers.init();
 		DataAttachments.init();
+		ModRegistries.init();
 		Registry.register(BuiltInRegistries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
 	}
 

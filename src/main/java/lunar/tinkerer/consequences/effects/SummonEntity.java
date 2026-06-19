@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public record SummonEntity<T extends Entity>(EntityType<T> entityType, int count) implements ConsequenceEffect {
     @Override
-    public ItemStack run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
         Stream<Entity> entities = IntStream.range(0, count)
             .mapToObj(i -> entityType.spawn(world, player.blockPosition(), EntitySpawnReason.MOB_SUMMONED));
         world.addWorldGenChunkEntities(entities);
