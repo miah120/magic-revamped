@@ -1,8 +1,7 @@
 package lunar.tinkerer;
 
-import lunar.tinkerer.consequences.ConsequenceRegistry;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.registry.ModRegistries;
-import lunar.tinkerer.registry.ModRegistryKeys;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -49,7 +48,7 @@ public class MagicRevamped implements ModInitializer {
 		ModBlocks.initialize();
 		ModBlockEntities.initialize();
 		ModRecipeTypes.initialize();
-		ConsequenceRegistry.initialize();
+		Consequence.init();
 		CriteriaTriggers.init();
 		DataAttachments.init();
 		ModRegistries.init();

@@ -25,15 +25,9 @@ public interface ConsequenceEffect {
     Codec<ConsequenceEffect> CODEC = ModRegistries.CONSEQUENCE_EFFECT.byNameCodec()
         .dispatch(ConsequenceEffect::codec, c -> c);
 
-//    MapCodec<?> APPLY_CURSE = register("apply_curse", ApplyCurse.CODEC);
-
     MapCodec<? extends ConsequenceEffect> codec();
 
     ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack);
-
-    static <T extends ConsequenceEffect> MapCodec<T> register(String id, MapCodec<T> codec) {
-        return Registry.register(ModRegistries.CONSEQUENCE_EFFECT, MagicRevamped.identifier(id), codec);
-    }
 
     static Object bootstrap(final Registry<MapCodec<? extends ConsequenceEffect>> registry) {
         return Registry.register(registry, MagicRevamped.identifier("apply_curse"), ApplyCurse.CODEC);

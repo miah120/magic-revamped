@@ -84,8 +84,5 @@ public record Consequence(
         return this.decoration.test(new ItemStack(block.asItem()));
     }
 
-    public static Object bootstrap(final Registry<Consequence> registry) {
-        return null;
-    }
-
+    public static void init() {}
 }
