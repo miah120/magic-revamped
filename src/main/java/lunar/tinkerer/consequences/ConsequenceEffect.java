@@ -5,11 +5,7 @@ import com.mojang.serialization.MapCodec;
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.effects.*;
 import lunar.tinkerer.registry.ModRegistries;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 
 public interface ConsequenceEffect {
@@ -18,7 +14,7 @@ public interface ConsequenceEffect {
 
     MapCodec<? extends ConsequenceEffect> codec();
 
-    ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack);
+    ItemStack apply(Consequence.RunInfo info);
 
     static Object bootstrap(final Registry<MapCodec<? extends ConsequenceEffect>> registry) {
         Registry.register(registry, MagicRevamped.identifier("apply_effect"), ApplyEffect.CODEC);

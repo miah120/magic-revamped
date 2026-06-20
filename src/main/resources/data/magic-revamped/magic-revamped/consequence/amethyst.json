@@ -14,22 +14,12 @@
     },
     {
       "type": "magic-revamped:transform_block",
-      "target": [
-        "minecraft:amethyst_cluster",
-        "minecraft:small_amethyst_bud",
-        "minecraft:medium_amethyst_bud",
-        "minecraft:large_amethyst_bud"
-      ],
-      "result": {
-        "Name": "minecraft:air"
-      }
-    },
-    {
-      "type": "magic-revamped:transform_block",
-      "target": [
-        "minecraft:bookshelf",
-        "minecraft:chiseled_bookshelf"
-      ],
+      "target": {
+        "blocks": [
+          "minecraft:bookshelf",
+          "minecraft:chiseled_bookshelf"
+        ]
+      },
       "result": {
         "Name": "minecraft:amethyst_block"
       }

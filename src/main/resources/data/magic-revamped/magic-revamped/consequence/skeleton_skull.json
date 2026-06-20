@@ -7,13 +7,6 @@
       "type": "magic-revamped:enchant_success"
     },
     {
-      "type": "magic-revamped:transform_block",
-      "target": "minecraft:skeleton_skull",
-      "result": {
-        "Name": "minecraft:air"
-      }
-    },
-    {
       "type": "magic-revamped:summon_entity",
       "entity_type": "minecraft:skeleton",
       "count": 3

@@ -16,17 +16,6 @@
       "sound": "minecraft:block.lantern.break"
     },
     {
-      "type": "magic-revamped:transform_block",
-      "target": [
-        "minecraft:soul_lantern",
-        "minecraft:soul_campfire",
-        "minecraft:soul_torch"
-      ],
-      "result": {
-        "Name": "minecraft:air"
-      }
-    },
-    {
       "type": "magic-revamped:apply_effect",
       "effect": "minecraft:wither",
       "min_ticks": 600,

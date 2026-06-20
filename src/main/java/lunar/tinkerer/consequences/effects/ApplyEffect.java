@@ -2,6 +2,7 @@ package lunar.tinkerer.consequences.effects;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -29,10 +30,10 @@ public record ApplyEffect(Holder<MobEffect> statusEffect, int minTicks, int maxT
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        int duration = world.getRandom().nextIntBetweenInclusive(minTicks, maxTicks);
+    public ItemStack apply(Consequence.RunInfo info) {
+        int duration = info.world().getRandom().nextIntBetweenInclusive(minTicks, maxTicks);
         MobEffectInstance effect = new MobEffectInstance(statusEffect, duration, amplifier);
-        player.addEffect(effect, player);
+        info.player().addEffect(effect, info.player());
         return ItemStack.EMPTY;
     }
 }

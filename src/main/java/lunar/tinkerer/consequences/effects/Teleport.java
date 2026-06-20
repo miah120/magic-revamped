@@ -3,6 +3,7 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,9 +29,9 @@ public record Teleport(int min, int max) implements ConsequenceEffect {
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        var target = player.trackingPosition().add(getTarget(world));
-        teleportTo(world, player, target.x(), target.y(), target.z());
+    public ItemStack apply(Consequence.RunInfo info) {
+        var target = info.player().trackingPosition().add(getTarget(info.world()));
+        teleportTo(info.world(), info.player(), target.x(), target.y(), target.z());
         return ItemStack.EMPTY;
     }
 

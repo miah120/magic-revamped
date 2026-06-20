@@ -10,13 +10,6 @@
     {
       "type": "magic-revamped:play_sound",
       "sound": "minecraft:block.candle.extinguish"
-    },
-    {
-      "type": "magic-revamped:transform_block",
-      "target": "#minecraft:candles",
-      "result": {
-        "Name": "minecraft:air"
-      }
     }
   ],
   "succeeds": true,

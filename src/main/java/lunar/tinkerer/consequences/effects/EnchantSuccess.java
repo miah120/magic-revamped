@@ -3,6 +3,7 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.MagicRevamped;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -21,7 +22,7 @@ public record EnchantSuccess() implements ConsequenceEffect {
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        return stack;
+    public ItemStack apply(Consequence.RunInfo info) {
+        return info.stack();
     }
 }

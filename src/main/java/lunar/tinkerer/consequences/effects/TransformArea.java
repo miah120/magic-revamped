@@ -2,6 +2,7 @@ package lunar.tinkerer.consequences.effects;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
@@ -29,10 +30,10 @@ public record TransformArea(Vec3i start, Vec3i end, BlockState result, Optional<
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        getBlockPositions(start, end, blockPos)
-            .filter(pos -> from.filter(f -> !f.matches(world, pos)).isEmpty())
-            .forEach(pos -> world.setBlockAndUpdate(pos, result));
+    public ItemStack apply(Consequence.RunInfo info) {
+        getBlockPositions(start, end, info.blockPos())
+            .filter(pos -> from.filter(f -> !f.matches(info.world(), pos)).isEmpty())
+            .forEach(pos -> info.world().setBlockAndUpdate(pos, result));
         return ItemStack.EMPTY;
     }
 

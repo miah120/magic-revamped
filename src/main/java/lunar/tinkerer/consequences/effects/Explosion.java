@@ -3,6 +3,7 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryCodecs;
@@ -25,12 +26,12 @@ public record Explosion(float power, boolean fire) implements ConsequenceEffect 
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        world.explode(
+    public ItemStack apply(Consequence.RunInfo info) {
+        info.world().explode(
             null,
-            world.damageSources().magic(),
+            info.world().damageSources().magic(),
             null,
-            blockPos.getCenter().add(0, 1, 0),
+            info.blockPos().getCenter().add(0, 1, 0),
             power,
             fire,
             Level.ExplosionInteraction.BLOCK

@@ -3,6 +3,7 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -27,8 +28,8 @@ public record PlaySound(Holder<SoundEvent> soundEvent, float volume) implements 
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-        world.playSound(null, blockPos, soundEvent.value(), SoundSource.BLOCKS, volume, world.getRandom().nextFloat() * 0.1f + 0.9f);
+    public ItemStack apply(Consequence.RunInfo info) {
+        info.world().playSound(null, info.blockPos(), soundEvent.value(), SoundSource.BLOCKS, volume, info.world().getRandom().nextFloat() * 0.1f + 0.9f);
         return ItemStack.EMPTY;
     }
 }

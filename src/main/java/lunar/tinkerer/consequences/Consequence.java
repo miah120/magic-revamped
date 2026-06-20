@@ -8,21 +8,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-import net.minecraft.world.level.levelgen.structure.templatesystem.BlockStateMatchTest;
 
 
 public record Consequence(
@@ -33,7 +26,6 @@ public record Consequence(
 ) {
     public static final Codec<Consequence> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    //TODO: This should be a blockstate instead
                     BlockPredicate.CODEC.fieldOf("decoration").forGetter(Consequence::decoration),
                     ConsequenceEffect.CODEC.listOf().fieldOf("effects").forGetter(Consequence::effectList),
                     Codec.BOOL.optionalFieldOf("succeeds", false).forGetter(Consequence::succeeds),
@@ -51,9 +43,9 @@ public record Consequence(
             }
 
             @Override
-            public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
-                IntStream.range(1, input.getContainerSize()).forEach(
-                        i -> input.removeItem(i, 1)
+            public ItemStack apply(Consequence.RunInfo info) {
+                IntStream.range(1, info.input.getContainerSize()).forEach(
+                        i -> info.input.removeItem(i, 1)
                 );
                 return ItemStack.EMPTY;
             }
@@ -63,11 +55,11 @@ public record Consequence(
     );
     public record Result<T> (T entry, boolean success, boolean decorationsPresent) {}
 
-    public Result<ItemStack> run(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public Result<ItemStack> run(RunInfo info) {
         List<ItemStack> results;
         try {
             results = effectList.stream()
-                .map(effect -> effect.apply(world, blockPos, player, input, stack))
+                .map(effect -> effect.apply(info))
                 .toList();
         } catch (Exception _) {
             results = List.of();
@@ -78,6 +70,8 @@ public record Consequence(
             this != Consequence.EMPTY
         );
     }
+
+    public record RunInfo(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {}
 
     public boolean test(BlockInWorld blockInWorld) {
         return this.decoration.matches(blockInWorld);

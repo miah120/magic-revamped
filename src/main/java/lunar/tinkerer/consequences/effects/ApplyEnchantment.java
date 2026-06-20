@@ -2,6 +2,7 @@ package lunar.tinkerer.consequences.effects;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
@@ -28,12 +29,12 @@ public record ApplyEnchantment(HolderSet<Enchantment> enchantments) implements C
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(Consequence.RunInfo info) {
         List<EnchantmentInstance> enchantmentOptions = EnchantmentHelper.selectEnchantment(
-                player.getRandom(), stack, 25, this.enchantments.stream()
+                info.player().getRandom(), info.stack(), 25, this.enchantments.stream()
         );
-        if (enchantmentOptions.isEmpty()) return input.getItem(0);
-        stack.enchant(enchantmentOptions.getFirst().enchantment(), 1);
-        return stack;
+        if (enchantmentOptions.isEmpty()) return info.input().getItem(0);
+        info.stack().enchant(enchantmentOptions.getFirst().enchantment(), 1);
+        return info.stack();
     }
 }

@@ -2,6 +2,7 @@ package lunar.tinkerer.consequences.effects;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -27,10 +28,10 @@ public record SummonEntity<T extends Entity>(EntityType<T> entityType, int count
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(Consequence.RunInfo info) {
         Stream<Entity> entities = IntStream.range(0, count)
-            .mapToObj(i -> entityType.spawn(world, player.blockPosition(), EntitySpawnReason.MOB_SUMMONED));
-        world.addWorldGenChunkEntities(entities);
+            .mapToObj(i -> entityType.spawn(info.world(), info.player().blockPosition(), EntitySpawnReason.MOB_SUMMONED));
+        info.world().addWorldGenChunkEntities(entities);
         return ItemStack.EMPTY;
     }
 }

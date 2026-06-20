@@ -1,6 +1,7 @@
 package lunar.tinkerer.consequences.effects;
 
 import com.mojang.serialization.MapCodec;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +21,7 @@ public record SummonLightning() implements ConsequenceEffect {
     public MapCodec<? extends ConsequenceEffect> codec() { return CODEC; }
 
     @Override
-    public ItemStack apply(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {
+    public ItemStack apply(Consequence.RunInfo info) {
         int r = 2;
         double r2 = Math.pow(r, 0.5);
         Stream<Entity> bolts = Stream.of(
@@ -34,13 +35,13 @@ public record SummonLightning() implements ConsequenceEffect {
                 new Vec3(r2, 0, -r2),
                 new Vec3(-r2, 0, -r2)
             )
-            .map(pos -> pos.add(player.trackingPosition()))
+            .map(pos -> pos.add(info.player().trackingPosition()))
             .map(pos -> {
-                var bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, world);
+                var bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, info.world());
                 bolt.setPos(pos);
                 return bolt;
             });
-        world.addWorldGenChunkEntities(bolts);
+        info.world().addWorldGenChunkEntities(bolts);
         return ItemStack.EMPTY;
     }
 }

@@ -4,13 +4,6 @@
   },
   "effects": [
     {
-      "type": "magic-revamped:transform_block",
-      "target": "minecraft:end_rod",
-      "result": {
-        "Name": "minecraft:air"
-      }
-    },
-    {
       "type": "magic-revamped:teleport",
       "min_range": 25,
       "max_range": 50

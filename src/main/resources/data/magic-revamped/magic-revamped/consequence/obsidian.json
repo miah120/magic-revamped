@@ -9,7 +9,9 @@
     },
     {
       "type": "magic-revamped:transform_block",
-      "target": "minecraft:obsidian",
+      "target": {
+        "blocks": "minecraft:obsidian"
+      },
       "result": {
         "Name": "minecraft:crying_obsidian"
       }

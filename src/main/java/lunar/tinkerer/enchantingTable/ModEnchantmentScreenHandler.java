@@ -43,6 +43,7 @@ import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -632,13 +633,12 @@ public class ModEnchantmentScreenHandler
         if (!(world instanceof ServerLevel serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false, false);
         if (!(player instanceof ServerPlayer serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false, false);
 
-        Consequence consequence = ConsequenceManager.pick(
+        return ConsequenceManager.pick(
             world,
             MagicRevamped.DECORATION_OFFSETS.stream()
                 .map(blockPos1 -> blockPos1.offset(blockPos))
                 .toList()
-        );
-        return consequence.run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
+        ).run(new Consequence.RunInfo(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack));
     }
 
     public int getBookBonus(ItemStack itemStack) {

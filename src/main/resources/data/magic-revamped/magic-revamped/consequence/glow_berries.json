@@ -15,17 +15,12 @@
     },
     {
       "type": "magic-revamped:transform_block",
-      "target": "minecraft:glow_berries",
-      "result": {
-        "Name": "minecraft:air"
-      }
-    },
-    {
-      "type": "magic-revamped:transform_block",
-      "target": [
-        "minecraft:bookshelf",
-        "minecraft:chiseled_bookshelf"
-      ],
+      "target": {
+        "blocks": [
+          "minecraft:bookshelf",
+          "minecraft:chiseled_bookshelf"
+        ]
+      },
       "result": {
         "Name": "minecraft:moss_block"
       }
