@@ -267,7 +267,8 @@ public class ModEnchantmentScreenHandler
 
     @Override
     public @NonNull PostPlaceAction handlePlacement(boolean craftAll, boolean creative, @NonNull RecipeHolder<?> recipe, @NonNull ServerLevel world, @NonNull Inventory inventory) {
-        RecipeHolder<EnchantmentRecipe> recipeEntry = (RecipeHolder<EnchantmentRecipe>) recipe;
+        if (!(recipe.value() instanceof EnchantmentRecipe recipeEntryValue)) return PostPlaceAction.NOTHING;
+        RecipeHolder<EnchantmentRecipe> recipeEntry = new RecipeHolder<>(recipe.id(), recipeEntryValue);
         this.onInputSlotFillStart();
         try {
             List<Slot> list = this.getInputSlots();
