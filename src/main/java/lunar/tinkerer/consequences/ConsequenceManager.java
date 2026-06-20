@@ -2,10 +2,14 @@ package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.registry.ModRegistryKeys;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.random.WeightedRandom;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 
 import java.util.List;
@@ -39,9 +43,23 @@ public class ConsequenceManager {
             super(consequence, Optional.of(blockInWorld));
         }
 
-        public Consequence.Result<ItemStack> run(Consequence.RunInfo info) {
-            this.getB().ifPresent(block -> info.world().destroyBlock(block.getPos(), false));
-            return this.getA().run(info);
+        public Consequence.Result<ItemStack> run(
+            ServerLevel world,
+            BlockPos blockPos,
+            ServerPlayer player,
+            CraftingContainer input,
+            ItemStack stack
+        ) {
+            Consequence.Result<ItemStack> result = this.getA().run(new Consequence.RunInfo(
+                world,
+                blockPos,
+                player,
+                input,
+                stack,
+                this.getB()
+            ));
+            this.getB().ifPresent(block -> world.destroyBlock(block.getPos(), false));
+            return result;
         }
     }
 }

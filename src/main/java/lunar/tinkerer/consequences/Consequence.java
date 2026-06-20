@@ -1,6 +1,7 @@
 package lunar.tinkerer.consequences;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import com.mojang.serialization.Codec;
@@ -15,6 +16,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 
 
@@ -71,7 +73,14 @@ public record Consequence(
         );
     }
 
-    public record RunInfo(ServerLevel world, BlockPos blockPos, ServerPlayer player, CraftingContainer input, ItemStack stack) {}
+    public record RunInfo(
+        ServerLevel world,
+        BlockPos blockPos,
+        ServerPlayer player,
+        CraftingContainer input,
+        ItemStack stack,
+        Optional<BlockInWorld> decoration
+    ) {}
 
     public boolean test(BlockInWorld blockInWorld) {
         return this.decoration.matches(blockInWorld);

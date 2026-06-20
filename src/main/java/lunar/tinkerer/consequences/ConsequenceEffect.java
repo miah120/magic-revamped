@@ -26,6 +26,7 @@ public interface ConsequenceEffect {
         Registry.register(registry, MagicRevamped.identifier("play_sound"), PlaySound.CODEC);
         Registry.register(registry, MagicRevamped.identifier("explosion"), Explosion.CODEC);
         Registry.register(registry, MagicRevamped.identifier("enchant_success"), EnchantSuccess.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("enchant_flower"), EnchantFlower.CODEC);
         return Registry.register(registry, MagicRevamped.identifier("apply_enchantment"), ApplyEnchantment.CODEC);
     }
 }

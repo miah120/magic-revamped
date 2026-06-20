@@ -1,6 +1,6 @@
 {
   "decoration": {
-    "blocks": "#minecraft:small_flowers"
+    "blocks": "#minecraft:flower_pots"
   },
   "effects": [
     {
@@ -14,5 +14,5 @@
     }
   ],
   "succeeds": false,
-  "weight": 1
+  "weight": 9
 }

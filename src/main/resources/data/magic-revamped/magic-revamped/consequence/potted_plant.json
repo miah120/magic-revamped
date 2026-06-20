@@ -1,0 +1,12 @@
+{
+  "decoration": {
+    "blocks": "#minecraft:flower_pots"
+  },
+  "effects": [
+    {
+      "type": "magic-revamped:enchant_flower"
+    }
+  ],
+  "succeeds": false,
+  "weight": 1
+}
