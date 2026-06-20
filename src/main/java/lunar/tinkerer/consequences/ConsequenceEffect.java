@@ -17,8 +17,6 @@ public interface ConsequenceEffect {
     ItemStack apply(Consequence.RunInfo info);
 
     static Object bootstrap(final Registry<MapCodec<? extends ConsequenceEffect>> registry) {
-        //TODO: Add function type
-        //TODO: Add a particle type
         Registry.register(registry, MagicRevamped.identifier("run_function"), RunFunction.CODEC);
         Registry.register(registry, MagicRevamped.identifier("apply_effect"), ApplyEffect.CODEC);
         Registry.register(registry, MagicRevamped.identifier("teleport"), Teleport.CODEC);
@@ -27,6 +25,7 @@ public interface ConsequenceEffect {
         Registry.register(registry, MagicRevamped.identifier("summon_entity"), SummonEntity.CODEC);
         Registry.register(registry, MagicRevamped.identifier("summon_lightning"), SummonLightning.CODEC);
         Registry.register(registry, MagicRevamped.identifier("play_sound"), PlaySound.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("spawn_particles"), SpawnParticles.CODEC);
         Registry.register(registry, MagicRevamped.identifier("explosion"), Explosion.CODEC);
         Registry.register(registry, MagicRevamped.identifier("enchant_success"), EnchantSuccess.CODEC);
         Registry.register(registry, MagicRevamped.identifier("enchant_flower"), EnchantFlower.CODEC);
