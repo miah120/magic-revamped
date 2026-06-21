@@ -37,8 +37,8 @@ public record SpawnParticles(
             SpawnParticlesEffect.PositionSource.CODEC.fieldOf("vertical_position").forGetter(SpawnParticles::verticalPosition),
             SpawnParticlesEffect.VelocitySource.CODEC.fieldOf("horizontal_velocity").forGetter(SpawnParticles::horizontalVelocity),
             SpawnParticlesEffect.VelocitySource.CODEC.fieldOf("vertical_velocity").forGetter(SpawnParticles::verticalVelocity),
-            FloatProviders.CODEC.optionalFieldOf("speed", ConstantFloat.ZERO).forGetter(SpawnParticles::speed),
-            IntProviders.CODEC.optionalFieldOf("count", ConstantInt.ZERO).forGetter(SpawnParticles::count),
+            FloatProviders.CODEC.optionalFieldOf("speed", new ConstantFloat(1f)).forGetter(SpawnParticles::speed),
+            IntProviders.CODEC.optionalFieldOf("count", new ConstantInt(1)).forGetter(SpawnParticles::count),
             Codec.STRING.optionalFieldOf("target", "decoration").forGetter(SpawnParticles::target)
         )
         .apply(i, SpawnParticles::new)
