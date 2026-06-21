@@ -1,4 +1,3 @@
-* cobweb.json
 * gilded_blackstone.json
 * glow_berries.json
 * lightning_rod.json
