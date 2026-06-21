@@ -4,6 +4,44 @@
   },
   "effects": [
     {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.note_block.chime"
+    },
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.decorated_pot.insert"
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "entity_position"
+      },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.3,
+          "max_exclusive": 0.3
+        }
+      },
+      "particle": {
+        "type": "minecraft:poof"
+      },
+      "count": 10,
+      "speed": 0.5,
+      "vertical_position": {
+        "type": "entity_position",
+        "offset": 0.1
+      },
+      "vertical_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.1,
+          "max_exclusive": 0.3
+        }
+      }
+    },
+    {
       "type": "magic-revamped:enchant_flower"
     }
   ],
