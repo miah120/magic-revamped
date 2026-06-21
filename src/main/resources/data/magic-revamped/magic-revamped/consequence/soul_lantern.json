@@ -9,11 +9,38 @@
   "effects": [
     {
       "type": "magic-revamped:play_sound",
-      "sound": "minecraft:particle.soul_escape"
+      "sound": "minecraft:particle.soul_escape",
+      "volume": 8,
+      "count": 20
     },
     {
-      "type": "magic-revamped:play_sound",
-      "sound": "minecraft:block.lantern.break"
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "in_bounding_box"
+      },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.1,
+          "max_exclusive": 0.1
+        }
+      },
+      "particle": {
+        "type": "minecraft:soul"
+      },
+      "count": 20,
+      "vertical_position": {
+        "type": "in_bounding_box",
+        "offset": -0.5
+      },
+      "vertical_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": 0,
+          "max_exclusive": 0.3
+        }
+      }
     },
     {
       "type": "magic-revamped:apply_effect",
