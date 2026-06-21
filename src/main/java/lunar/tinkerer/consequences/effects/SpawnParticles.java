@@ -18,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.stream.IntStream;
+
 public record SpawnParticles(
     ParticleOptions particle,
     SpawnParticlesEffect.PositionSource horizontalPosition,
@@ -53,23 +55,22 @@ public record SpawnParticles(
             case "player": yield info.player().position();
             case "table": yield info.blockPos().getCenter();
             case "decoration":
-            default: yield info.decoration().map(d -> d.getPos().getCenter()).orElse(info.player().position());
+            default: yield info.decoration().map(d -> d.getPos().getCenter()).orElse(info.blockPos().getCenter());
         };
         RandomSource random = entity.getRandom();
-        Vec3 movement = entity.getKnownMovement();
-        float bbWidth = entity.getBbWidth();
-        float bbHeight = entity.getBbHeight();
-        serverLevel.sendParticles(
+        float bbWidth = this.target.equals("player") ? entity.getBbWidth() : 1;
+        float bbHeight = this.target.equals("player") ? entity.getBbHeight() : 1;
+        IntStream.range(0, this.count.sample(random)).forEach(_ -> serverLevel.sendParticles(
             this.particle,
             this.horizontalPosition.getCoordinate(position.x(), position.x(), bbWidth, random),
             this.verticalPosition.getCoordinate(position.y(), position.y() + bbHeight / 2.0F, bbHeight, random),
             this.horizontalPosition.getCoordinate(position.z(), position.z(), bbWidth, random),
-            this.count.sample(random),
-            this.horizontalVelocity.getVelocity(movement.x(), random),
-            this.verticalVelocity.getVelocity(movement.y(), random),
-            this.horizontalVelocity.getVelocity(movement.z(), random),
+            0,
+            this.horizontalVelocity.getVelocity(0, random),
+            this.verticalVelocity.getVelocity(0, random),
+            this.horizontalVelocity.getVelocity(0, random),
             this.speed.sample(random)
-        );
+        ));
         return ItemStack.EMPTY;
     }
 }

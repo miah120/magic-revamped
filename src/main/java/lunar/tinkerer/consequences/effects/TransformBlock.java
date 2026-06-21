@@ -39,6 +39,7 @@ public record TransformBlock(BlockPredicate target, BlockState result) implement
             .toList();
         if (targets.isEmpty()) return ItemStack.EMPTY;
         BlockPos target = targets.get(info.world().getRandom().nextInt(targets.size())).getPos();
+        info.world().destroyBlock(target, true);
         if (result.getBlock() instanceof DoublePlantBlock) {
             DoublePlantBlock.placeAt(info.world(), result, info.blockPos(), 2);
         } else {
