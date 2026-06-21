@@ -1,6 +1,9 @@
 {
   "decoration": {
-    "blocks": "#minecraft:candles"
+    "blocks": "#minecraft:candles",
+    "state": {
+      "lit": "true"
+    }
   },
   "effects": [
     {
@@ -8,8 +11,28 @@
       "enchantments": "#minecraft:curse"
     },
     {
+      "type": "magic-revamped:spawn_particles",
+      "target": "table",
+      "horizontal_position": {
+        "type": "in_bounding_box"
+      },
+      "horizontal_velocity": {},
+      "particle": {
+        "type": "minecraft:small_flame"
+      },
+      "count": 20,
+      "vertical_position": {
+        "type": "in_bounding_box",
+        "offset": 0.2
+      },
+      "vertical_velocity": {
+        "base": 0.1
+      }
+    },
+    {
       "type": "magic-revamped:play_sound",
-      "sound": "minecraft:block.candle.extinguish"
+      "sound": "minecraft:block.candle.extinguish",
+      "volume": 2
     }
   ],
   "succeeds": true,

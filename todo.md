@@ -1,4 +1,3 @@
-* candle.json
 * cobweb.json
 * gilded_blackstone.json
 * glow_berries.json
