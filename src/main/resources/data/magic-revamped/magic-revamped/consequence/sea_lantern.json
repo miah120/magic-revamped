@@ -4,6 +4,55 @@
   },
   "effects": [
     {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.trial_spawner.spawn_mob"
+    },
+    {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.bubble_column.upwards_inside",
+      "volume": 8
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "in_bounding_box"
+      },
+      "horizontal_velocity": {},
+      "particle": {
+        "type": "minecraft:flame"
+      },
+      "count": 20,
+      "vertical_position": {
+        "type": "in_bounding_box",
+        "offset": -0.5
+      },
+      "vertical_velocity": {
+        "base": 0.1
+      }
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "table",
+      "horizontal_position": {
+        "type": "in_bounding_box",
+        "scale": 5
+      },
+      "horizontal_velocity": {},
+      "particle": {
+        "type": "minecraft:bubble_column_up"
+      },
+      "count": 2000,
+      "vertical_position": {
+        "type": "in_bounding_box",
+        "offset": -0.5,
+        "scale": 5
+      },
+      "vertical_velocity": {
+        "base": 0.1
+      }
+    },
+    {
       "type": "magic-revamped:transform_area",
       "start_offset": [-2, -2, -2],
       "end_offset": [2, 2, 2],
