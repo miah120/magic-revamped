@@ -1,9 +1,5 @@
 package lunar.tinkerer.consequences;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,8 +12,11 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 
 public record Consequence(

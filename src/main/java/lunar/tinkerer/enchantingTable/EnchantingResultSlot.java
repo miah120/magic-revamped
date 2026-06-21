@@ -1,13 +1,12 @@
 package lunar.tinkerer.enchantingTable;
 
-import static lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler.getLevelRequirement;
-
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
+
+import static lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler.getLevelRequirement;
 
 public class EnchantingResultSlot extends ResultSlot {
     public ModEnchantmentScreenHandler handler;

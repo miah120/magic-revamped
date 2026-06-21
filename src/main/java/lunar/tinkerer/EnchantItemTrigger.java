@@ -2,15 +2,12 @@ package lunar.tinkerer;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Optional;
-
-import it.unimi.dsi.fastutil.booleans.BooleanPredicate;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.criterion.*;
+import net.minecraft.advancements.criterion.ContextAwarePredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemInstance;
-import net.minecraft.world.item.ItemStack;
+
+import java.util.Optional;
 
 public class EnchantItemTrigger extends SimpleCriterionTrigger<EnchantItemTrigger.TriggerInstance> {
     @Override

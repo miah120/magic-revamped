@@ -3,7 +3,6 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.MapCodec;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +13,6 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 public record EnchantFlower() implements ConsequenceEffect {
     public static MapCodec<EnchantFlower> CODEC = MapCodec.unit(new EnchantFlower());
