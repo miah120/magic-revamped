@@ -50,9 +50,11 @@ public record SpawnParticles(
         Entity entity = info.player();
         Vec3 position = switch (this.target) {
             case "player": yield info.player().position();
-            case "table": yield info.blockPos().getCenter();
+            case "table": yield new Vec3(info.blockPos()).add(0.5, 0.5, 0.5);
             case "decoration":
-            default: yield info.decoration().map(d -> d.getPos().getCenter()).orElse(info.blockPos().getCenter());
+            default: yield info.decoration()
+                .map(d -> new Vec3(d.getPos()).add(0.5, 0.5, 0.5))
+                .orElse(new Vec3(info.blockPos()).add(0.5, 0.5, 0.5));
         };
         RandomSource random = entity.getRandom();
         float bbWidth = this.target.equals("player") ? entity.getBbWidth() : 1;

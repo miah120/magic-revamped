@@ -41,12 +41,14 @@ public record EnchantFlower() implements ConsequenceEffect {
     public void drop(Consequence.RunInfo info, ItemStack itemStack) {
         info.decoration().map(BlockInWorld::getPos).ifPresent(pos -> {
             Level level = info.world();
-            Vec3 offset = new Vec3(
+            Vec3 location = new Vec3(pos)
+                .add(0.5, 0.5, 0.5)
+                .add(
                     (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.1F,
                     level.getRandom().nextFloat() * 0.05F,
                     (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.1F
-            );
-            ItemEntity entity = new ItemEntity(level, pos.getCenter().x + offset.x, pos.getCenter().y + offset.y, pos.getCenter().z + offset.z, itemStack);
+                );
+            ItemEntity entity = new ItemEntity(level, location.x, location.y, location.z, itemStack);
             entity.setDefaultPickUpDelay();
             level.addFreshEntity(entity);
         });

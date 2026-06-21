@@ -3,17 +3,12 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import net.minecraft.advancements.criterion.BlockPredicate;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-
-import java.util.List;
 
 public record TransformDecoration(BlockState result, Boolean dropResources) implements ConsequenceEffect {
     public static MapCodec<TransformDecoration> CODEC = RecordCodecBuilder.mapCodec(

@@ -5,6 +5,7 @@ import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -34,7 +35,7 @@ public record SummonLightning() implements ConsequenceEffect {
             )
             .map(pos -> pos.add(info.player().trackingPosition()))
             .map(pos -> {
-                var bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, info.world());
+                var bolt = new LightningBolt(EntityTypes.LIGHTNING_BOLT, info.world());
                 bolt.setPos(pos);
                 return bolt;
             });

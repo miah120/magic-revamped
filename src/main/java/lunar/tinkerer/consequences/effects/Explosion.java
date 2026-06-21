@@ -7,6 +7,7 @@ import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public record Explosion(float power, boolean fire) implements ConsequenceEffect {
     public static MapCodec<Explosion> CODEC = RecordCodecBuilder.mapCodec(
@@ -25,7 +26,7 @@ public record Explosion(float power, boolean fire) implements ConsequenceEffect 
             null,
             info.world().damageSources().magic(),
             null,
-            info.blockPos().getCenter().add(0, 1, 0),
+            new Vec3(info.blockPos()).add(0.5, 1.5, 0.5),
             power,
             fire,
             Level.ExplosionInteraction.BLOCK

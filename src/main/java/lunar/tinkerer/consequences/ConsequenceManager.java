@@ -1,10 +1,10 @@
 package lunar.tinkerer.consequences;
 
 import lunar.tinkerer.registry.ModRegistryKeys;
+import lunar.tinkerer.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;

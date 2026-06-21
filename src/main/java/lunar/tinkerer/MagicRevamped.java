@@ -7,6 +7,8 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -60,7 +62,11 @@ public class MagicRevamped implements ModInitializer {
 	}
 
 	public static class CriteriaTriggers {
-		public static final EnchantItemTrigger ENCHANTED_ITEM = net.minecraft.advancements.CriteriaTriggers.register("enchant_item", new EnchantItemTrigger());
+		public static final EnchantItemTrigger ENCHANTED_ITEM = register("enchant_item", new EnchantItemTrigger());
+
+		private static <T extends CriterionTrigger<?>> T register(final String name, final T criterion) {
+			return Registry.register(BuiltInRegistries.TRIGGER_TYPES, name, criterion);
+		}
 
 		public static void init() {}
 	}

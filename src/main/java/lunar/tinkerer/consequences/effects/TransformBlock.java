@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
-import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.predicates.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DoublePlantBlock;
