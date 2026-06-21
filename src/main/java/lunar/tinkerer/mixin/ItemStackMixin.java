@@ -51,7 +51,6 @@ public class ItemStackMixin {
                     RuneItem.LeveledEnchantment chargedEnchant = getChargedEnchant(thisCopy, enchantments, serverWorld);
                     int flux = getFluxValue(thisCopy);
                     if (!enchantments.isEmpty()) {
-                        //TODO: Make these particles nicer
                         serverWorld.sendParticles(
                                 MagicRevamped.BREAK_ENCHANT_PARTICLE,
                                 serverPlayerEntity.getX(),
