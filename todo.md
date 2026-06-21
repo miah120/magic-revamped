@@ -1,4 +1,3 @@
-* obsidian.json
 * plant.json
 * potted_plant.json
 * sea_lantern.json

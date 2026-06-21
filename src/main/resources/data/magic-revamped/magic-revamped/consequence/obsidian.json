@@ -8,15 +8,44 @@
       "sound": "minecraft:block.respawn_anchor.deplete"
     },
     {
-      "type": "magic-revamped:transform_block",
-      "target": {
-        "blocks": "minecraft:obsidian"
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.stone.break"
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "in_bounding_box",
+        "scale": 3
       },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.3,
+          "max_exclusive": 0.3
+        }
+      },
+      "particle": {
+        "type": "minecraft:falling_obsidian_tear"
+      },
+      "count": 90,
+      "speed": 0.5,
+      "vertical_position": {
+        "type": "in_bounding_box"
+      },
+      "vertical_velocity": {
+        "base": -1
+      }
+    },
+    {
+      "type": "magic-revamped:transform_decoration",
       "result": {
         "Name": "minecraft:crying_obsidian"
-      }
+      },
+      "drop_resources": false
     }
   ],
   "succeeds": false,
-  "weight": 2
+  "weight": 2,
+  "preserve_decoration": true
 }

@@ -22,6 +22,7 @@ public interface ConsequenceEffect {
         Registry.register(registry, MagicRevamped.identifier("teleport"), Teleport.CODEC);
         Registry.register(registry, MagicRevamped.identifier("transform_area"), TransformArea.CODEC);
         Registry.register(registry, MagicRevamped.identifier("transform_block"), TransformBlock.CODEC);
+        Registry.register(registry, MagicRevamped.identifier("transform_decoration"), TransformDecoration.CODEC);
         Registry.register(registry, MagicRevamped.identifier("summon_entity"), SummonEntity.CODEC);
         Registry.register(registry, MagicRevamped.identifier("summon_lightning"), SummonLightning.CODEC);
         Registry.register(registry, MagicRevamped.identifier("play_sound"), PlaySound.CODEC);
