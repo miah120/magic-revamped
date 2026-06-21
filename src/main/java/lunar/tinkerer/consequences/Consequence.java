@@ -23,14 +23,16 @@ public record Consequence(
         BlockPredicate decoration,
         List<ConsequenceEffect> effectList,
         Boolean succeeds,
-        Integer weight
+        Integer weight,
+        Boolean preserveDecoration
 ) {
     public static final Codec<Consequence> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     BlockPredicate.CODEC.fieldOf("decoration").forGetter(Consequence::decoration),
                     ConsequenceEffect.CODEC.listOf().fieldOf("effects").forGetter(Consequence::effectList),
                     Codec.BOOL.optionalFieldOf("succeeds", false).forGetter(Consequence::succeeds),
-                    ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("weight", 1).forGetter(Consequence::weight)
+                    ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("weight", 1).forGetter(Consequence::weight),
+                    Codec.BOOL.optionalFieldOf("preserve_decoration", false).forGetter(Consequence::preserveDecoration)
             ).apply(instance, Consequence::new)
     );
 
@@ -52,7 +54,8 @@ public record Consequence(
             }
         }),
         false,
-        0
+        0,
+        false
     );
     public record Result<T> (T entry, boolean success, boolean decorationsPresent) {}
 

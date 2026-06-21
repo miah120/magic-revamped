@@ -57,7 +57,9 @@ public class ConsequenceManager {
                 stack,
                 this.getB()
             ));
-            this.getB().ifPresent(block -> world.destroyBlock(block.getPos(), false));
+            if (!this.getA().preserveDecoration()) {
+                this.getB().ifPresent(block -> world.destroyBlock(block.getPos(), false));
+            }
             return result;
         }
     }
