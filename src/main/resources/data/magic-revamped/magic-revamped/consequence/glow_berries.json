@@ -14,6 +14,66 @@
       "sound": "minecraft:item.bone_meal.use"
     },
     {
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "in_bounding_box"
+      },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.3,
+          "max_exclusive": 0.3
+        }
+      },
+      "particle": {
+        "type": "minecraft:happy_villager"
+      },
+      "count": 30,
+      "speed": 0.5,
+      "vertical_position": {
+        "type": "in_bounding_box"
+      },
+      "vertical_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.1,
+          "max_exclusive": 0.3
+        }
+      }
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "table",
+      "horizontal_position": {
+        "type": "in_bounding_box",
+        "scale": 10
+      },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.3,
+          "max_exclusive": 0.3
+        }
+      },
+      "particle": {
+        "type": "minecraft:spore_blossom_air"
+      },
+      "count": 90,
+      "speed": 0.5,
+      "vertical_position": {
+        "type": "in_bounding_box",
+        "scale": 3
+      },
+      "vertical_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.1,
+          "max_exclusive": 0.3
+        }
+      }
+    },
+    {
       "type": "magic-revamped:transform_block",
       "target": {
         "blocks": [
