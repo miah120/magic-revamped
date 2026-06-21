@@ -7,6 +7,40 @@
       "type": "magic-revamped:enchant_success"
     },
     {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:entity.blaze.death"
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "table",
+      "horizontal_position": {
+        "type": "entity_position"
+      },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.5,
+          "max_exclusive": 0.5
+        }
+      },
+      "particle": {
+        "type": "minecraft:explosion_emitter"
+      },
+      "count": 5,
+      "speed": 0.5,
+      "vertical_position": {
+        "type": "entity_position",
+        "offset": 0.1
+      },
+      "vertical_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.5,
+          "max_exclusive": 0.5
+        }
+      }
+    },
+    {
       "type": "magic-revamped:explosion",
       "power": 10
     }
