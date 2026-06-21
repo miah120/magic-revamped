@@ -13,6 +13,36 @@
       "sound": "minecraft:block.amethyst_cluster.break"
     },
     {
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "entity_position"
+      },
+      "horizontal_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.3,
+          "max_exclusive": 0.3
+        }
+      },
+      "particle": {
+        "type": "minecraft:end_rod"
+      },
+      "count": 10,
+      "speed": 0.5,
+      "vertical_position": {
+        "type": "entity_position",
+        "offset": 0.1
+      },
+      "vertical_velocity": {
+        "base": {
+          "type": "uniform",
+          "min_inclusive": -0.1,
+          "max_exclusive": 0.3
+        }
+      }
+    },
+    {
       "type": "magic-revamped:transform_block",
       "target": {
         "blocks": [
