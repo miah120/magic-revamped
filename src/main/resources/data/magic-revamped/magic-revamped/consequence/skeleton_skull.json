@@ -7,6 +7,29 @@
       "type": "magic-revamped:enchant_success"
     },
     {
+      "type": "magic-revamped:play_sound",
+      "sound": "minecraft:block.trial_spawner.spawn_mob"
+    },
+    {
+      "type": "magic-revamped:spawn_particles",
+      "target": "decoration",
+      "horizontal_position": {
+        "type": "in_bounding_box"
+      },
+      "horizontal_velocity": {},
+      "particle": {
+        "type": "minecraft:flame"
+      },
+      "count": 20,
+      "vertical_position": {
+        "type": "in_bounding_box",
+        "offset": -0.5
+      },
+      "vertical_velocity": {
+        "base": 0.1
+      }
+    },
+    {
       "type": "magic-revamped:summon_entity",
       "entity_type": "minecraft:skeleton",
       "count": 3
