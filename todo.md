@@ -1,1 +1,2 @@
-* Upgrade to most recent version
+* add particle effects to decorations within an enchanting radius?
+* 

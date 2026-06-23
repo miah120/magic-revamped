@@ -3,13 +3,12 @@
   "key": {
     "L": "minecraft:lapis_lazuli",
     "B": "minecraft:blaze_powder",
-    "A": "minecraft:arrow",
-    "S": "minecraft:string"
+    "A": "minecraft:arrow"
   },
   "pattern": [
     "AAA",
     "BLB",
-    "BSB"
+    "B B"
   ],
   "result": {
     "count": 1,

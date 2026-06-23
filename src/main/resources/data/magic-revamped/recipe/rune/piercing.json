@@ -4,13 +4,12 @@
     "L": "minecraft:lapis_lazuli",
     "B": "minecraft:blaze_powder",
     "A": "minecraft:arrow",
-    "S": "minecraft:string",
     "T": "minecraft:tripwire_hook"
   },
   "pattern": [
     "BAB",
     "BLB",
-    "STS"
+    " T "
   ],
   "result": {
     "count": 1,
