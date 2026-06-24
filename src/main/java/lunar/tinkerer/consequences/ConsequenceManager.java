@@ -1,5 +1,6 @@
 package lunar.tinkerer.consequences;
 
+import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.registry.ModRegistryKeys;
 import lunar.tinkerer.util.Tuple;
 import net.minecraft.core.BlockPos;
@@ -15,10 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class ConsequenceManager {
-    public static Info pick(Level world, List<BlockPos> area) {
-        List<BlockInWorld> blocks = area.stream()
-             .map(blockPos -> new BlockInWorld(world, blockPos, false))
-             .toList();
+    public static Info pick(Level world, BlockPos pos) {
+        List<BlockInWorld> blocks = MagicRevamped.DECORATION_OFFSETS.stream()
+            .map(pos::offset)
+            .map(blockPos -> new BlockInWorld(world, blockPos, false))
+            .toList();
         List<Info> consequenceList = world.registryAccess()
             .lookupOrThrow(ModRegistryKeys.CONSEQUENCE).stream()
             .flatMap(consequence -> blocks.stream()

@@ -624,12 +624,7 @@ public class ModEnchantmentScreenHandler
         if (!(world instanceof ServerLevel serverWorld)) return new Consequence.Result<>(ItemStack.EMPTY, false, false);
         if (!(player instanceof ServerPlayer serverPlayer)) return new Consequence.Result<>(ItemStack.EMPTY, false, false);
 
-        return ConsequenceManager.pick(
-            world,
-            MagicRevamped.DECORATION_OFFSETS.stream()
-                .map(blockPos1 -> blockPos1.offset(blockPos))
-                .toList()
-        ).run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
+        return ConsequenceManager.pick(world, blockPos).run(serverWorld, blockPos, serverPlayer, this.craftingInventory, stack);
     }
 
     public int getBookBonus(ItemStack itemStack) {
