@@ -577,7 +577,7 @@ public class ModEnchantmentScreenHandler
             this.timeout.set(MAX_TIME_OUT);
             boolean success = this.doFluxCheck(player, this.craftingInventory, world, blockPos, stack);
             if (!success) {
-                world.playSound(null, blockPos, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.BLOCKS, 1.0f, world.getRandom().nextFloat() * 0.1f + 0.9f);
+                world.playSound(null, blockPos, SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.BLOCKS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
                 Consequence.Result<ItemStack> result = doConsequence(world, blockPos, player, stack);
                 stack.setCount(result.entry().getCount());
                 stack.applyComponents(result.entry().getComponents());

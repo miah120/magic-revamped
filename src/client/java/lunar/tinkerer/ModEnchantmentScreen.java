@@ -1,7 +1,6 @@
 package lunar.tinkerer;
 
 import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
-import lunar.tinkerer.mixin.client.GhostSlotsInvoker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -82,7 +81,7 @@ public class ModEnchantmentScreen
 
             @Override
             protected void fillGhostRecipe(GhostSlots ghostSlots, RecipeDisplay display, ContextMap context) {
-                ((GhostSlotsInvoker) ghostSlots).invokeAddResults(this.menu.getOutputSlot(), context, display.result());
+                ghostSlots.setResult(this.menu.getOutputSlot(), context, display.result());
                 Objects.requireNonNull(display);
                 ShapedCraftingRecipeDisplay enchantmentRecipeDisplay = (ShapedCraftingRecipeDisplay) display;
                 List<Slot> list2 = this.menu.getInputSlots();
@@ -92,11 +91,7 @@ public class ModEnchantmentScreen
                     .toList();
                 int i = Math.min(list.size(), list2.size());
                 for (int j = 0; j < i; ++j) {
-                    ((GhostSlotsInvoker) ghostSlots).invokeAddInputs(
-                            list2.get(j),
-                            context,
-                            list.get(j)
-                    );
+                    ghostSlots.setInput(list2.get(j), context, list.get(j));
                 }
             }
         }, inventory, title);

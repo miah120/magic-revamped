@@ -26,11 +26,7 @@
 		]
 	},
 	"mixins": [
-		"magic-revamped.mixins.json",
-		{
-			"config": "magic-revamped.client.mixins.json",
-			"environment": "client"
-		}
+		"magic-revamped.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.19.3",
@@ -40,5 +36,6 @@
 	},
 	"recommends": {
 		"villagerconfig": ">=4.4.9"
-	}
+	},
+	"accessWidener": "magic-revamped.classtweaker"
 }
