@@ -3,21 +3,22 @@ package lunar.tinkerer.consequences;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.MagicRevamped;
+import lunar.tinkerer.util.Tuple;
 import net.minecraft.advancements.predicates.BlockPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
 
 public record Consequence(
         BlockPredicate decoration,
@@ -27,29 +28,24 @@ public record Consequence(
         Boolean preserveDecoration
 ) {
     public static final Codec<Consequence> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                    BlockPredicate.CODEC.fieldOf("decoration").forGetter(Consequence::decoration),
-                    ConsequenceEffect.CODEC.listOf().fieldOf("effects").forGetter(Consequence::effectList),
-                    Codec.BOOL.optionalFieldOf("succeeds", false).forGetter(Consequence::succeeds),
-                    ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("weight", 1).forGetter(Consequence::weight),
-                    Codec.BOOL.optionalFieldOf("preserve_decoration", false).forGetter(Consequence::preserveDecoration)
-            ).apply(instance, Consequence::new)
+        instance.group(
+            BlockPredicate.CODEC.fieldOf("decoration").forGetter(Consequence::decoration),
+            ConsequenceEffect.CODEC.listOf().fieldOf("effects").forGetter(Consequence::effectList),
+            Codec.BOOL.optionalFieldOf("succeeds", false).forGetter(Consequence::succeeds),
+            ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("weight", 1).forGetter(Consequence::weight),
+            Codec.BOOL.optionalFieldOf("preserve_decoration", false).forGetter(Consequence::preserveDecoration)
+        ).apply(instance, Consequence::new)
     );
 
-
     public static final Consequence EMPTY = new Consequence(
-        BlockPredicate.Builder.block().of(BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.BLOCK), Blocks.BARRIER).build(),
+        BlockPredicate.Builder.block().build(),
         List.of(new ConsequenceEffect() {
             @Override
-            public MapCodec<? extends ConsequenceEffect> codec() {
-                return null;
-            }
+            public MapCodec<? extends ConsequenceEffect> codec() { return null; }
 
             @Override
             public ItemStack apply(Consequence.RunInfo info) {
-                IntStream.range(1, info.input.getContainerSize()).forEach(
-                        i -> info.input.removeItem(i, 1)
-                );
+                IntStream.range(1, info.input.getContainerSize()).forEach(i -> info.input.removeItem(i, 1));
                 return ItemStack.EMPTY;
             }
         }),
@@ -77,7 +73,7 @@ public record Consequence(
 
     public record RunInfo(
         ServerLevel world,
-        BlockPos blockPos,
+        BlockPos tablePos,
         ServerPlayer player,
         CraftingContainer input,
         ItemStack stack,
@@ -89,4 +85,52 @@ public record Consequence(
     }
 
     public static void init() {}
+
+    public static Info pick(Level world, BlockPos pos) {
+        List<Info> consequenceList = world.registryAccess()
+            .lookupOrThrow(MagicRevamped.RegistryKeys.CONSEQUENCE).stream()
+            .flatMap(consequence -> MagicRevamped.DECORATION_OFFSETS.stream()
+                .map(pos::offset)
+                .map(blockPos -> new BlockInWorld(world, blockPos, false))
+                .filter(consequence::test)
+                .map(block -> new Info(consequence, block))
+            )
+            .toList();
+        return WeightedRandom
+            .getRandomItem(world.getRandom(), consequenceList, t -> t.getA().weight())
+            .orElse(Info.EMPTY);
+    }
+
+    public static class Info extends Tuple<Consequence, Optional<BlockInWorld>> {
+        public static Info EMPTY = new Info(Consequence.EMPTY, Optional.empty());
+
+        public Info(Consequence consequence, Optional<BlockInWorld> blockInWorld) {
+            super(consequence, blockInWorld);
+        }
+
+        public Info(Consequence consequence, BlockInWorld blockInWorld) {
+            super(consequence, Optional.of(blockInWorld));
+        }
+
+        public Consequence.Result<ItemStack> run(
+            ServerLevel world,
+            BlockPos blockPos,
+            ServerPlayer player,
+            CraftingContainer input,
+            ItemStack stack
+        ) {
+            Consequence.Result<ItemStack> result = this.getA().run(new Consequence.RunInfo(
+                world,
+                blockPos,
+                player,
+                input,
+                stack,
+                this.getB()
+            ));
+            if (!this.getA().preserveDecoration()) {
+                this.getB().ifPresent(block -> world.destroyBlock(block.getPos(), false));
+            }
+            return result;
+        }
+    }
 }

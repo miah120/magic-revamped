@@ -3,8 +3,8 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.MapCodec;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +21,7 @@ public record SummonLightning() implements ConsequenceEffect {
     @Override
     public ItemStack apply(Consequence.RunInfo info) {
         int r = 2;
-        double r2 = Math.pow(r, 0.5);
+        double r2 = r * Mth.SQRT_OF_TWO;
         Stream<Entity> bolts = Stream.of(
                 new Vec3(0, 0, 0),
                 new Vec3(r, 0, 0),

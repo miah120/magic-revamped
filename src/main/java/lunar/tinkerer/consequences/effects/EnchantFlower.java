@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public record EnchantFlower() implements ConsequenceEffect {
     public static MapCodec<EnchantFlower> CODEC = MapCodec.unit(new EnchantFlower());
@@ -25,10 +26,9 @@ public record EnchantFlower() implements ConsequenceEffect {
         Optional<ItemStack> flower = info.decoration()
             .map(BlockInWorld::getState)
             .map(BlockBehaviour.BlockStateBase::getBlock)
-            .flatMap(block -> {
-                if (!(block instanceof FlowerPotBlock pot)) return Optional.empty();
-                return Optional.of(new ItemStack(pot.getPotted()));
-            });
+            .flatMap(block -> block instanceof FlowerPotBlock pot ? Optional.of(pot) : Optional.empty())
+            .map(FlowerPotBlock::getPotted)
+            .map(ItemStack::new);
         info.world().registryAccess().lookup(Registries.ENCHANTMENT)
             .flatMap(registry -> registry.getRandom(info.player().getRandom()))
             .flatMap(enchantment -> {
@@ -39,15 +39,10 @@ public record EnchantFlower() implements ConsequenceEffect {
     }
 
     public void drop(Consequence.RunInfo info, ItemStack itemStack) {
+        Level level = info.world();
+        Supplier<Float> r = () -> level.getRandom().nextFloat();
         info.decoration().map(BlockInWorld::getPos).ifPresent(pos -> {
-            Level level = info.world();
-            Vec3 location = new Vec3(pos)
-                .add(0.5, 0.5, 0.5)
-                .add(
-                    (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.1F,
-                    level.getRandom().nextFloat() * 0.05F,
-                    (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.1F
-                );
+            Vec3 location = Vec3.atCenterOf(pos).add((r.get() - 0.5) * 0.1F, r.get() * 0.05F, (r.get() - 0.5) * 0.1F);
             ItemEntity entity = new ItemEntity(level, location.x, location.y, location.z, itemStack);
             entity.setDefaultPickUpDelay();
             level.addFreshEntity(entity);

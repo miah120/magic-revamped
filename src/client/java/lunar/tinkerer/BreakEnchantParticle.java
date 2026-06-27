@@ -50,6 +50,7 @@ public class BreakEnchantParticle extends SimpleAnimatedParticle {
             this.spriteProvider = spriteProvider;
         }
 
+        @Override
         public Particle createParticle(
                 SimpleParticleType simpleParticleType, @NonNull ClientLevel clientLevel, double d, double e, double f, double g, double h, double i, @NonNull RandomSource random
         ) {

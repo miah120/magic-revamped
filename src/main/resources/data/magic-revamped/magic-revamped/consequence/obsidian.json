@@ -31,14 +31,16 @@
       "count": 90,
       "speed": 0.5,
       "vertical_position": {
-        "type": "in_bounding_box"
+        "type": "in_bounding_box",
+        "scale": 2
       },
       "vertical_velocity": {
         "base": -1
       }
     },
     {
-      "type": "magic-revamped:transform_decoration",
+      "type": "magic-revamped:transform_block",
+      "target_decoration": true,
       "result": {
         "Name": "minecraft:crying_obsidian"
       },

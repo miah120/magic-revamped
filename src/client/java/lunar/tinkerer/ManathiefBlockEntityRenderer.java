@@ -2,12 +2,14 @@ package lunar.tinkerer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import lunar.tinkerer.manathief.ManathiefBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
@@ -21,7 +23,7 @@ import org.jspecify.annotations.NonNull;
 
 @Environment(value=EnvType.CLIENT)
 public class ManathiefBlockEntityRenderer
-        implements BlockEntityRenderer<ManathiefBlockEntity, ManathiefBlockEntityRenderState> {
+        implements BlockEntityRenderer<ManathiefBlockEntity, ManathiefBlockEntityRenderer.ManathiefBlockEntityRenderState> {
     private static final SpriteId TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.id("manathief_face"));
     private final ManathiefFaceModel face;
     private final SpriteGetter spriteHolder;
@@ -36,11 +38,11 @@ public class ManathiefBlockEntityRenderer
     }
 
     public void extractRenderState(
-            ManathiefBlockEntity manathiefBlockEntity,
-            ManathiefBlockEntityRenderState manathiefBlockEntityRenderState,
-            float f,
-            @NonNull Vec3 vec3d,
-            @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlayCommand
+        ManathiefBlockEntity manathiefBlockEntity,
+        ManathiefBlockEntityRenderState manathiefBlockEntityRenderState,
+        float f,
+        @NonNull Vec3 vec3d,
+        @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlayCommand
     ) {
         BlockEntityRenderer.super.extractRenderState(manathiefBlockEntity, manathiefBlockEntityRenderState, f, vec3d, crumblingOverlayCommand);
         manathiefBlockEntityRenderState.ticks = manathiefBlockEntity.ticks + f;
@@ -49,10 +51,10 @@ public class ManathiefBlockEntityRenderer
     }
 
     public void submit(
-            ManathiefBlockEntityRenderState manathiefBlockEntityRenderState,
-            PoseStack matrixStack,
-            SubmitNodeCollector orderedRenderCommandQueue,
-            @NonNull CameraRenderState cameraRenderState
+        ManathiefBlockEntityRenderState manathiefBlockEntityRenderState,
+        PoseStack matrixStack,
+        SubmitNodeCollector orderedRenderCommandQueue,
+        @NonNull CameraRenderState cameraRenderState
     ) {
         matrixStack.pushPose();
         matrixStack.translate(0.5F, 0.75F, 0.5F);
@@ -64,18 +66,23 @@ public class ManathiefBlockEntityRenderer
 
         ManathiefFaceModel.ManathiefFaceModelState faceModelState = new ManathiefFaceModel.ManathiefFaceModelState();
         orderedRenderCommandQueue.submitModel(
-                this.face,
-                faceModelState,
-                matrixStack,
-                TEXTURE.renderType(RenderTypes::entityCutout),
-                manathiefBlockEntityRenderState.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                -1,
-                this.spriteHolder.get(TEXTURE),
-                0,
-                manathiefBlockEntityRenderState.breakProgress
+            this.face,
+            faceModelState,
+            matrixStack,
+            TEXTURE.renderType(RenderTypes::entityCutout),
+            manathiefBlockEntityRenderState.lightCoords,
+            OverlayTexture.NO_OVERLAY,
+            -1,
+            this.spriteHolder.get(TEXTURE),
+            0,
+            manathiefBlockEntityRenderState.breakProgress
         );
         matrixStack.popPose();
+    }
+
+    public static class ManathiefBlockEntityRenderState extends BlockEntityRenderState {
+        public float ticks;
+        public float bookRotationDegrees;
     }
 }
 

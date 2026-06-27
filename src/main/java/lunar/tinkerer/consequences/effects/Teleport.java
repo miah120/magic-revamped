@@ -12,16 +12,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.stream.Stream;
+
 public record Teleport(int min, int max) implements ConsequenceEffect {
     public static MapCodec<Teleport> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(
-                    Codec.INT.optionalFieldOf("min_range", 25).forGetter(Teleport::min),
-                    Codec.INT.optionalFieldOf("max_range", 50).forGetter(Teleport::max)
-            ).apply(i, Teleport::new)
+        i -> i.group(
+            Codec.INT.optionalFieldOf("min_range", 25).forGetter(Teleport::min),
+            Codec.INT.optionalFieldOf("max_range", 50).forGetter(Teleport::max)
+        ).apply(i, Teleport::new)
     );
 
     @Override
@@ -29,41 +31,38 @@ public record Teleport(int min, int max) implements ConsequenceEffect {
 
     @Override
     public ItemStack apply(Consequence.RunInfo info) {
-        var target = info.player().trackingPosition().add(getTarget(info.world()));
-        teleportTo(info.world(), info.player(), target.x(), target.y(), target.z());
+        var target = info.player().blockPosition().offset(getTarget(info.world()));
+        teleportTo(info.world(), info.player(), target);
         return ItemStack.EMPTY;
     }
 
-    public Vec3 getTarget(ServerLevel world) {
-        int size = world.getRandom().nextIntBetweenInclusive(min, max);
-        double x = world.getRandom().nextDouble();
-        double y = world.getRandom().nextDouble();
-        double z = world.getRandom().nextDouble();
-
-        return new Vec3(x, y, z).normalize().scale(size);
+    public BlockPos getTarget(ServerLevel world) {
+        var r = world.getRandom();
+        Vec3 target = new Vec3(r.nextDouble(), 0, r.nextDouble())
+            .normalize()
+            .scale(r.nextIntBetweenInclusive(min, max));
+        return new BlockPos((int) target.x, max, (int) target.z);
     }
 
-    public static void teleportTo(ServerLevel world, ServerPlayer player, double x, double y, double z) {
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(x, y, z);
-
-        while (mutable.getY() > world.getMinY() && !world.getBlockState(mutable).blocksMotion()) {
-            mutable.move(Direction.DOWN);
-        }
-
-        BlockState blockState = world.getBlockState(mutable);
-        boolean bl = blockState.blocksMotion();
-        boolean bl2 = blockState.getFluidState().is(FluidTags.WATER);
-        if (bl && !bl2) {
-            Vec3 vec3d = player.trackingPosition();
-            boolean bl3 = player.randomTeleport(x, y, z, true);
-            if (bl3) {
-                world.gameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Context.of(player));
-                if (!player.isSilent()) {
-                    world.playSound(null, player.xo, player.yo, player.zo, SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 1.0F);
-                    player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
-                }
-            }
-        }
+    public static void teleportTo(ServerLevel level, ServerPlayer player, BlockPos blockPos) {
+        Vec3 oldPos = player.position();
+        Stream.iterate(
+                blockPos,
+                curPos -> curPos.getY() > level.getMinY(),
+                BlockPos::below
+            )
+            .map(pos -> new BlockInWorld(level, pos, true))
+            .filter(block -> block.getState().isFaceSturdy(level, block.getPos(), Direction.UP))
+            .filter(block -> !block.getState().getFluidState().is(FluidTags.WATER))
+            .findFirst()
+            .map(BlockInWorld::getPos)
+            .filter(pos -> player.randomTeleport(pos.getX(), pos.getY() + 1, pos.getZ(), true))
+            .ifPresent(_ -> {
+                level.gameEvent(GameEvent.TELEPORT, oldPos, GameEvent.Context.of(player));
+                if (player.isSilent()) return;
+                level.playSound(null, player.xo, player.yo, player.zo, SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 1.0F);
+                player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            });
     }
 
 }

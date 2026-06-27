@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class EnchantingTableResultInventory implements Container,
         RecipeCraftingHolder {
@@ -22,30 +23,26 @@ public class EnchantingTableResultInventory implements Container,
 
     @Override
     public boolean isEmpty() {
-        for (ItemStack itemStack : this.stacks) {
-            if (itemStack.isEmpty()) continue;
-            return false;
-        }
-        return true;
+        return this.stacks.stream().allMatch(ItemStack::isEmpty);
     }
 
     @Override
-    public ItemStack getItem(int slot) {
+    public @NonNull ItemStack getItem(int slot) {
         return this.stacks.getFirst();
     }
 
     @Override
-    public ItemStack removeItem(int slot, int amount) {
+    public @NonNull ItemStack removeItem(int slot, int amount) {
         return ContainerHelper.takeItem(this.stacks, 0);
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int slot) {
+    public @NonNull ItemStack removeItemNoUpdate(int slot) {
         return ContainerHelper.takeItem(this.stacks, 0);
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NonNull ItemStack stack) {
         this.stacks.set(0, stack);
     }
 
@@ -54,7 +51,7 @@ public class EnchantingTableResultInventory implements Container,
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NonNull Player player) {
         return true;
     }
 

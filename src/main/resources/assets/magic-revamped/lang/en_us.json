@@ -2,7 +2,7 @@
   "item.magic-revamped.rune.template": "Rune of %s",
   "item.magic-revamped.rune.template.open": "Open Rune of %s",
   "item.magic-revamped.rune.template.charged": "Charged Rune of %s",
-  "item.magic-revamped.rune.flux": "Flux %s",
+  "item.flux": "Flux %s",
 
   "item.magic-revamped.manathief": "Manathief",
 
@@ -21,5 +21,7 @@
   "advancements.story.failed_enchant_with_decoration.description": "Use a decoration to preserve your runes. \nAt least you're not a potted plant",
 
   "advancements.story.enchant_without_effect.title": "Oops",
-  "advancements.story.enchant_without_effect.description": "Enchant an item to no effect. \nMaybe keep a better eye on things next time"
+  "advancements.story.enchant_without_effect.description": "Enchant an item to no effect. \nMaybe keep a better eye on things next time",
+
+  "block.magic-revamped.manathief": "Manathief"
 }

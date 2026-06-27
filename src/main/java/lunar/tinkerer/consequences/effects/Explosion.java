@@ -26,7 +26,7 @@ public record Explosion(float power, boolean fire) implements ConsequenceEffect 
             null,
             info.world().damageSources().magic(),
             null,
-            new Vec3(info.blockPos()).add(0.5, 1.5, 0.5),
+            Vec3.atCenterOf(info.tablePos().above()),
             power,
             fire,
             Level.ExplosionInteraction.BLOCK

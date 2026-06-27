@@ -1,6 +1,7 @@
-package lunar.tinkerer;
+package lunar.tinkerer.manathief;
 
 import com.mojang.serialization.MapCodec;
+import lunar.tinkerer.MagicRevamped;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -111,6 +112,6 @@ public class ManathiefBlock extends DoublePlantBlock implements EntityBlock {
     protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> validateTicker(
             BlockEntityType<A> givenType, BlockEntityTicker<? super E> ticker
     ) {
-        return ModBlockEntities.MANATHIEF_BLOCK_ENTITY == givenType ? (BlockEntityTicker<A>) ticker : null;
+        return MagicRevamped.BlockEntities.MANATHIEF_BLOCK_ENTITY == givenType ? (BlockEntityTicker<A>) ticker : null;
     }
 }

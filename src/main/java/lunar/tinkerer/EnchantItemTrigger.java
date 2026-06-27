@@ -15,21 +15,11 @@ public class EnchantItemTrigger extends SimpleCriterionTrigger<EnchantItemTrigge
         return EnchantItemTrigger.TriggerInstance.CODEC;
     }
 
-    public void trigger(
-        final ServerPlayer player,
-        boolean success,
-        boolean decorationPresent,
-        boolean changeMade
-    ) {
+    public void trigger(final ServerPlayer player, boolean success, boolean decorationPresent, boolean changeMade) {
         this.trigger(player, t -> t.matches(success, decorationPresent, changeMade));
     }
 
-    public record TriggerInstance(
-        Optional<ContextAwarePredicate> player,
-        Optional<Boolean> success,
-        Optional<Boolean> decorationPresent,
-        Optional<Boolean> changeMade
-    )
+    public record TriggerInstance(Optional<ContextAwarePredicate> player, Optional<Boolean> success, Optional<Boolean> decorationPresent, Optional<Boolean> changeMade)
             implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<EnchantItemTrigger.TriggerInstance> CODEC = RecordCodecBuilder.create(
             i -> i.group(
@@ -41,11 +31,7 @@ public class EnchantItemTrigger extends SimpleCriterionTrigger<EnchantItemTrigge
                 .apply(i, EnchantItemTrigger.TriggerInstance::new)
         );
 
-        public boolean matches(
-            boolean success,
-            boolean decorationPresent,
-            boolean changeMade
-        ) {
+        public boolean matches(boolean success, boolean decorationPresent, boolean changeMade) {
             return this.success.map(s -> s == success).orElse(true)
                 && this.decorationPresent.map(s -> s == decorationPresent).orElse(true)
                 && this.changeMade.map(s -> s == changeMade).orElse(true);

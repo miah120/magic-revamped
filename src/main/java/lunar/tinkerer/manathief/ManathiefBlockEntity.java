@@ -1,11 +1,11 @@
 /*
  * Decompiled with CFR 0.2.2 (FabricMC 7c48b8c4).
  */
-package lunar.tinkerer;
+package lunar.tinkerer.manathief;
 
+import lunar.tinkerer.MagicRevamped;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,11 +17,9 @@ public class ManathiefBlockEntity
     public float bookRotation;
     public float lastBookRotation;
     public float targetBookRotation;
-    public float leafRotation;
-    private static final RandomSource RANDOM = RandomSource.create();
 
     public ManathiefBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.MANATHIEF_BLOCK_ENTITY, pos, state);
+        super(MagicRevamped.BlockEntities.MANATHIEF_BLOCK_ENTITY, pos, state);
     }
 
     public static void tick(Level world, BlockPos pos, BlockState state, ManathiefBlockEntity blockEntity) {

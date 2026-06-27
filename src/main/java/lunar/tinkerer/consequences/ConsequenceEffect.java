@@ -4,12 +4,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.consequences.effects.*;
-import lunar.tinkerer.registry.ModRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 
 public interface ConsequenceEffect {
-    Codec<ConsequenceEffect> CODEC = ModRegistries.CONSEQUENCE_EFFECT.byNameCodec()
+    Codec<ConsequenceEffect> CODEC = MagicRevamped.Registries.CONSEQUENCE_EFFECT.byNameCodec()
         .dispatch(ConsequenceEffect::codec, c -> c);
 
     MapCodec<? extends ConsequenceEffect> codec();
@@ -22,7 +21,6 @@ public interface ConsequenceEffect {
         Registry.register(registry, MagicRevamped.id("teleport"), Teleport.CODEC);
         Registry.register(registry, MagicRevamped.id("transform_area"), TransformArea.CODEC);
         Registry.register(registry, MagicRevamped.id("transform_block"), TransformBlock.CODEC);
-        Registry.register(registry, MagicRevamped.id("transform_decoration"), TransformDecoration.CODEC);
         Registry.register(registry, MagicRevamped.id("summon_entity"), SummonEntity.CODEC);
         Registry.register(registry, MagicRevamped.id("summon_lightning"), SummonLightning.CODEC);
         Registry.register(registry, MagicRevamped.id("play_sound"), PlaySound.CODEC);

@@ -12,12 +12,12 @@ import net.minecraft.world.item.ItemStack;
 
 public record ApplyEffect(Holder<MobEffect> statusEffect, int minTicks, int maxTicks, int amplifier) implements ConsequenceEffect {
     public static MapCodec<ApplyEffect> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(
-                    MobEffect.CODEC.fieldOf("effect").forGetter(ApplyEffect::statusEffect),
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("min_ticks").forGetter(ApplyEffect::minTicks),
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("max_ticks").forGetter(ApplyEffect::maxTicks),
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("amplifier").forGetter(ApplyEffect::amplifier)
-            ).apply(i, ApplyEffect::new)
+        i -> i.group(
+            MobEffect.CODEC.fieldOf("effect").forGetter(ApplyEffect::statusEffect),
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("min_ticks").forGetter(ApplyEffect::minTicks),
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("max_ticks").forGetter(ApplyEffect::maxTicks),
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("amplifier").forGetter(ApplyEffect::amplifier)
+        ).apply(i, ApplyEffect::new)
     );
 
     @Override

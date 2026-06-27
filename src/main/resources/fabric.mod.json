@@ -20,9 +20,6 @@
 		],
 		"client": [
 			"lunar.tinkerer.MagicRevampedClient"
-		],
-		"fabric-datagen": [
-			"lunar.tinkerer.MagicRevampedDataGenerator"
 		]
 	},
 	"mixins": [

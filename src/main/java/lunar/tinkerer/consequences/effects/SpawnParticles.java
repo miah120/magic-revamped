@@ -7,12 +7,13 @@ import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.*;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.effects.SpawnParticlesEffect;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.stream.IntStream;
@@ -46,24 +47,16 @@ public record SpawnParticles(
 
     @Override
     public ItemStack apply(Consequence.RunInfo info) {
-        ServerLevel serverLevel = info.world();
-        Entity entity = info.player();
-        Vec3 position = switch (this.target) {
-            case "player": yield info.player().position();
-            case "table": yield new Vec3(info.blockPos()).add(0.5, 0.5, 0.5);
-            case "decoration":
-            default: yield info.decoration()
-                .map(d -> new Vec3(d.getPos()).add(0.5, 0.5, 0.5))
-                .orElse(new Vec3(info.blockPos()).add(0.5, 0.5, 0.5));
-        };
-        RandomSource random = entity.getRandom();
-        float bbWidth = this.target.equals("player") ? entity.getBbWidth() : 1;
-        float bbHeight = this.target.equals("player") ? entity.getBbHeight() : 1;
-        IntStream.range(0, this.count.sample(random)).forEach(_ -> serverLevel.sendParticles(
+        Target target = getTarget(info);
+        Vec3 position = target.position;
+        AABB bounds = target.bounds;
+        Vec3 center = bounds.getCenter().add(position);
+        RandomSource random = info.player().getRandom();
+        IntStream.range(0, this.count.sample(random)).forEach(_ -> info.world().sendParticles(
             this.particle,
-            this.horizontalPosition.getCoordinate(position.x(), position.x(), bbWidth, random),
-            this.verticalPosition.getCoordinate(position.y(), position.y() + bbHeight / 2.0F, bbHeight, random),
-            this.horizontalPosition.getCoordinate(position.z(), position.z(), bbWidth, random),
+            this.horizontalPosition.getCoordinate(center.x(), center.x(), (float) bounds.getXsize(), random),
+            this.verticalPosition.getCoordinate(center.y(), center.y(), (float) bounds.getYsize(), random),
+            this.horizontalPosition.getCoordinate(center.z(), center.z(), (float) bounds.getZsize(), random),
             0,
             this.horizontalVelocity.getVelocity(0, random),
             this.verticalVelocity.getVelocity(0, random),
@@ -71,5 +64,25 @@ public record SpawnParticles(
             this.speed.sample(random)
         ));
         return ItemStack.EMPTY;
+    }
+
+    public Target getTarget(Consequence.RunInfo info) {
+        if (this.target.equals("player")) return Target.player(info.player());
+        Target table = Target.block(new BlockInWorld(info.world(), info.tablePos(), false));
+        if (this.target.equals("table")) return table;
+        return info.decoration().map(Target::block).orElse(table);
+    }
+
+    public record Target(Vec3 position, AABB bounds) {
+        static Target player(Player player) {
+            return new Target(player.position(), player.getBoundingBox());
+        }
+
+        static Target block(BlockInWorld block) {
+            return new Target(
+                new Vec3(block.getPos()),
+                block.getState().getShape(block.getLevel(), block.getPos()).bounds()
+            );
+        }
     }
 }

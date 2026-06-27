@@ -1,7 +1,7 @@
 package lunar.tinkerer.mixin;
 
 import lunar.tinkerer.MagicRevamped;
-import lunar.tinkerer.consequences.ConsequenceManager;
+import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.enchantingTable.ModEnchantmentScreenHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,11 +29,11 @@ import java.util.stream.IntStream;
 @Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
     @Inject(method = "getMenuProvider", at = @At(value = "HEAD"), cancellable = true)
-    protected void getMenuProvider(BlockState state, Level world, BlockPos pos, CallbackInfoReturnable<MenuProvider> ci) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+    protected void getMenuProvider(BlockState state, Level level, BlockPos pos, CallbackInfoReturnable<MenuProvider> ci) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof EnchantingTableBlockEntity enchantingTable) {
             Component text = enchantingTable.getDisplayName();
-            ci.setReturnValue(new SimpleMenuProvider((syncId, inventory, player) -> new ModEnchantmentScreenHandler(syncId, inventory, ContainerLevelAccess.create(world, pos)), text));
+            ci.setReturnValue(new SimpleMenuProvider((syncId, inventory, _) -> new ModEnchantmentScreenHandler(syncId, inventory, ContainerLevelAccess.create(level, pos)), text));
         } else {
             ci.setReturnValue(null);
         }
@@ -40,12 +41,13 @@ public class EnchantingTableBlockMixin {
     }
 
     @Inject(method = "animateTick", at = @At(value = "HEAD"), cancellable = true)
-    public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        bookshelfParticles(world, pos, random);
-        try { decorationParticles(world, pos, random); } catch (Exception _) {}
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        bookshelfParticles(level, pos, random);
+        try { decorationParticles(level, pos, random); } catch (Exception _) {}
         ci.cancel();
     }
 
+    @Unique
     private void bookshelfParticles(Level world, BlockPos pos, RandomSource random) {
         for (BlockPos blockPos : MagicRevamped.POWER_PROVIDER_OFFSETS) {
             if (random.nextInt(12) != 0 || !EnchantingTableBlock.isValidBookShelf(world, pos, blockPos)) continue;
@@ -55,21 +57,18 @@ public class EnchantingTableBlockMixin {
         }
     }
 
+    @Unique
     private void decorationParticles(Level world, BlockPos pos, RandomSource random) {
         if (random.nextInt(24) != 0) return;
-        ConsequenceManager.pick(world, pos).getB().ifPresent(blockInWorld -> {
+        Consequence.pick(world, pos).getB().ifPresent(blockInWorld -> {
             Supplier<Vec3> pos1 = () -> new Vec3(blockInWorld.getPos()).add(
-                    1.5 * random.nextFloat() - 0.25,
-                    1.5 * random.nextFloat() - 0.25,
-                    1.5 * random.nextFloat() - 0.25
+                1.5 * random.nextFloat() - 0.25,
+                1.5 * random.nextFloat() - 0.25,
+                1.5 * random.nextFloat() - 0.25
             );
             Supplier<Vec3> vel = () -> new Vec3(pos)
                 .subtract(blockInWorld.getPos().getX(), blockInWorld.getPos().getY(), blockInWorld.getPos().getZ())
-                .add(
-                    random.nextFloat() - 0.5,
-                    random.nextFloat() - 0.5,
-                    random.nextFloat() - 0.5
-                )
+                .add(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5)
                 .normalize()
                 .scale(0.05);
 

@@ -15,12 +15,12 @@ import java.util.stream.Stream;
 
 public record TransformArea(Vec3i start, Vec3i end, BlockState result, Optional<BlockPredicate> from) implements ConsequenceEffect {
     public static MapCodec<TransformArea> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(
-                    Vec3i.CODEC.fieldOf("start_offset").forGetter(TransformArea::start),
-                    Vec3i.CODEC.fieldOf("end_offset").forGetter(TransformArea::end),
-                    BlockState.CODEC.fieldOf("result").forGetter(TransformArea::result),
-                    BlockPredicate.CODEC.optionalFieldOf("only_transform").forGetter(TransformArea::from)
-            ).apply(i, TransformArea::new)
+        i -> i.group(
+            Vec3i.CODEC.fieldOf("start_offset").forGetter(TransformArea::start),
+            Vec3i.CODEC.fieldOf("end_offset").forGetter(TransformArea::end),
+            BlockState.CODEC.fieldOf("result").forGetter(TransformArea::result),
+            BlockPredicate.CODEC.optionalFieldOf("only_transform").forGetter(TransformArea::from)
+        ).apply(i, TransformArea::new)
     );
 
     @Override
@@ -28,7 +28,7 @@ public record TransformArea(Vec3i start, Vec3i end, BlockState result, Optional<
 
     @Override
     public ItemStack apply(Consequence.RunInfo info) {
-        getBlockPositions(start, end, info.blockPos())
+        getBlockPositions(start, end, info.tablePos())
             .filter(pos -> from.filter(f -> !f.matches(info.world(), pos)).isEmpty())
             .forEach(pos -> info.world().setBlockAndUpdate(pos, result));
         return ItemStack.EMPTY;

@@ -1,8 +1,9 @@
-package lunar.tinkerer;
+package lunar.tinkerer.enchantmentRecipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lunar.tinkerer.MagicRevamped;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
 import net.fabricmc.fabric.impl.recipe.ingredient.ShapelessMatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -21,30 +22,31 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class EnchantmentRecipe implements Recipe<CraftingInput> {
     public final String group;
     public final ItemStackTemplate result;
-    public final ShapedRecipePattern pattern;
+    public final EnchantmentRecipePattern pattern;
     public final List<Ingredient> ingredients;
     private final boolean fabric_requiresTesting;
 
     public EnchantmentRecipe(String group, ItemStackTemplate result, ShapedRecipePattern pattern) {
         this.group = group;
         this.result = result;
-        this.pattern = pattern;
+        this.pattern = new EnchantmentRecipePattern(pattern.width, pattern.height, pattern.ingredients, pattern.data);
         this.ingredients = this.pattern.ingredients().stream().flatMap(Optional::stream).toList();
         this.fabric_requiresTesting = pattern.ingredients().stream().flatMap(Optional::stream).anyMatch(FabricIngredient::requiresTesting);
     }
 
     @Override
     public @NonNull RecipeType<EnchantmentRecipe> getType() {
-        return ModRecipeTypes.ENCHANTMENT_RECIPE_TYPE;
+        return MagicRevamped.RecipeTypes.ENCHANTMENT_RECIPE_TYPE;
     }
 
     @Override
     public @NonNull RecipeSerializer<EnchantmentRecipe> getSerializer() {
-        return ModRecipeTypes.ENCHANTMENT_RECIPE_SERIALIZER;
+        return MagicRevamped.RecipeSerializers.ENCHANTMENT_RECIPE_SERIALIZER;
     }
 
     @Override
@@ -57,29 +59,18 @@ public class EnchantmentRecipe implements Recipe<CraftingInput> {
         return PlacementInfo.createFromOptionals(this.pattern.ingredients());
     }
 
-
     @Override
     public boolean matches(CraftingInput craftingRecipeInput, @NonNull Level world) {
         if (fabric_requiresTesting) {
-            List<ItemStack> nonEmptyStacks = new ArrayList<>(craftingRecipeInput.ingredientCount());
-
-            for (int i = 0; i < craftingRecipeInput.size(); ++i) {
-                ItemStack stack = craftingRecipeInput.getItem(i);
-
-                if (!stack.isEmpty()) {
-                    nonEmptyStacks.add(stack);
-                }
-            }
-
+            List<ItemStack> nonEmptyStacks = craftingRecipeInput.items().stream()
+                .filter(stack -> !stack.isEmpty())
+                .toList();
             return ShapelessMatch.isMatch(nonEmptyStacks, this.ingredients);
         }
-        if (craftingRecipeInput.ingredientCount() != this.ingredients.size()) {
-            return false;
-        } else {
-            return craftingRecipeInput.size() == 1 && this.ingredients.size() == 1
-                ? this.ingredients.getFirst().test(craftingRecipeInput.getItem(0))
-                : craftingRecipeInput.stackedContents().canCraft(this, null);
-        }
+        if (craftingRecipeInput.ingredientCount() != this.ingredients.size()) return false;
+        return craftingRecipeInput.size() == 1 && this.ingredients.size() == 1
+            ? this.ingredients.getFirst().test(craftingRecipeInput.getItem(0))
+            : craftingRecipeInput.stackedContents().canCraft(this, null);
     }
 
     @Override
@@ -107,25 +98,37 @@ public class EnchantmentRecipe implements Recipe<CraftingInput> {
 
     @Override
     public @NonNull RecipeBookCategory recipeBookCategory() {
-        return ModRecipeTypes.ENCHANTMENT_RECIPE_BOOK_CATEGORY;
+        return MagicRevamped.RecipeBookCategories.ENCHANTMENT_RECIPE_BOOK_CATEGORY;
     }
 
     public static final MapCodec<EnchantmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(
     i -> i.group(
-                Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
-                ItemStackTemplate.CODEC.fieldOf("result").forGetter(o -> o.result),
-                ShapedRecipePattern.MAP_CODEC.forGetter(o -> o.pattern)
-            )
-            .apply(i, EnchantmentRecipe::new)
+            Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(o -> o.result),
+            ShapedRecipePattern.MAP_CODEC.forGetter(o -> o.pattern)
+        )
+        .apply(i, EnchantmentRecipe::new)
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentRecipe> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8,
-            recipe -> recipe.group,
-            ItemStackTemplate.STREAM_CODEC,
-            o -> o.result,
-            ShapedRecipePattern.STREAM_CODEC,
-            o -> o.pattern,
-            EnchantmentRecipe::new
+        ByteBufCodecs.STRING_UTF8,
+        recipe -> recipe.group,
+        ItemStackTemplate.STREAM_CODEC,
+        o -> o.result,
+        ShapedRecipePattern.STREAM_CODEC,
+        o -> o.pattern,
+        EnchantmentRecipe::new
     );
     public static final RecipeSerializer<EnchantmentRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
+    public static class EnchantmentRecipePattern extends ShapedRecipePattern {
+        public EnchantmentRecipePattern(int width, int height, List<Optional<Ingredient>> ingredients, Optional<Data> data) {
+            super(width, height, ingredients, data);
+        }
+
+        @Override
+        public @NonNull List<Optional<Ingredient>> ingredients() {
+            var raw = super.ingredients();
+            return Stream.of(4, 1, 2, 5, 8, 7, 6, 3, 0).filter(i -> i < raw.size()).map(raw::get).toList();
+        }
+    }
 }

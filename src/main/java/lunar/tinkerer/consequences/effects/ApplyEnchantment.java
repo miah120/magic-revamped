@@ -27,7 +27,7 @@ public record ApplyEnchantment(HolderSet<Enchantment> enchantments) implements C
     @Override
     public ItemStack apply(Consequence.RunInfo info) {
         List<EnchantmentInstance> enchantmentOptions = EnchantmentHelper.selectEnchantment(
-                info.player().getRandom(), info.stack(), 25, this.enchantments.stream()
+            info.player().getRandom(), info.stack(), 25, this.enchantments.stream()
         );
         if (enchantmentOptions.isEmpty()) return info.input().getItem(0);
         info.stack().enchant(enchantmentOptions.getFirst().enchantment(), 1);

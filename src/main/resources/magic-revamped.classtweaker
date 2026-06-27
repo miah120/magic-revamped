@@ -1,3 +1,24 @@
 classTweaker  v1  official
 accessible method net/minecraft/client/gui/screens/recipebook/GhostSlots setResult (Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/util/context/ContextMap;Lnet/minecraft/world/item/crafting/display/SlotDisplay;)V
 accessible method net/minecraft/client/gui/screens/recipebook/GhostSlots setInput (Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/util/context/ContextMap;Lnet/minecraft/world/item/crafting/display/SlotDisplay;)V
+
+accessible field net/minecraft/world/inventory/AnvilMenu onlyRenaming Z
+accessible field net/minecraft/world/inventory/AnvilMenu repairItemCountCost I
+accessible field net/minecraft/world/inventory/AnvilMenu itemName Ljava/lang/String;
+accessible field net/minecraft/world/inventory/AnvilMenu cost Lnet/minecraft/world/inventory/DataSlot;
+accessible field net/minecraft/world/inventory/ItemCombinerMenu player Lnet/minecraft/world/entity/player/Player;
+accessible field net/minecraft/world/inventory/ItemCombinerMenu inputSlots Lnet/minecraft/world/Container;
+accessible field net/minecraft/world/inventory/ItemCombinerMenu resultSlots Lnet/minecraft/world/inventory/ResultContainer;
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageWidth I
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+extendable class net/minecraft/world/item/crafting/ShapedRecipePattern
+accessible field net/minecraft/world/item/crafting/ShapedRecipePattern width I
+accessible field net/minecraft/world/item/crafting/ShapedRecipePattern height I
+accessible field net/minecraft/world/item/crafting/ShapedRecipePattern ingredients Ljava/util/List;
+accessible field net/minecraft/world/item/crafting/ShapedRecipePattern data Ljava/util/Optional;
+
+accessible method net/minecraft/core/component/DataComponents register (Ljava/lang/String;Ljava/util/function/UnaryOperator;)Lnet/minecraft/core/component/DataComponentType;
+accessible method net/minecraft/world/item/Items registerItem (Lnet/minecraft/resources/ResourceKey;Ljava/util/function/Function;Lnet/minecraft/world/item/Item$Properties;)Lnet/minecraft/world/item/Item;
+accessible method net/minecraft/advancements/triggers/CriteriaTriggers register (Ljava/lang/String;Lnet/minecraft/advancements/triggers/CriterionTrigger;)Lnet/minecraft/advancements/triggers/CriterionTrigger;
+accessible method net/minecraft/tags/EntityTypeTags create (Ljava/lang/String;)Lnet/minecraft/tags/TagKey;
+accessible method net/minecraft/world/item/Items registerBlock (Lnet/minecraft/references/BlockItemId;Lnet/minecraft/world/level/block/Block;)Lnet/minecraft/world/item/Item;

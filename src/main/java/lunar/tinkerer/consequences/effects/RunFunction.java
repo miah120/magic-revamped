@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 
 public record RunFunction(Identifier function) implements ConsequenceEffect {
     public static MapCodec<RunFunction> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(
-                    Identifier.CODEC.fieldOf("function").forGetter(RunFunction::function)
-            ).apply(i, RunFunction::new)
+        i -> i.group(
+            Identifier.CODEC.fieldOf("function").forGetter(RunFunction::function)
+        ).apply(i, RunFunction::new)
     );
 
     @Override
@@ -27,12 +27,12 @@ public record RunFunction(Identifier function) implements ConsequenceEffect {
         ServerFunctionManager functions = server.getFunctions();
         functions.get(this.function).ifPresent(function -> {
             CommandSourceStack source = server.createCommandSourceStack()
-                    .withPermission(LevelBasedPermissionSet.GAMEMASTER)
-                    .withSuppressedOutput()
-                    .withEntity(info.player())
-                    .withLevel(info.world())
-                    .withPosition(info.player().position())
-                    .withRotation(info.player().getRotationVector());
+                .withPermission(LevelBasedPermissionSet.GAMEMASTER)
+                .withSuppressedOutput()
+                .withEntity(info.player())
+                .withLevel(info.world())
+                .withPosition(info.player().position())
+                .withRotation(info.player().getRotationVector());
             functions.execute(function, source);
         });
         return ItemStack.EMPTY;
