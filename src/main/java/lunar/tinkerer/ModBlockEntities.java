@@ -18,14 +18,14 @@ public class ModBlockEntities {
     );
     public static final MenuType<ModEnchantmentScreenHandler> ENCHANTMENT_SCREEN_HANDLER = Registry.register(
             BuiltInRegistries.MENU,
-            MagicRevamped.identifier("enchanting_table"),
+            MagicRevamped.id("enchanting_table"),
             new MenuType<>(ModEnchantmentScreenHandler::new, FeatureFlagSet.of())
     );
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, Block block) {
         return Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                MagicRevamped.identifier(name),
+                MagicRevamped.id(name),
                 FabricBlockEntityTypeBuilder.create(factory, block).build()
         );
     }

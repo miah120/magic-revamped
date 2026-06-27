@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -54,10 +53,10 @@ public class MagicRevamped implements ModInitializer {
 		CriteriaTriggers.init();
 		DataAttachments.init();
 		ModRegistries.init();
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, MagicRevamped.identifier("break_enchant"), BREAK_ENCHANT_PARTICLE);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, MagicRevamped.id("break_enchant"), BREAK_ENCHANT_PARTICLE);
 	}
 
-	public static Identifier identifier(String id) {
+	public static Identifier id(String id) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, id);
 	}
 
@@ -75,13 +74,13 @@ public class MagicRevamped implements ModInitializer {
 		public static final TagKey<EntityType<?>> ENCHANTMENT_HELPERS = create("enchantment_helpers");
 
 		private static TagKey<EntityType<?>> create(final String name) {
-			return TagKey.create(Registries.ENTITY_TYPE, identifier(name));
+			return TagKey.create(Registries.ENTITY_TYPE, id(name));
 		}
 	}
 
 	public static class DataAttachments {
 		public static final AttachmentType<Integer> ENCHANTMENT_SKILL = AttachmentRegistry.create(
-			identifier("enchantment_skill"),
+			id("enchantment_skill"),
 			builder -> builder
 				.initializer(() -> 0)
 				.persistent(ExtraCodecs.NON_NEGATIVE_INT)

@@ -50,7 +50,7 @@ public class ModEnchantmentScreen
     );
     private final CyclingSlotBackground slotIcon = new CyclingSlotBackground(1);
 
-    private static final Identifier TEXTURE = MagicRevamped.identifier("textures/gui/enchanting_table.png");
+    private static final Identifier TEXTURE = MagicRevamped.id("textures/gui/enchanting_table.png");
 
     public ModEnchantmentScreen(ModEnchantmentScreenHandler handler, Inventory inventory, Component title) {
         super(handler, new RecipeBookComponent<>(handler, List.of(

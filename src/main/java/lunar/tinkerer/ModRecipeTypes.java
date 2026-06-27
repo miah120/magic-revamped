@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 
 public class ModRecipeTypes {
-    public static Identifier ID = MagicRevamped.identifier("enchanting");
+    public static Identifier ID = MagicRevamped.id("enchanting");
 
     public static final RecipeSerializer<EnchantmentRecipe> ENCHANTMENT_RECIPE_SERIALIZER = Registry.register(
             BuiltInRegistries.RECIPE_SERIALIZER,

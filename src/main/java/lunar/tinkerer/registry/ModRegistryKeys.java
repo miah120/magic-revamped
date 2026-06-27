@@ -12,6 +12,6 @@ public class ModRegistryKeys {
     public static final ResourceKey<Registry<MapCodec<? extends ConsequenceEffect>>> CONSEQUENCE_EFFECT = create("consequence_effect");
 
     private static <T> ResourceKey<Registry<T>> create(String path) {
-        return ResourceKey.createRegistryKey(MagicRevamped.identifier(path));
+        return ResourceKey.createRegistryKey(MagicRevamped.id(path));
     }
 }

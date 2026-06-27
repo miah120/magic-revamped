@@ -48,11 +48,11 @@ public class ModBlocks {
     }
 
     private static ResourceKey<Block> keyOfBlock(String name) {
-        return ResourceKey.create(Registries.BLOCK, MagicRevamped.identifier(name));
+        return ResourceKey.create(Registries.BLOCK, MagicRevamped.id(name));
     }
 
     private static ResourceKey<Item> keyOfItem(String name) {
-        return ResourceKey.create(Registries.ITEM, MagicRevamped.identifier(name));
+        return ResourceKey.create(Registries.ITEM, MagicRevamped.id(name));
     }
 
 }

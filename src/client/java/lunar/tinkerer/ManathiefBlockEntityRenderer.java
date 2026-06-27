@@ -22,13 +22,13 @@ import org.jspecify.annotations.NonNull;
 @Environment(value=EnvType.CLIENT)
 public class ManathiefBlockEntityRenderer
         implements BlockEntityRenderer<ManathiefBlockEntity, ManathiefBlockEntityRenderState> {
-    private static final SpriteId TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.identifier("manathief_face"));
+    private static final SpriteId TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.apply(MagicRevamped.id("manathief_face"));
     private final ManathiefFaceModel face;
     private final SpriteGetter spriteHolder;
 
     public ManathiefBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         this.spriteHolder = ctx.sprites();
-        this.face = new ManathiefFaceModel(ctx.bakeLayer(ModModelLayers.MANATHIEF_FACE_MODEL_LAYER));
+        this.face = new ManathiefFaceModel(ctx.bakeLayer(MagicRevampedClient.ModelLayers.MANATHIEF_FACE_MODEL_LAYER));
     }
 
     public ManathiefBlockEntityRenderState createRenderState() {

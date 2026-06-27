@@ -56,8 +56,8 @@ public class ModItems {
             .component(FLUX, RuneItem.DEFAULT_RUNE_FLUX)
     );
 
-    public static final TagKey<Item> DROPS_CHARGED_RUNE = TagKey.create(Registries.ITEM, MagicRevamped.identifier("drops_charged_rune"));
-    public static final TagKey<Item> SUMMONS_LIGHTNING = TagKey.create(Registries.ITEM, MagicRevamped.identifier("summons_lightning"));
+    public static final TagKey<Item> DROPS_CHARGED_RUNE = TagKey.create(Registries.ITEM, MagicRevamped.id("drops_charged_rune"));
+    public static final TagKey<Item> SUMMONS_LIGHTNING = TagKey.create(Registries.ITEM, MagicRevamped.id("summons_lightning"));
 
     public static void initialize() {
         addBlocksToItemGroup();
@@ -80,7 +80,7 @@ public class ModItems {
 
     public static Item register(String name, Function<Item.Properties, Item> itemFactory, Item.Properties settings) {
         // Create the item key.
-        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, MagicRevamped.identifier(name));
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, MagicRevamped.id(name));
 
         // Create the item instance.
         Item item = itemFactory.apply(settings.setId(itemKey));
@@ -94,10 +94,8 @@ public class ModItems {
     private static <T> DataComponentType<T> registerDataComponent(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
         return Registry.register(
                 BuiltInRegistries.DATA_COMPONENT_TYPE,
-                MagicRevamped.identifier(id),
+                MagicRevamped.id(id),
                 builderOperator.apply(DataComponentType.builder()).build()
         );
     }
-
-
 }
