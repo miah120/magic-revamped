@@ -7,14 +7,26 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,6 +42,11 @@ import java.util.stream.IntStream;
 public class EnchantingTableBlockMixin {
     @Inject(method = "getMenuProvider", at = @At(value = "HEAD"), cancellable = true)
     protected void getMenuProvider(BlockState state, Level level, BlockPos pos, CallbackInfoReturnable<MenuProvider> ci) {
+        if(!state.getValue(BlockStateProperties.HAS_BOOK)) {
+            ci.setReturnValue(null);
+            ci.cancel();
+            return;
+        }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof EnchantingTableBlockEntity enchantingTable) {
             Component text = enchantingTable.getDisplayName();
@@ -38,6 +55,29 @@ public class EnchantingTableBlockMixin {
             ci.setReturnValue(null);
         }
         ci.cancel();
+    }
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    public void EnchantingTableBlock(BlockBehaviour.Properties properties, CallbackInfo ci) {
+        EnchantingTableBlock thisObj = (EnchantingTableBlock) (Object) this;
+        thisObj.registerDefaultState(thisObj.getStateDefinition().any().setValue(BlockStateProperties.HAS_BOOK, false));
+    }
+
+    @Unique
+    public void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(BlockStateProperties.HAS_BOOK);
+    }
+
+    @Unique
+    protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (state.getValue(BlockStateProperties.HAS_BOOK) || !itemStack.is(Items.BOOK)) {
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
+
+        itemStack.shrink(1);
+        BlockState newState = state.setValue(BlockStateProperties.HAS_BOOK, true);
+        level.setBlock(pos, newState, 3);
+        return InteractionResult.SUCCESS;
     }
 
     @Inject(method = "animateTick", at = @At(value = "HEAD"), cancellable = true)

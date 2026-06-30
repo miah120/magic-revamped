@@ -3,6 +3,7 @@ package lunar.tinkerer.consequences.effects;
 import com.mojang.serialization.MapCodec;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
+import lunar.tinkerer.util.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -39,13 +40,9 @@ public record EnchantFlower() implements ConsequenceEffect {
     }
 
     public void drop(Consequence.RunInfo info, ItemStack itemStack) {
-        Level level = info.world();
-        Supplier<Float> r = () -> level.getRandom().nextFloat();
-        info.decoration().map(BlockInWorld::getPos).ifPresent(pos -> {
-            Vec3 location = Vec3.atCenterOf(pos).add((r.get() - 0.5) * 0.1F, r.get() * 0.05F, (r.get() - 0.5) * 0.1F);
-            ItemEntity entity = new ItemEntity(level, location.x, location.y, location.z, itemStack);
-            entity.setDefaultPickUpDelay();
-            level.addFreshEntity(entity);
-        });
+        info.decoration()
+            .map(BlockInWorld::getPos)
+            .map(Vec3::atCenterOf)
+            .ifPresent(pos -> Util.drop(info.world(), pos, itemStack));
     }
 }

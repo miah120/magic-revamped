@@ -4,6 +4,7 @@ import lunar.tinkerer.MagicRevamped;
 import lunar.tinkerer.RuneItem;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.enchantmentRecipe.EnchantmentRecipe;
+import lunar.tinkerer.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
@@ -33,8 +34,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
@@ -124,7 +128,8 @@ public class ModEnchantmentScreenHandler
 
     @Override
     public boolean stillValid(@NonNull Player player) {
-        return ModEnchantmentScreenHandler.stillValid(this.context, player, Blocks.ENCHANTING_TABLE);
+        var hasBook = this.context.evaluate((level, blockPos) -> level.getBlockState(blockPos).getValue(BlockStateProperties.HAS_BOOK), true);
+        return hasBook && ModEnchantmentScreenHandler.stillValid(this.context, player, Blocks.ENCHANTING_TABLE);
     }
 
     @Override
@@ -222,7 +227,7 @@ public class ModEnchantmentScreenHandler
         } else if (conduit.is(MagicRevamped.Items.RUNE)) {
             return stabilize(craftingInventory);
         } else {
-            return enchant(craftingInventory);
+            return enchant(craftingInventory.getConduit(), craftingInventory);
         }
     }
 
@@ -260,8 +265,7 @@ public class ModEnchantmentScreenHandler
             .orElse(ItemStack.EMPTY);
     }
 
-    public static ItemStack enchant(EnchantmentCraftingContainer craftingInventory) {
-        ItemStack conduit = craftingInventory.getConduit();
+    public static ItemStack enchant(ItemStack conduit, EnchantmentCraftingContainer craftingInventory) {
         if (!EnchantmentHelper.canStoreEnchantments(conduit) && !conduit.is(Items.BOOK)) return ItemStack.EMPTY;
         if (craftingInventory.getNonEmptyAdditions().anyMatch(i -> !isValidRuneForItem(i, conduit))) return ItemStack.EMPTY;
 
@@ -387,7 +391,7 @@ public class ModEnchantmentScreenHandler
     public static int getInputCost(EnchantmentCraftingContainer input) {
         return RuneItem.getEnchantments(input.getConduit())
             .map(RuneItem.LeveledEnchantment::cost)
-            .reduce(0, Integer::sum);
+            .reduce(0, (sum, i) -> 2 * sum + i);
     }
 
     public static int getLevelRequirement(EnchantmentCraftingContainer input, Level world, BlockPos blockPos) {
@@ -455,7 +459,14 @@ public class ModEnchantmentScreenHandler
         player.giveExperienceLevels(-getLevelRequirement(this.craftingInventory, world, blockPos));
         triggerAdvancements(original, stack, false, result.decorationsPresent());
         boostPlayerEnchantingSkill(1);
-        if (result.success()) takeResultEnchanted(world, blockPos, stack);
+        if (result.success()) {
+            takeResultEnchanted(world, blockPos, stack);
+        } else {
+            ItemStack book = enchant(new ItemStack(Items.BOOK), this.craftingInventory);
+            BlockState newState = world.getBlockState(blockPos).setValue(BlockStateProperties.HAS_BOOK, false);
+            world.setBlock(blockPos, newState, 3);
+            Util.drop(world, Vec3.atCenterOf(blockPos), book);
+        }
     }
 
     public void takeResultEnchanted(Level world, BlockPos blockPos, ItemStack stack) {

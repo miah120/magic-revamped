@@ -1,6 +1,7 @@
 package lunar.tinkerer;
 
 import com.google.common.base.Function;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import lunar.tinkerer.consequences.Consequence;
 import lunar.tinkerer.consequences.ConsequenceEffect;
@@ -25,6 +26,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.references.BlockItemId;
 import net.minecraft.resources.Identifier;
@@ -138,6 +140,11 @@ public class MagicRevamped implements ModInitializer {
 		public static DataComponentType<Holder<Enchantment>> ENCHANTMENT = register(
 			"enchantment",
 			builder -> builder.persistent(Enchantment.CODEC).networkSynchronized(Enchantment.STREAM_CODEC)
+		);
+
+		public static DataComponentType<Boolean> HAS_BOOK = register(
+			"has_book",
+			builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
 		);
 
 		private static <T> DataComponentType<T> register(final String id, final UnaryOperator<DataComponentType.Builder<T>> builder) {

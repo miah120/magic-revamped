@@ -16,6 +16,8 @@ accessible field net/minecraft/world/item/crafting/ShapedRecipePattern width I
 accessible field net/minecraft/world/item/crafting/ShapedRecipePattern height I
 accessible field net/minecraft/world/item/crafting/ShapedRecipePattern ingredients Ljava/util/List;
 accessible field net/minecraft/world/item/crafting/ShapedRecipePattern data Ljava/util/Optional;
+accessible method net/minecraft/world/level/block/state/BlockBehaviour useItemOn (Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;
+accessible method net/minecraft/world/level/block/Block registerDefaultState (Lnet/minecraft/world/level/block/state/BlockState;)V
 
 accessible method net/minecraft/core/component/DataComponents register (Ljava/lang/String;Ljava/util/function/UnaryOperator;)Lnet/minecraft/core/component/DataComponentType;
 accessible method net/minecraft/world/item/Items registerItem (Lnet/minecraft/resources/ResourceKey;Ljava/util/function/Function;Lnet/minecraft/world/item/Item$Properties;)Lnet/minecraft/world/item/Item;
